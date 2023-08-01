@@ -22,6 +22,10 @@ private:
     void servoData_to_socketData(const Driver &d, const vector<DFS> &data);
     int enableFlag{};
     int ppFlag{};
+    bool cspFlag;
+    vector<DFS> getData{vector<DFS>(servoNums)};
+    vector<DTS> sendData{vector<DTS>(servoNums)};
+    vector<float> angles{vector<float>(9)};
 };
 
 
