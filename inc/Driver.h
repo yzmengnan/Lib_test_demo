@@ -16,10 +16,11 @@
 #include <vector>
 using namespace std;
 extern mutex adsLock;
-#define angles2Pulses 8388608/360
+#define angles2Pulses 8388608 / 360
 using sd = class Driver {
 public:
-    vector<float> _driver_gearRatioScalar{vector<float>{181.22*angles2Pulses, 144.9 * 5 / 3*angles2Pulses, 33.0 * 5 / 3*angles2Pulses}};
+    vector<float> _driver_gearRatioScalar{vector<float>{181.22 * angles2Pulses, 144.9 * 5 / 3 * angles2Pulses, 33.0 * 5 / 3 * angles2Pulses}};
+
 public:
     Driver(Tc_Ads &ads_handle);
     auto servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int;
@@ -72,6 +73,7 @@ public:
         servoBreak(state);
     }
     bool enableFlag = false;
+
 private:
     auto servoBreak(const bool &state) -> int;
     bool pp_Flag = false; //=1表示pp就位，=0表示未就位
@@ -82,14 +84,20 @@ private:
     int error_code = 0;
     void f_Cyclic(vector<DTS> &SendData) {
         cout << "Cyclic START!" << endl;
+        TimerCounter tc;
+        tc.Start();
         while (*cyclicFlag) {
-            for (const auto& s: SendData) {
+            for (const auto &s: SendData) {
                 cout << "Pos: " << s.Target_Pos << ",";
                 cout << "Torque: " << s.Target_Torque << ",";
             }
             cout << endl;
-            p_ads->set(SendData);
-            this_thread::sleep_for(chrono::milliseconds(10));
+            if (tc.dbTime * 1000 >= 10) {
+                p_ads->set(SendData);
+                cout << "------" << tc.dbTime << endl;
+                tc.Start();
+            }
+            tc.Stop();
         }
         cout << "Cyclic QUIT!" << endl;
     }
@@ -122,7 +130,7 @@ public:
      */
     int Write(T operationMode = '0', T2... args) {
         //update the actual position to the command first
-        for(int i{};i<servoNums;i++){
+        for (int i{}; i < servoNums; i++) {
             MotSendData[i].Target_Pos = MotGetData[i].Actual_Pos;
         }
         //update target position with gearRatio_Scalar anyway!
@@ -143,7 +151,7 @@ public:
             uint32_t maxDelta = *max_element(Delta.begin(), Delta.end());
             //calculate and update each joint`s velocity
             for (int vec_index = 0; vec_index < servoNums; vec_index++) {
-                MotSendData[vec_index].Profile_Velocity = sync_rpm * (float)Delta[vec_index]/maxDelta * 8388608/60;
+                MotSendData[vec_index].Profile_Velocity = sync_rpm * (float) Delta[vec_index] / maxDelta * 8388608 / 60;
                 MotSendData[vec_index].Max_Velocity = 3000;
             }
             auto err = servoPP0(MotSendData, MotGetData);
@@ -189,6 +197,7 @@ public:
         return this->MotSendData;
     }
     vector<DFS> MotGetData{vector<DFS>(servoNums)};
+
 private:
     vector<DTS> MotSendData{vector<DTS>(servoNums)};
     vector<DTS> &gearRatio_Scalar(initializer_list<float> args);
