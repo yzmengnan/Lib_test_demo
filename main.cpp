@@ -12,7 +12,7 @@ int main() {
     while(server->state>=0){
 
     }
-    cout<<"Finish!"<<endl;
+    cout<<"Finished!"<<endl;
     p.processDelete(pi);
 //    system("pause");
     return 0;
