@@ -13,7 +13,6 @@ using namespace std;
 using MDT = class motionDataTransform {
 public:
 public:
-
     static vector<float> getAngles(const Driver &d, const vector<DFS> &getData) {
         vector<float> result{};
         int i{};
@@ -21,12 +20,17 @@ public:
             result.push_back((g.Actual_Pos + pulse_offset[i]) / d._driver_gearRatioScalar[i]);
             i++;
         }
+#ifdef UP_NEEDED
+        while (result.size() != 9) {
+            result.push_back(0.0f);
+        }
+#endif
         return result;
     }
     static void fromAnglesToPulses(const Driver &d, const vector<float> &angles, vector<DTS> &SendData) {
         int i{};
         for (auto &s: SendData) {
-            if(i>=angles.size()){
+            if (i >= angles.size()) {
                 break;
             }
             s.Target_Pos = (angles[i]) * d._driver_gearRatioScalar[i] - pulse_offset[i];
@@ -38,6 +42,10 @@ public:
         for (auto g: getData) {
             result.push_back(g.Actual_Torque * 1.21 / 1000);
         }
+#ifdef UP_NEEDED
+        while (result.size() != 9)
+            result.push_back(0.0f);
+#endif
         return result;
     }
     static vector<float> getVecs(const Driver &d, const vector<DFS> &getData) {
@@ -47,6 +55,10 @@ public:
             result.push_back(g.Actual_Vec / d._driver_gearRatioScalar[i]);
             i++;
         }
+#ifdef UP_NEEDED
+        while(result.size()!=9)
+            result.push_back(0.0f);
+#endif
         return result;
     }
 };
