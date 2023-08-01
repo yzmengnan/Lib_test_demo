@@ -14,7 +14,7 @@
 #include <chrono>
 #include <memory>
 #include <thread>
-mutex th_mutex;
+mutex adsLock;
 Driver::Driver(Tc_Ads &ads_handle) {
     p_ads = &ads_handle;
 }
@@ -205,19 +205,19 @@ auto Driver::servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> 
     }
 
     //伺服已设置为PP模式
-    th_mutex.lock();
+    adsLock.lock();
     // 更新607Ah（Target Position）的值
     error_code = p_ads->set(SendData);
-    th_mutex.unlock();
+    adsLock.unlock();
     if (error_code < 0) {
         return error_code;
     }
     //控制字BIT4为1，通知伺服器目标位置开始有效
     for (auto &child_servo: SendData)
         child_servo.Control_Word |= 0x10;
-    th_mutex.lock();
+    adsLock.lock();
     error_code = p_ads->set(SendData);
-    th_mutex.unlock();
+    adsLock.unlock();
     // 检查伺服是否收到目标点，否则，循环发送控制字的bit4为1；
     if (error_code < 0) {
         return error_code;
@@ -236,9 +236,9 @@ auto Driver::servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> 
     while (target_ack && *servoLag_flag) {
         int statusReadyCount = 0;
         // 获取伺服状态字
-        th_mutex.lock();
+        adsLock.lock();
         error_code = p_ads->get(GetData);
-        th_mutex.unlock();
+        adsLock.unlock();
         if (error_code) {
             return error_code;
         }
@@ -255,9 +255,9 @@ auto Driver::servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> 
         for (auto &child_servo: SendData) {
             child_servo.Control_Word &= 0xffef;//控制字BIT4置0
         }
-        th_mutex.lock();
+        adsLock.lock();
         error_code = p_ads->set(SendData);
-        th_mutex.unlock();
+        adsLock.unlock();
         return error_code;
     }
     // 否则，则是*servoLag_flag=0退出 由th1最大延时后，伺服依旧没有响应
@@ -350,17 +350,13 @@ auto Driver::servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
  * @return
  */
 auto Driver::servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
-    //如果未上使能
-    if (!enableFlag) {
-        cout << "禁止！请先上使能！" << endl;
-    }
     //如果CSP模式已经进入，则直接退出
     if (csp_Flag) {
-        cout << "CSP MODE has been running!" << endl;
+//        cout << "CSP MODE is running:"<<endl;
         return 0;
     }
-    //任意模式设置且使能状态，禁止模式切换
-    else if (cst_Flag || pp_Flag || enableFlag) {
+    //任意模式设置，禁止模式切换
+    else if (cst_Flag || pp_Flag ) {
         cout << "禁止！请下使能后再切换模式" << endl;
         vector<DTS> temp(servoNums);
         this->servoDisable(temp);
