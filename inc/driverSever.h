@@ -25,7 +25,6 @@ private:
     bool cspFlag;
     vector<DFS> getData{vector<DFS>(servoNums)};
     vector<DTS> sendData{vector<DTS>(servoNums)};
-    vector<float> angles{vector<float>(9)};
 };
 
 
