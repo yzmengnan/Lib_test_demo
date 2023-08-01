@@ -9,6 +9,7 @@
 #define DFS_SIZE 20
 #define servoNums 3
 #define MONITOR_Hz 20
+#define UP_NEEDED
 #include <memory>
 #include <vector>
 static std::vector<int32_t> pulse_offset{-382944720,-506320482,42662099,0,0,0,0,0,0};
@@ -53,10 +54,10 @@ using _recv = struct Recv_from_Client {
 using _send = struct Send_to_Client {
     int Head_check{};
     int Status{};
-    std::vector<float> Joint_Position{std::vector<float>(9,0.7)};
-    std::vector<float> Cartesian_Position{std::vector<float>(6, 0)};
-    std::vector<float> Joint_Velocity{std::vector<float>(9, 0)};
-    std::vector<float> Cartesian_Velocity{std::vector<float>(6, 0)};
+    std::vector<float> Joint_Position{std::vector<float>(9,0.0f)};
+    std::vector<float> Cartesian_Position{std::vector<float>(6, 0.0f)};
+    std::vector<float> Joint_Velocity{std::vector<float>(9, 0.0f)};
+    std::vector<float> Cartesian_Velocity{std::vector<float>(6, 0.0f)};
     int Tail_check{};
 
     const int Head_check_location = 0;
