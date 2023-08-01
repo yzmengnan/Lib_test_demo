@@ -159,7 +159,7 @@ void comSocket::comSocket_send() {
         }
         //关节空间位置信息添加
         temp = (char *) (socketSend->Joint_Position.data());
-        for (int j = 0; j < 4 * servoNums; j++)
+        for (int j = 0; j < 4 * 9; j++)
             byte_data.push_back(*(temp + j));
         //笛卡尔位置信息添加
         temp = (char *) socketSend->Cartesian_Position.data();
@@ -167,7 +167,7 @@ void comSocket::comSocket_send() {
             byte_data.push_back(*(temp + j));
         //关节速度信息添加
         temp = (char *) socketSend->Joint_Velocity.data();
-        for (int j = 0; j < 4 * servoNums; j++)
+        for (int j = 0; j < 4 * 9; j++)
             byte_data.push_back(*(temp + j));
         //笛卡尔速度信息添加
         temp = (char *) socketSend->Cartesian_Velocity.data();
@@ -178,8 +178,8 @@ void comSocket::comSocket_send() {
         temp = (char *) &socketSend->Tail_check;
         for (int j = 0; j < 4; j++)
             byte_data.push_back(*temp + j);
-        this_thread::sleep_for(chrono::milliseconds(20));
         send_res = send(com_socket, byte_data.data(), byte_data.size(), 0);
+        this_thread::sleep_for(chrono::milliseconds(20));
     }
     cout << "send error :" << send_res << endl;
     socketResult = -2;
