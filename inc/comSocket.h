@@ -24,6 +24,8 @@ public:
 protected:
     int port{1115};
 
+public:
+    mutex servoStatusLock{};
 private:
     SOCKET com_socket{};
     int recv_res{0};
