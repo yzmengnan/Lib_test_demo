@@ -21,6 +21,7 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
     auto Server_Controller = [&]() {
         //        while (driver_errcode >=0) {
         //Test
+        bool changedFlag{0};
         while (true) {
             //如果套接字通讯错误,则直接退出
             if (this->socketResult < 0) {
@@ -44,6 +45,7 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     if (!ppFlag) {
                         cout << "Command: PP Enable!" << endl;
                         ppFlag = 1;
+                        changedFlag = 1;
                     }
                     this->setSyncrpm(100);
                     driver_errcode = this->Write('1',
@@ -65,15 +67,34 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     if (!cspFlag) {
                         cout << "Command: CSP Enable!" << endl;
                         cspFlag = 1;
+                        changedFlag = 1;
+                        //refresh sendData
+                        int i{};
+                        for (auto &s: sendData) {
+                            s.Control_Word = 15;
+                        }
                     }
-
+                    vector<float> angles{
+                            this->socketRecv->Joint_Position_set[0],
+                            this->socketRecv->Joint_Position_set[1],
+                            this->socketRecv->Joint_Position_set[2],
+                            this->socketRecv->Joint_Position_set[3],
+                            this->socketRecv->Joint_Position_set[4],
+                            this->socketRecv->Joint_Position_set[5],
+                            this->socketRecv->Joint_Position_set[6],
+                            this->socketRecv->Joint_Position_set[7],
+                            this->socketRecv->Joint_Position_set[8],
+                    };
                     MDT::fromAnglesToPulses(*this, angles, sendData);
                     driver_errcode = this->servoCSP(sendData, getData);
                     if (driver_errcode < 0) {
                         cout << "Command error in CSP! check: " << driver_errcode << endl;
                     }
                 } else {
-                    cout<<"operation mode disable!"<<endl;
+                    if (changedFlag) {
+                        cout << "operation mode disable!" << endl;
+                        changedFlag = 0;
+                    }
                     ppFlag = 0;
                     cspFlag = 0;
                 }
