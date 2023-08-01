@@ -21,7 +21,6 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
     auto Server_Controller = [&]() {
         //        while (driver_errcode >=0) {
         //Test
-        bool changedFlag{0};
         while (true) {
             //如果套接字通讯错误,则直接退出
             if (this->socketResult < 0) {
@@ -45,7 +44,6 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     if (!ppFlag) {
                         cout << "Command: PP Enable!" << endl;
                         ppFlag = 1;
-                        changedFlag = 1;
                     }
                     this->setSyncrpm(100);
                     driver_errcode = this->Write('1',
@@ -58,8 +56,11 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                         cout << "Command error in PP! check: " << driver_errcode << endl;
                     }
                 }
+                else{
+                    ppFlag=0;
+                }
                 //CSP
-                else if (this->socketRecv->Command & 0b1000) {
+                if (this->socketRecv->Command & 0b1000) {
                     if (ppFlag) {
                         cout << "Command error: pp is enable now!" << endl;
                         continue;
@@ -67,7 +68,6 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     if (!cspFlag) {
                         cout << "Command: CSP Enable!" << endl;
                         cspFlag = 1;
-                        changedFlag = 1;
                         //refresh sendData
                         int i{};
                         for (auto &s: sendData) {
@@ -91,11 +91,6 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                         cout << "Command error in CSP! check: " << driver_errcode << endl;
                     }
                 } else {
-                    if (changedFlag) {
-                        cout << "operation mode disable!" << endl;
-                        changedFlag = 0;
-                    }
-                    ppFlag = 0;
                     cspFlag = 0;
                 }
             }
