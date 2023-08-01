@@ -15,7 +15,7 @@
 #include <thread>
 #include <vector>
 using namespace std;
-extern mutex th_mutex;
+extern mutex adsLock;
 #define angles2Pulses 8388608/360
 using sd = class Driver {
 public:
@@ -49,9 +49,9 @@ public:
         }
     }
     int GetDataUpdate(vector<DFS> &GetData) {
-        th_mutex.lock();
+        adsLock.lock();
         auto err = p_ads->get(GetData);
-        th_mutex.unlock();
+        adsLock.unlock();
         if (err < 0) {
             cout << "Get Data Update error :" << err << endl;
             return err;
@@ -83,7 +83,7 @@ private:
     void f_Cyclic(vector<DTS> &SendData) {
         cout << "Cyclic START!" << endl;
         while (*cyclicFlag) {
-            for (auto s: SendData) {
+            for (const auto& s: SendData) {
                 cout << "Pos: " << s.Target_Pos << ",";
                 cout << "Torque: " << s.Target_Torque << ",";
             }
