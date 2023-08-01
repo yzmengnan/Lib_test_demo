@@ -144,6 +144,7 @@ void comSocket::comSocket_receive() {
 void comSocket::comSocket_send() {
     //_send 的数据应该在外部引用更新
     while (send_res >= 0) {
+        servoStatusLock.lock();
         vector<char> byte_data{};
         //头校验字节添加
         char *temp = (char *) &socketSend->Head_check;
@@ -178,6 +179,7 @@ void comSocket::comSocket_send() {
         temp = (char *) &socketSend->Tail_check;
         for (int j = 0; j < 4; j++)
             byte_data.push_back(*temp + j);
+        servoStatusLock.unlock();
         send_res = send(com_socket, byte_data.data(), byte_data.size(), 0);
         this_thread::sleep_for(chrono::milliseconds(20));
     }
