@@ -128,9 +128,9 @@ void comSocket::comSocket_receive() {
         this->socketRecv->Head_check = *((int *) &recvbuf.front());
         this->socketRecv->Command = *((int *) &recvbuf.front() + socketRecv->Command_location);
         socketRecv->Joint_Position_set = vector<float>{(float *) &recvbuf.front() + socketRecv->Joint_Position_set_location,
-                                                       (float *) &recvbuf.front() + socketRecv->Joint_Position_set_location + servoNums};
+                                                       (float *) &recvbuf.front() + socketRecv->Joint_Position_set_location + 9};
         socketRecv->Joint_Velocity_set = vector<float>{(float *) &recvbuf.front() + socketRecv->Joint_Velocity_set_location,
-                                                       (float *) &recvbuf.front() + socketRecv->Joint_Velocity_set_location + servoNums};
+                                                       (float *) &recvbuf.front() + socketRecv->Joint_Velocity_set_location + 9};
         socketRecv->Cartesian_Position_set = vector<float>{(float *) &recvbuf.front() + socketRecv->Cartesian_Position_set_location,
                                                            (float *) &recvbuf.front() + socketRecv->Cartesian_Position_set_location + 6};
         socketRecv->Cartesian_Velocity_set = vector<float>{(float *) &recvbuf.front() + socketRecv->Cartesian_Velocity_set_location,
