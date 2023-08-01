@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="Axis_Command" Id="{7458968c-ea94-44e1-b454-7c4b0d359999}">
+    <Declaration><![CDATA[TYPE Axis_Command :
+STRUCT
+	Control_Word AT%Q* :WORD;
+	Target_Position AT%Q* :DINT;
+	Profile_Velocity AT%Q*:UDINT;
+	Max_Motor_Speed AT%Q* :UDINT;
+	Mode_of_Operation AT%Q* :BYTE:=1;
+	Target_Torque AT%Q*: INT:=0;
+	Max_Torque AT%Q*: UINT:=0;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
