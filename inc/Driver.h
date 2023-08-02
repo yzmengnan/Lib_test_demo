@@ -3,6 +3,8 @@
  */
 #pragma once
 
+#include "winsock2.h"
+//
 #include "DATA_STRUCT.h"
 #include "Tc_Ads.h"
 #include "TimerCounter.h"
@@ -65,6 +67,11 @@ public:
     auto servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int;
     auto servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int;
     auto servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int;
+    void servoOperationModeSet(int pp,int csp,int cst){
+       pp_Flag=pp;
+       csp_Flag=csp;
+       cst_Flag=cst;
+    }
 
     virtual ~Driver();
 
@@ -82,25 +89,20 @@ private:
     shared_ptr<bool> cyclicFlag = make_shared<bool>(false);
     pTc_Ads p_ads = nullptr;
     int error_code = 0;
-    void f_Cyclic(vector<DTS> &SendData) {
+    void f_Cyclic(vector<DTS>& SendData) {
         cout << "Cyclic START!" << endl;
         TimerCounter tc;
         tc.Start();
         while (*cyclicFlag) {
-            for (const auto &s: SendData) {
-                cout << "Pos: " << s.Target_Pos << ",";
-                cout << "Torque: " << s.Target_Torque << ",";
-            }
-            cout << endl;
             if (tc.dbTime * 1000 >= 10) {
                 p_ads->set(SendData);
-                cout << "------" << tc.dbTime << endl;
                 tc.Start();
             }
             tc.Stop();
         }
         cout << "Cyclic QUIT!" << endl;
     }
+public:
     void servoFinishCS() {
         *cyclicFlag = false;
     }
