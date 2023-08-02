@@ -45,6 +45,7 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                         cout << "Command: PP Enable!" << endl;
                         ppFlag = 1;
                     }
+                    this->servoFinishCS();
                     this->setSyncrpm(100);
                     driver_errcode = this->Write('1',
                                                  this->socketRecv->Joint_Position_set[0], this->socketRecv->Joint_Position_set[1],
@@ -58,6 +59,7 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                 }
                 else{
                     ppFlag=0;
+                    this->servoOperationModeSet(ppFlag,cspFlag,0);
                 }
                 //CSP
                 if (this->socketRecv->Command & 0b1000) {
@@ -69,7 +71,6 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                         cout << "Command: CSP Enable!" << endl;
                         cspFlag = 1;
                         //refresh sendData
-                        int i{};
                         for (auto &s: sendData) {
                             s.Control_Word = 15;
                         }
@@ -92,6 +93,7 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     }
                 } else {
                     cspFlag = 0;
+                    this->servoOperationModeSet(ppFlag,cspFlag,0);
                 }
             }
             // 如果没有上使能指令，则下使能
