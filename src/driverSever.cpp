@@ -42,10 +42,11 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                 //PP
                 if (this->socketRecv->Command & 0b100) {
                     if (!ppFlag) {
+                        //重置CS flag，关闭后台Cyclic 线程
+                        this->servoFinishCS();
                         cout << "Command: PP Enable!" << endl;
                         ppFlag = 1;
                     }
-                    this->servoFinishCS();
                     this->setSyncrpm(100);
                     driver_errcode = this->Write('1',
                                                  this->socketRecv->Joint_Position_set[0], this->socketRecv->Joint_Position_set[1],
@@ -64,6 +65,7 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                 //CSP
                 if (this->socketRecv->Command & 0b1000) {
                     if (ppFlag) {
+                        //若指令为0b1110,则PP模式与CSP共存，此时以PP优先，并warning
                         cout << "Command error: pp is enable now!" << endl;
                         continue;
                     }
@@ -101,6 +103,7 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                 driver_errcode = this->Disable();
                 enableFlag = 0;
                 ppFlag = 0;
+                this->servoOperationModeSet(ppFlag,cspFlag,0);
             }
             if (driver_errcode < 0) {
                 cout << "Command error! Check: " << driver_errcode << endl;
