@@ -124,7 +124,7 @@ int comSocket::comSocket_build() {
 void comSocket::comSocket_receive() {
     std::array<char, 1024> recvbuf{};
     while (recv_res >= 0) {
-        recv_res = recv(com_socket, &recvbuf.front(), 1024, 0);
+        recv_res = recv(com_socket, &recvbuf.front(), 132, 0);
         this->socketRecv->Head_check = *((int *) &recvbuf.front());
         this->socketRecv->Command = *((int *) &recvbuf.front() + socketRecv->Command_location);
         socketRecv->Joint_Position_set = vector<float>{(float *) &recvbuf.front() + socketRecv->Joint_Position_set_location,
