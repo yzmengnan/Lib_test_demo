@@ -10,6 +10,8 @@
 #define servoNums 3
 #define MONITOR_Hz 20
 #define UP_NEEDED
+#include "winsock2.h"
+//
 #include <memory>
 #include <vector>
 static std::vector<int32_t> pulse_offset{-382944720,-506320482,42662099,0,0,0,0,0,0};
