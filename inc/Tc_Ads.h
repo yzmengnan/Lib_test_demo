@@ -6,10 +6,11 @@
 #define SEAL_DEMO_TC_ADS_H
 
 
+#include "winsock2.h"
+//
 #include "ADDRESS_DEFINE.h"
 #include "DATA_STRUCT.h"
 #include "thread"
-#include "winsock2.h"
 #include <vector>
 //
 #include "windows.h"
