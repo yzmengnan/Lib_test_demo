@@ -352,11 +352,11 @@ auto Driver::servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
 auto Driver::servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
     //如果CSP模式已经进入，则直接退出
     if (csp_Flag) {
-//        cout << "CSP MODE is running:"<<endl;
+        //        cout << "CSP MODE is running:"<<endl;
         return 0;
     }
     //任意模式设置，禁止模式切换
-    else if (cst_Flag || pp_Flag ) {
+    else if (cst_Flag || pp_Flag) {
         cout << "禁止！请下使能后再切换模式" << endl;
         vector<DTS> temp(servoNums);
         this->servoDisable(temp);
@@ -370,7 +370,7 @@ auto Driver::servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
         if (error_code < 0) {
             cout << "Error: set CSP MODE! " << error_code << endl;
         }
-        this_thread::sleep_for(chrono::milliseconds(100));
+        this_thread::sleep_for(chrono::milliseconds(30));
         error_code = p_ads->get(GetData);
         if (error_code) {
             cout << "Error: get CSP MODE! " << error_code << endl;
@@ -388,7 +388,11 @@ auto Driver::servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
     }
     //设置cyclicFlag为真，表示Driver开启了循环同步子线程
     *cyclicFlag = true;
-    thread t(&Driver::f_Cyclic, *this, ref(SendData));
+    auto pSendData = make_shared<vector<DTS>>(SendData);
+    auto csp_func=[&](){
+        this->f_Cyclic(SendData);
+    };
+    thread t(csp_func);
     t.detach();
     return error_code;
 }
