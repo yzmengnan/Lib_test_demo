@@ -1,4 +1,6 @@
 #pragma once
+#include <winsock2.h>
+//
 #include "DATA_STRUCT.h"
 #include "motionDataTransform.hpp"
 #include "ws2tcpip.h"
@@ -8,7 +10,6 @@
 #include <sstream>
 #include <thread>
 #include <vector>
-#include <winsock2.h>
 using namespace std;
 class comSocket {
 public:
