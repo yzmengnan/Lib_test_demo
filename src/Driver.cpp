@@ -339,7 +339,10 @@ auto Driver::servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
     }
     //设置cyclicFlag 为真，表示Driver开启了循环同步子线程
     *cyclicFlag = true;
-    thread t(&Driver::f_Cyclic, *this, ref(SendData));
+    auto cst_func=[&](){
+       this->f_Cyclic(SendData);
+    };
+    thread t(cst_func);
     t.detach();
     return 0;
 }
