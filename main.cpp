@@ -10,8 +10,8 @@ int main() {
     Multi_Process p;
     auto pi = p.safety_monitor_build("SAFE-CHECK.exe");
     auto server = make_shared<driverSever>(1115,ads_ptr);
-    auto fl = make_shared<file_log>();
-    fl->writeFile(*server);
+    auto fl = file_log();
+    fl.writeFile(*server);
     while(server->state>=0){
 
     }
