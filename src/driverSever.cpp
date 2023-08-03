@@ -3,7 +3,7 @@
 //
 
 #include "driverSever.h"
-driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_handle}, comSocket{port} {
+driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_handle}, comSocket{port}{
     this_thread::sleep_for(std::chrono::seconds(2));
     cout << "driver Server start!" << endl;
     //lamda: 将伺服器数据实时转译为套接字数据
