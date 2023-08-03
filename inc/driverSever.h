@@ -23,7 +23,6 @@ private:
     int enableFlag{};
     int ppFlag{};
     bool cspFlag;
-    vector<DFS> getData{vector<DFS>(servoNums)};
     vector<DTS> sendData{vector<DTS>(servoNums)};
 };
 
