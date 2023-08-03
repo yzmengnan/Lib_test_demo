@@ -9,6 +9,7 @@
 #define DFS_SIZE 20
 #define servoNums 3
 #define MONITOR_Hz 20
+#define Socket_Hz 1000/100
 #define motorLagRate 1.2
 #define electronicGearRatio 10
 #define UP_NEEDED
