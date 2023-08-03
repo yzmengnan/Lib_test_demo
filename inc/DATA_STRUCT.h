@@ -9,7 +9,10 @@
 #define DFS_SIZE 20
 #define servoNums 3
 #define MONITOR_Hz 20
+#define motorLagRate 1.2
+#define electronicGearRatio 10
 #define UP_NEEDED
+#define electronicGear
 #include "winsock2.h"
 //
 #include <memory>
