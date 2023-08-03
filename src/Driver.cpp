@@ -297,7 +297,7 @@ auto Driver::servoBreak(const bool &state) -> int {
  * @param GetData
  * @return
  */
-auto Driver::servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
+auto Driver::servoCST(vector<DTS> &SendData,vector<DFS> &GetData) -> int {
     //若伺服未使能
     if (!enableFlag) {
         cout << "禁止！请先上使能！" << endl;
@@ -340,7 +340,7 @@ auto Driver::servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
     //设置cyclicFlag 为真，表示Driver开启了循环同步子线程
     *cyclicFlag = true;
     auto cst_func=[&](){
-       this->f_Cyclic(SendData);
+       this->f_Cyclic(SendData,GetData);
     };
     thread t(cst_func);
     t.detach();
@@ -393,7 +393,7 @@ auto Driver::servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
     *cyclicFlag = true;
     auto pSendData = make_shared<vector<DTS>>(SendData);
     auto csp_func=[&](){
-        this->f_Cyclic(SendData);
+        this->f_Cyclic(SendData,GetData);
     };
     thread t(csp_func);
     t.detach();
