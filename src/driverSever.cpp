@@ -88,8 +88,9 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                             this->socketRecv->Joint_Position_set[7],
                             this->socketRecv->Joint_Position_set[8],
                     };
+
                     MDT::fromAnglesToPulses(*this, angles, sendData);
-                    driver_errcode = this->servoCSP(sendData, getData);
+                    driver_errcode = this->servoCSP(sendData, this->MotGetData);
                     if (driver_errcode < 0) {
                         cout << "Command error in CSP! check: " << driver_errcode << endl;
                     }
@@ -124,8 +125,12 @@ void driverSever::servoData_to_socketData(const Driver &d, const vector<DFS> &da
     if (this->enableFlag) {
         this->socketSend->Status |= 0b10;
     } else {
-        this->socketSend->Status &= ~((uint32_t) 2);
+        this->socketSend->Status=0;
     }
     this->socketSend->Joint_Position = MDT::getAngles(d, data);
+//            for(const auto & joint:this->socketSend->Joint_Position){
+    //                cout<<joint<<',';
+    //            }
+    //            cout<<endl;
     this->socketSend->Joint_Velocity = MDT::getVecs(d, data);
 }
