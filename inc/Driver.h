@@ -19,6 +19,7 @@
 using namespace std;
 extern mutex adsLock;
 #define angles2Pulses 8388608 / 360
+#define pulsetoMotorSpeedRate 0.000715
 using sd = class Driver {
 public:
     vector<float> _driver_gearRatioScalar{vector<float>{181.22 * angles2Pulses, 144.9 * 5 / 3 * angles2Pulses, 33.0 * 5 / 3 * angles2Pulses}};
@@ -67,10 +68,10 @@ public:
     auto servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int;
     auto servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int;
     auto servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int;
-    void servoOperationModeSet(int pp,int csp,int cst){
-       pp_Flag=pp;
-       csp_Flag=csp;
-       cst_Flag=cst;
+    void servoOperationModeSet(int pp, int csp, int cst) {
+        pp_Flag = pp;
+        csp_Flag = csp;
+        cst_Flag = cst;
     }
 
     virtual ~Driver();
@@ -89,19 +90,45 @@ private:
     shared_ptr<bool> cyclicFlag = make_shared<bool>(false);
     pTc_Ads p_ads = nullptr;
     int error_code = 0;
-    void f_Cyclic(vector<DTS>& SendData) {
+    void f_Cyclic(vector<DTS> &SendData,const vector<DFS>&GetData) {
         cout << "Cyclic START!" << endl;
         TimerCounter tc;
         tc.Start();
+        vector<int32_t> pulseLast{};
+        for(const auto&f:SendData){
+            pulseLast.push_back(f.Target_Pos);
+        }
+        auto motor_speed_adjust = [&]() {
+            int i{};
+            for (auto &data: SendData) {
+#ifdef electronicGear
+                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos)*pulsetoMotorSpeedRate/motorLagRate*electronicGearRatio;
+#elif
+                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos)*pulsetoMotorSpeedRate/motoLagRate;
+#endif
+            }
+            i = 0;
+            for (const auto &lastPulses: GetData) {
+                pulseLast[i++] = lastPulses.Actual_Pos;
+            }
+        };
         while (*cyclicFlag) {
             if (tc.dbTime * 1000 >= 10) {
+                if (csp_Flag)
+                    motor_speed_adjust();
                 p_ads->set(SendData);
+//                cout<<"Target_Pos: ";
+//                for (const auto &data: SendData) {
+//                    cout << data.Target_Pos << ',';
+//                }
+//                cout << endl;
                 tc.Start();
             }
             tc.Stop();
         }
         cout << "Cyclic QUIT!" << endl;
     }
+
 public:
     void servoFinishCS() {
         *cyclicFlag = false;
