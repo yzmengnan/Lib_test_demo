@@ -43,42 +43,42 @@ public:
         TimerCounter tc;
         tc.Start();
         auto func = [&]() {
-        while (this->writeEnable) {
-            if (tc.dbTime * 1000 > 10) {
-                tc.Start();
-                {
-                    stringstream data;
-                    data << index;
-                    for (auto d: MDT::getAngles(m, m.MotGetData)) {
-                        data << " " << d;
+            while (this->writeEnable) {
+                if (tc.dbTime * 1000 > 10) {
+                    tc.Start();
+                    {
+                        stringstream data;
+                        data << index;
+                        for (auto d: MDT::getAngles(m, m.MotGetData)) {
+                            data << " " << d;
+                        }
+                        fp << data.str() << endl;
                     }
-                    fp << data.str() << endl;
-                }
-                {
-                    stringstream data;
-                    data << index;
-                    for (auto d: MDT::getVecs(m, m.MotGetData)) {
-                        data << " " << d;
+                    {
+                        stringstream data;
+                        data << index;
+                        for (auto d: MDT::getVecs(m, m.MotGetData)) {
+                            data << " " << d;
+                        }
+                        fv << data.str() << endl;
                     }
-                    fv << data.str() << endl;
-                }
-                {
-                    stringstream data;
-                    data << index;
-                    for (auto d: MDT::getMoments(m, m.MotGetData)) {
-                        data << " " << d;
+                    {
+                        stringstream data;
+                        data << index;
+                        for (auto d: MDT::getMoments(m, m.MotGetData)) {
+                            data << " " << d;
+                        }
+                        fm << data.str() << endl;
                     }
-                    fm << data.str() << endl;
+                    index++;
                 }
-                index++;
+                tc.Stop();
             }
-            tc.Stop();
-            //            this_thread::sleep_for(chrono::milliseconds(10));
-        } };
+        };
         thread t(func);
         t.detach();
     }
-    virtual ~Data_Log() {
+    ~Data_Log() {
         finishWrite();
     }
 
