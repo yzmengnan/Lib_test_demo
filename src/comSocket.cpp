@@ -181,7 +181,7 @@ void comSocket::comSocket_send() {
             byte_data.push_back(*temp + j);
         servoStatusLock.unlock();
         send_res = send(com_socket, byte_data.data(), byte_data.size(), 0);
-        this_thread::sleep_for(chrono::milliseconds(20));
+        this_thread::sleep_for(chrono::milliseconds(Socket_Hz));
     }
     cout << "send error :" << send_res << endl;
     socketResult = -2;
