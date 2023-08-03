@@ -2,6 +2,7 @@
 #include "Multi_Process.h"
 #include "comSocket.h"
 #include "driverSever.h"
+#include "Data_Log.hpp"
 using namespace std;
 
 int main() {
@@ -9,6 +10,8 @@ int main() {
     Multi_Process p;
     auto pi = p.safety_monitor_build("SAFE-CHECK.exe");
     auto server = make_shared<driverSever>(1115,ads_ptr);
+    auto fl = make_shared<file_log>();
+    fl->writeFile(*server);
     while(server->state>=0){
 
     }
