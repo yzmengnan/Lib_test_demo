@@ -11,7 +11,7 @@ int main() {
     auto addf = [](string data) {
         data = data.substr(0, data.find('.') + 3);
         while (data.size() < 4) {
-            data = " " + data;
+            data += " ";
         }
         return data;
     };
@@ -28,11 +28,9 @@ int main() {
             }
         }
         cout << message.str() << "===";
-        cout << endl;
+        cout << '\n';
         message.str("");
         Sleep(20);
     }
     return 0;
 }
-
-#pragma clang diagnostic pop
