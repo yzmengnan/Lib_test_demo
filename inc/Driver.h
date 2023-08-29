@@ -103,8 +103,8 @@ private:
             for (auto &data: SendData) {
 #ifdef electronicGear
                 data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos)*pulsetoMotorSpeedRate/motorLagRate*electronicGearRatio;
-#elif
-                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos)*pulsetoMotorSpeedRate/motoLagRate;
+#else
+                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos)*pulsetoMotorSpeedRate/motorLagRate;
 #endif
             }
             i = 0;
