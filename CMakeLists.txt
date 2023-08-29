@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.26)
 project(SocketTest)
 project(SAFE-CHECK)
-project(Main)
+project(noSocketMain)
+project(Lib_Demo)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
@@ -11,13 +12,17 @@ include_directories(inc)
 aux_source_directory(src src_list)
 
 add_executable(Lib_Demo main.cpp ${src_list})
-add_executable(SocketTest vs_Low.cpp ${src_list})
+#add_executable(SocketTest vs_Low.cpp ${src_list})
 add_executable(SAFE-CHECK safeCheck.cpp ${src_list})
+add_executable(noSocketMain main_Nosocket.cpp ${src_list})
 
+if(NOT DEFINED ENV{isNoSocket})
+    message(WARNING "socket needed")
+else ()
+    add_compile_definitions(libtest)
+endif ()
 add_library(runninglib ${src_list})
-
-
-target_link_libraries(SocketTest ws2_32 ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib)
-#target_link_libraries(Lib_Demo ws2_32 ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib)
+#target_link_libraries(SocketTest ws2_32 ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib)
 target_link_libraries(Lib_Demo ws2_32 ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib runninglib)
 target_link_libraries(SAFE-CHECK ws2_32 ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib )
+target_link_libraries(noSocketMain ws2_32 ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib runninglib)
