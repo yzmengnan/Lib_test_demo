@@ -8,7 +8,11 @@
 
 // To ensure correct resolution of symbols, add Psapi.lib to TARGETLIBS
 // and compile with -DPSAPI_VERSION=1
-
+#ifdef libtest
+#define targetName "noSocketMain.exe"
+#else
+#define targetName "Lib_Demo.exe"
+#endif
 bool check_name(DWORD processID);
 void PrintProcessNameAndID(DWORD processID);
 void safety_behaviour();
@@ -108,7 +112,7 @@ bool check_name(DWORD processID) {
                               sizeof(szProcessName) / sizeof(TCHAR));
         }
     }
-    if ((std::string) szProcessName == "Lib_Demo.exe") {
+    if ((std::string) szProcessName == targetName) {
         return 1;
     }
     return 0;
