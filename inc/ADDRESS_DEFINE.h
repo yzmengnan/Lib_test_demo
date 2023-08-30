@@ -14,7 +14,7 @@
 #define OUTPUT_OFFSET 0x3e800
 #define INPUT_BASE 0xf020
 #define INPUT_OFFSET 0x1f400
-#define BREAK_OFFSET 0x3e990
+#define DIGITAL_IO_OFFSET 0x3e990
 
 
 #endif
