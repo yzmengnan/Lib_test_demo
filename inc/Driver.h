@@ -84,6 +84,17 @@ public:
 
 private:
     auto servoBreak(const bool &state) -> int;
+
+public:
+    /*
+     *
+     * @param flag flag=0:hold
+     *              flag = 1; catch
+     *              flag =2 ; release
+     * @return
+     */
+    auto cutToolOperation(const int8_t &flag) -> int;
+private:
     bool pp_Flag = false; //=1表示pp就位，=0表示未就位
     bool cst_Flag = false;// 1 ready, 0 not ready
     bool csp_Flag = false;// 1 ready, 0 not ready

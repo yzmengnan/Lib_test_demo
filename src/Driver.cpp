@@ -59,7 +59,7 @@ auto Driver::servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) 
             child_servo.Control_Word = 0x0006;
         }
         error_code = p_ads->set(SendData);
-        Sleep(50);
+        Sleep(120);
         if (error_code < 0) {
             cout << "SERVO ENABLE: Set Data Error:" << error_code << endl;
         }
@@ -280,12 +280,17 @@ auto Driver::servoBreak(const bool &state) -> int {
     //    }
     //
     int break_state{};
+#ifdef DISTRIBUTE_BREAK
     if (state) {
-        for (int i = 0; i < servoNums; i++) {
+        for (int i = 0; i < servoNUMs; i++) {
             break_state |= 0b1 << i;
         }
     }
-    auto nErr = AdsSyncWriteReq(p_ads->pAddr, OUTPUT_BASE, BREAK_OFFSET, 4 * servoNums, &break_state);
+#else
+    if (state)
+        break_state = 1;
+#endif
+    auto nErr = AdsSyncWriteReq(p_ads->pAddr, OUTPUT_BASE, DIGITAL_IO_OFFSET, 4, &break_state);
     if (nErr) {
         std::cout << "Ads set error: " << nErr << endl;
     }
@@ -398,6 +403,29 @@ auto Driver::servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
     thread t(csp_func);
     t.detach();
     return error_code;
+}
+auto Driver::cutToolOperation(const int8_t &flag) -> int {
+    int ioState =(0| this->enableFlag);
+#ifndef DISTRIBUTE_BREAK
+    if (flag == 0) {
+        ioState&=0b001;
+    } else if (flag == 1) {
+        ioState&=0b001;
+        ioState|=0b100;
+    } else if (flag == 2) {
+        ioState&=0b001;
+        ioState|=0b010;
+    } else
+        return 0;
+    error_code = AdsSyncWriteReq(p_ads->pAddr,OUTPUT_BASE, DIGITAL_IO_OFFSET,4,&ioState);
+    if(error_code){
+        cout<<"Error! cutToolOperation Error: "<<error_code<<endl;
+        return -1;
+    }
+    return 0;
+#else
+    cout<<"Warning! Work in distribute break connections!"<<endl;
+#endif
 }
 MotionV1::MotionV1(Tc_Ads &ads_handle) : Driver{ads_handle} {
     cout << "MotionV1 control module built!" << endl;
