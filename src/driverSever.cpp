@@ -79,6 +79,7 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                             s.Control_Word = 15;
                         }
                     }
+                    //此处更新csp的位置数据
                     vector<float> angles{
                             this->socketRecv->Joint_Position_set[0],
                             this->socketRecv->Joint_Position_set[1],
@@ -92,6 +93,7 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     };
 
                     MDT::fromAnglesToPulses(*this, angles, sendData);
+                    //servoCSP内部有自检，只会启动一次csp线程
                     driver_errcode = this->servoCSP(sendData, this->MotGetData);
                     if (driver_errcode < 0) {
                         cout << "Command error in CSP! check: " << driver_errcode << '\n';
