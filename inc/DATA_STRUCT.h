@@ -7,7 +7,7 @@
 #include <cstdint>
 #define DTS_SIZE 24
 #define DFS_SIZE 20
-#define servoNums 3
+#define servoNums 6
 #define MONITOR_Hz 20
 #define Socket_Hz 1000/100
 #define motorLagRate 1.2
@@ -18,7 +18,7 @@
 //
 #include <memory>
 #include <vector>
-static std::vector<int32_t> pulse_offset{-382944720,-506320482,42662099,0,0,0,0,0,0};
+static std::vector<int32_t> pulse_offset{-507555,-905323126,6492578,17654595,-394883,234933,0,0,0};
 using DTS = struct Data_To_Servo {
     uint16_t Control_Word = 0;
     int32_t Target_Pos = 0;
