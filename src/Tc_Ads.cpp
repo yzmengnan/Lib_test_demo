@@ -10,7 +10,7 @@
 Tc_Ads::Tc_Ads() {
     nPort = AdsPortOpen();
     nErr = AdsGetLocalAddress(pAddr);
-    if (nErr)
+    if (nErr != 0)
         cout << "Error: Ads: Open port: " << nErr << endl;
     pAddr->port = 851;
     cout<<"ADS CONNECTION BUILT!"<<endl;
