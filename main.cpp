@@ -2,6 +2,7 @@
 #include "Multi_Process.h"
 #include "driverSever.h"
 #include "Data_Log.hpp"
+#include "monitorData.h"
 using namespace std;
 
 int main() {
@@ -9,8 +10,11 @@ int main() {
     Multi_Process p;
     auto pi = p.safety_monitor_build("SAFE-CHECK.exe");
     auto server = make_shared<driverSever>(1115,ads_ptr);
-    auto fl = file_log();
-    fl.writeFile(*server);
+    monitorData md;
+    thread monitor(&monitorData::sendMessage,md,ref(*server),"dataMonitor.exe");
+    monitor.detach();
+//    auto fl = file_log();
+//    fl.writeFile(*server);
     while(server->state>=0){
 
     }
