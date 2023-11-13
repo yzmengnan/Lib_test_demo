@@ -22,7 +22,14 @@ extern mutex adsLock;
 #define pulsetoMotorSpeedRate 0.000715
 using sd = class Driver {
 public:
-    vector<float> _driver_gearRatioScalar{vector<float>{181.22 * angles2Pulses, 144.9 * 5 / 3 * angles2Pulses, 33.0 * 5 / 3 * angles2Pulses}};
+    vector<float> _driver_gearRatioScalar{vector<float>{-284.9231 * angles2Pulses,
+                                                        -213.7 * angles2Pulses,
+                                                        -171.0 * 5 / 3 * angles2Pulses,
+                                                        -181.22 * angles2Pulses,
+                                                        -144.9 * 5 / 3 * angles2Pulses,
+                                                        -33.0 * 5 / 3 * angles2Pulses,
+                                                        -25*1.5 * angles2Pulses}};
+
 
 public:
     Driver(Tc_Ads &ads_handle);
@@ -94,6 +101,7 @@ public:
      * @return
      */
     auto cutToolOperation(const int8_t &flag) -> int;
+
 private:
     bool pp_Flag = false; //=1表示pp就位，=0表示未就位
     bool cst_Flag = false;// 1 ready, 0 not ready
@@ -101,21 +109,21 @@ private:
     shared_ptr<bool> cyclicFlag = make_shared<bool>(false);
     pTc_Ads p_ads = nullptr;
     int error_code = 0;
-    void f_Cyclic(vector<DTS> &SendData,const vector<DFS>&GetData) {
+    void f_Cyclic(vector<DTS> &SendData, const vector<DFS> &GetData) {
         cout << "Cyclic START!" << endl;
         TimerCounter tc;
         tc.Start();
         vector<int32_t> pulseLast{};
-        for(const auto&f:SendData){
+        for (const auto &f: SendData) {
             pulseLast.push_back(f.Target_Pos);
         }
         auto motor_speed_adjust = [&]() {
             int i{};
             for (auto &data: SendData) {
 #ifdef electronicGear
-                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos)*pulsetoMotorSpeedRate/motorLagRate*electronicGearRatio;
+                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos) * pulsetoMotorSpeedRate / motorLagRate ;
 #else
-                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos)*pulsetoMotorSpeedRate/motorLagRate;
+                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos) * pulsetoMotorSpeedRate / motorLagRate;
 #endif
             }
             i = 0;
@@ -128,11 +136,11 @@ private:
                 if (csp_Flag)
                     motor_speed_adjust();
                 p_ads->set(SendData);
-//                cout<<"Target_Pos: ";
-//                for (const auto &data: SendData) {
-//                    cout << data.Target_Pos << ',';
-//                }
-//                cout << endl;
+                //                cout<<"Target_Pos: ";
+                //                for (const auto &data: SendData) {
+                //                    cout << data.Target_Pos << ',';
+                //                }
+                //                cout << endl;
                 tc.Start();
             }
             tc.Stop();
