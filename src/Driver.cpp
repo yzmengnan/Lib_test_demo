@@ -30,7 +30,7 @@ auto Driver::servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) 
         if (error_code < 0) {
             cout << "SERVO ENABLE: Get Data Error:" << error_code << endl;
         }
-        Sleep(10);
+        Sleep(60);
         //first check ,if servo is enabled, quit!
         for (auto child: GetData) {
             state += child.Status_Word &= 0x37 == 0x37;
@@ -64,7 +64,7 @@ auto Driver::servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) 
             cout << "SERVO ENABLE: Set Data Error:" << error_code << endl;
         }
         error_code = p_ads->get(GetData);
-        Sleep(10);
+        Sleep(60);
         if (error_code < 0) {
             cout << "SERVO ENABLE: Get Data Error:" << error_code << endl;
         }
@@ -87,7 +87,7 @@ auto Driver::servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) 
             cout << "SERVO ENABLE: Set Data Error:" << error_code << endl;
         }
         error_code = p_ads->get(GetData);
-        Sleep(10);
+        Sleep(60);
         if (error_code < 0) {
             cout << "SERVO ENABLE: Get Data Error:" << error_code << endl;
         }
@@ -226,7 +226,7 @@ auto Driver::servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> 
     //标志位指针
     shared_ptr<bool> servoLag_flag = make_shared<bool>(true);
     auto th = [servoLag_flag] {
-        this_thread::sleep_for(chrono::milliseconds(40));
+        this_thread::sleep_for(chrono::milliseconds(80));
         *servoLag_flag = false;
     };
 
