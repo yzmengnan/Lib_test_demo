@@ -10,6 +10,7 @@
 #include "Driver.h"
 #include "comSocket.h"
 #include "iostream"
+#include "traj.hpp"
 using namespace std;
 class driverSever :  public MotionV1,comSocket{
 public:
@@ -24,6 +25,8 @@ private:
     int ppFlag{};
     bool cspFlag;
     vector<DTS> sendData{vector<DTS>(servoNums)};
+    vector<vector<float>> offline_pathPoints{};
+    uint32_t offline_pathPointsNums{};
 };
 
 

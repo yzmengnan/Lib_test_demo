@@ -11,14 +11,11 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
         //driver_errcode 表示操作伺服器对象错误码
         //       while(driver_errcode>=0){
         //Test
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "EndlessLoop"
         while (true) {
             servoStatusLock.lock();
             this->servoData_to_socketData(*this, this->MotGetData);
             servoStatusLock.unlock();
         }
-#pragma clang diagnostic pop
     };
     //lamda: 解释套接字数据
     auto Server_Controller = [&]() {
@@ -35,10 +32,12 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                 if (enableFlag == 0) {
                     cout << "Command: operation Enable!" << '\n';
                     driver_errcode = this->Enable();
+#ifndef SOCKET_TEST
                     if (driver_errcode < 0) {
                         cout << "Command error! Check: " << driver_errcode << '\n';
                         break;
                     }
+#endif
                     enableFlag = 1;
                 }
                 // 所有伺服活动都在使能状态下进行
@@ -57,14 +56,16 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                                                  this->socketRecv->Joint_Position_set[4], this->socketRecv->Joint_Position_set[5],
                                                  this->socketRecv->Joint_Position_set[6], this->socketRecv->Joint_Position_set[7],
                                                  this->socketRecv->Joint_Position_set[8]);
+#ifndef SOCKET_TEST
                     if (driver_errcode < 0) {
                         cout << "Command error in PP! check: " << driver_errcode << '\n';
                     }
+#endif
                 } else {
                     ppFlag = 0;
                     this->servoOperationModeSet(ppFlag, cspFlag, 0);
                 }
-                //CSP
+                //CSP--online
                 if ((this->socketRecv->Command & 0b1000) != 0) {
                     if (ppFlag != 0) {
                         //若指令为0b1110,则PP模式与CSP共存，此时以PP优先，并warning
@@ -95,13 +96,78 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     MDT::fromAnglesToPulses(*this, angles, sendData);
                     //servoCSP内部有自检，只会启动一次csp线程
                     driver_errcode = this->servoCSP(sendData, this->MotGetData);
+#ifndef SOCKET_TEST
                     if (driver_errcode < 0) {
                         cout << "Command error in CSP! check: " << driver_errcode << '\n';
                     }
+#endif
                 } else {
                     cspFlag = 0;
                     this->servoOperationModeSet(ppFlag, cspFlag, 0);
                 }
+                //CSP--offline
+                //data buffer
+                if ((this->socketRecv->Command & 0b10000) != 0) {
+                    if (offline_pathPointsNums == 0)
+                        offline_pathPointsNums = this->socketRecv->Tail_check;
+                    //此处更新csp的位置数据
+                    if (offline_pathPointsNums--) {
+                        vector<float> angles{
+                                this->socketRecv->Joint_Position_set[0],
+                                this->socketRecv->Joint_Position_set[1],
+                                this->socketRecv->Joint_Position_set[2],
+                                this->socketRecv->Joint_Position_set[3],
+                                this->socketRecv->Joint_Position_set[4],
+                                this->socketRecv->Joint_Position_set[5],
+                                this->socketRecv->Joint_Position_set[6],
+                                this->socketRecv->Joint_Position_set[7],
+                                this->socketRecv->Joint_Position_set[8],
+                        };
+                        offline_pathPoints.push_back(angles);
+                    }
+                }
+                //data runner
+                //此处启动offline csp运动，生成轨迹，并本地csp方式执行轨迹
+                if ((this->socketRecv->Command & 0b110000) != 0) {
+                    if (ppFlag != 0) {
+                        //若指令为0b1110,则PP模式与CSP共存，此时以PP优先，并warning
+                        cout << "Command error: pp is enable now!" << '\n';
+                        continue;
+                    }
+                    if (!cspFlag) {
+                        cout << "Command: CSP Enable!" << '\n';
+                        cspFlag = 1;
+                        //refresh sendData
+                        for (auto &s: sendData) {
+                            s.Control_Word = 15;
+                        }
+                    }
+                    auto offline_traj_data = my_traj::_jtraj_Linear(offline_pathPoints, 100);
+                    //清空获取的路径点数据
+                    vector<vector<float>>().swap(offline_traj_data);
+                    //demo版本，本地执行固定轨迹
+                    auto offline_csp = [&]() {
+                        for (const auto &data: offline_traj_data) {
+                            MDT::fromAnglesToPulses(*this, data, sendData);
+                            driver_errcode = this->servoCSP(sendData, this->MotGetData);
+                            this_thread::sleep_for(chrono::milliseconds(10));
+#ifndef SOCKET_TEST
+                            if (driver_errcode < 0) {
+                                cout << "offline csp error!" << endl;
+                                break;
+                            }
+#endif
+                        }
+                    };
+                    thread t_offline_csp(offline_csp);
+                    t_offline_csp.detach();
+
+                } else {
+                    cspFlag = 0;
+                    this->servoOperationModeSet(ppFlag, cspFlag, 0);
+                }
+
+
             }
             // 如果没有上使能指令，则下使能
             else {
@@ -110,10 +176,12 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                 ppFlag = 0;
                 this->servoOperationModeSet(ppFlag, cspFlag, 0);
             }
+#ifndef SOCKET_TEST
             if (driver_errcode < 0) {
                 cout << "Command error! Check: " << driver_errcode << '\n';
                 break;
             }
+#endif
         }
         //任何异常退出后，driverServer类的状态标志置-1
         state = -1;
@@ -123,6 +191,7 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
     thread f2(Server_StatusBuilder);
     f2.detach();
 }
+
 void driverSever::servoData_to_socketData(const Driver &d, const vector<DFS> &data) {
     this->socketSend->Tail_check = 0;
     this->socketSend->Head_check = 22;
