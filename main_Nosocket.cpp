@@ -2,6 +2,7 @@
 #include "Data_Log.hpp"
 #include "Multi_Process.h"
 #include "driverSever.h"
+#define BasicTest
 using namespace std;
 int main() {
     Tc_Ads ads_ptr;
@@ -13,17 +14,18 @@ int main() {
     d->Enable();
 #ifdef BasicTest
     d->setSyncrpm(100);
-    d->Write('1', 30.0f, 0.0f, 0.0f);
+    d->Write('1', 0.0f, 0.0f, 0.0f);
     Sleep(5000);
-    d->Write('1', 10.0f, 10.0f, 10.0f);
-    Sleep(5000);
+    d->Write('1', 0.0f, 0.0f, 0.0f);
+    Sleep(30000);
     cout << "Finished!" << endl;
-#endif
+#else
     vector<DTS> cspSendData(servoNums, DTS{});
     vector<DFS> cspGetData(servoNums, DFS{});
     while (true) {
         d->servoCSP(cspSendData, cspGetData);
     }
+#endif
     p.processDelete(pi);
     //    system("pause");
     return 0;

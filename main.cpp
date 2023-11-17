@@ -10,9 +10,9 @@ int main() {
     Multi_Process p;
     auto pi = p.safety_monitor_build("SAFE-CHECK.exe");
     auto server = make_shared<driverSever>(1115,ads_ptr);
-    monitorData md;
-    thread monitor(&monitorData::sendMessage,md,ref(*server),"dataMonitor.exe");
-    monitor.detach();
+//    monitorData md;
+//    thread monitor(&monitorData::sendMessage,md,ref(*server),"dataMonitor.exe");
+//    monitor.detach();
 //    auto fl = file_log();
 //    fl.writeFile(*server);
     while(server->state>=0){
