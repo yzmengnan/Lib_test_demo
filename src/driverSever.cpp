@@ -108,10 +108,13 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                 //CSP--offline
                 //data buffer
                 if ((this->socketRecv->Command & 0b10000) != 0) {
-                    if (offline_pathPointsNums == 0)
-                        offline_pathPointsNums = this->socketRecv->Tail_check;
+                    //                    if (offline_pathPointsNums == 0){
+                    //                        offline_pathPointsNums = this->socketRecv->Tail_check;
+                    //                        this->socketRecv->Tail_check=0;
+                    //                    }
                     //此处更新csp的位置数据
-                    if (offline_pathPointsNums--) {
+                    if (offline_pathPoints.size() == this->socketRecv->Tail_check - 1) {
+                        cout << "Tail Check: " << this->socketRecv->Tail_check << endl;
                         vector<float> angles{
                                 this->socketRecv->Joint_Position_set[0],
                                 this->socketRecv->Joint_Position_set[1],
@@ -124,11 +127,17 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                                 this->socketRecv->Joint_Position_set[8],
                         };
                         offline_pathPoints.push_back(angles);
+                        for (const auto &data: offline_pathPoints) {
+                            for (const auto &data_second: data) {
+                                cout << data_second << ",";
+                            }
+                            cout << endl;
+                        }
                     }
                 }
                 //data runner
                 //此处启动offline csp运动，生成轨迹，并本地csp方式执行轨迹
-                if ((this->socketRecv->Command & 0b110000) != 0) {
+                if ((this->socketRecv->Command & 0b100000) != 0 && offline_pathPoints.size()) {
                     if (ppFlag != 0) {
                         //若指令为0b1110,则PP模式与CSP共存，此时以PP优先，并warning
                         cout << "Command error: pp is enable now!" << '\n';
@@ -136,31 +145,39 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     }
                     if (!cspFlag) {
                         cout << "Command: CSP Enable!" << '\n';
-                        cspFlag = 1;
                         //refresh sendData
                         for (auto &s: sendData) {
                             s.Control_Word = 15;
                         }
                     }
-                    auto offline_traj_data = my_traj::_jtraj_Linear(offline_pathPoints, 100);
-                    //清空获取的路径点数据
+                    //清空路径插值数据
                     vector<vector<float>>().swap(offline_traj_data);
+                    offline_traj_data = my_traj::_jtraj_Linear(offline_pathPoints, 10);
+                    //清空获取的路径点数据
+                    vector<vector<float>>().swap(offline_pathPoints);
+                    MDT::fromAnglesToPulses(*this, offline_traj_data[0], sendData);
                     //demo版本，本地执行固定轨迹
+                    driver_errcode = this->servoCSP(sendData, this->MotGetData);
+#ifndef SOCKET_TEST
+                    if (driver_errcode < 0) {
+                        cout << "offline csp error!" << endl;
+                        break;
+                    }
+#endif
                     auto offline_csp = [&]() {
+                        cspFlag=1;
                         for (const auto &data: offline_traj_data) {
                             MDT::fromAnglesToPulses(*this, data, sendData);
-                            driver_errcode = this->servoCSP(sendData, this->MotGetData);
                             this_thread::sleep_for(chrono::milliseconds(10));
-#ifndef SOCKET_TEST
-                            if (driver_errcode < 0) {
-                                cout << "offline csp error!" << endl;
-                                break;
-                            }
-#endif
                         }
+                        cout<<"offline csp finish!"<<endl;
+                        servoFinishCS();
                     };
-                    thread t_offline_csp(offline_csp);
-                    t_offline_csp.detach();
+                    if (cspFlag == 0) {
+                        thread t_offline_csp(offline_csp);
+                        t_offline_csp.detach();
+                        this->servoOperationModeSet(ppFlag, cspFlag, 0);
+                    }
 
                 } else {
                     cspFlag = 0;
