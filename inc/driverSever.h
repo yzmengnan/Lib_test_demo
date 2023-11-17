@@ -26,6 +26,7 @@ private:
     bool cspFlag;
     vector<DTS> sendData{vector<DTS>(servoNums)};
     vector<vector<float>> offline_pathPoints{};
+    vector<vector<float>>offline_traj_data{};
     uint32_t offline_pathPointsNums{};
 };
 
