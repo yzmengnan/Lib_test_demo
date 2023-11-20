@@ -3,6 +3,7 @@
 //
 
 #include "driverSever.h"
+#include "Transform.hpp"
 driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_handle}, comSocket{port} {
     this_thread::sleep_for(std::chrono::seconds(2));
     cout << "driver Server start!" << '\n';
@@ -165,12 +166,12 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     }
 #endif
                     auto offline_csp = [&]() {
-                        cspFlag=1;
+                        cspFlag = 1;
                         for (const auto &data: offline_traj_data) {
                             MDT::fromAnglesToPulses(*this, data, sendData);
                             this_thread::sleep_for(chrono::milliseconds(10));
                         }
-                        cout<<"offline csp finish!"<<endl;
+                        cout << "offline csp finish!" << endl;
                         servoFinishCS();
                     };
                     if (cspFlag == 0) {
@@ -212,15 +213,26 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
 void driverSever::servoData_to_socketData(const Driver &d, const vector<DFS> &data) {
     this->socketSend->Tail_check = 0;
     this->socketSend->Head_check = 22;
-    if (this->enableFlag != 0) {
-        this->socketSend->Status |= 0b10;
+
+    this->socketSend->Status &= ~((!enableFlag << 1));
+    this->socketSend->Status |= enableFlag << 1;
+
+    this->socketSend->Status &= ~((!ppFlag << 2));
+    this->socketSend->Status |= (ppFlag << 2);
+
+    this->socketSend->Status &= ~((!ppFlag << 2));
+    this->socketSend->Status |= (ppFlag << 2);
+
+    if ((this->socketRecv->Command & 0b100000) != 0) {
+        this->socketSend->Status &= ~((!cspFlag << 4));
+        this->socketSend->Status |= (cspFlag << 4);
     } else {
-        this->socketSend->Status = 0;
+        this->socketSend->Status &= ~((!cspFlag << 3));
+        this->socketSend->Status |= (cspFlag << 3);
     }
+
     this->socketSend->Joint_Position = MDT::getAngles(d, data);
-    //            for(const auto & joint:this->socketSend->Joint_Position){
-    //                cout<<joint<<',';
-    //            }
-    //            cout<<endl;
     this->socketSend->Joint_Velocity = MDT::getVecs(d, data);
+    auto c_Position =joint2Position(MDT::getAngles(d,data));
+    this->socketSend->Cartesian_Position = c_Position;
 }
