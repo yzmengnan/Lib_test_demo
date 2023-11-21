@@ -32,7 +32,7 @@ public:
 
 
 public:
-    Driver(Tc_Ads &ads_handle);
+    Driver(Tc_Ads &adsHandle);
     auto servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int;
     auto servoDisable(std::vector<DTS> &SendData) -> int;
     void setProfileVelocity(vector<float> degreesPerSeconds, std::vector<DTS> &SendData) {
@@ -182,7 +182,7 @@ public:
             MotSendData[i].Target_Pos = MotGetData[i].Actual_Pos;
         }
         //update target position with gearRatio_Scalar anyway!
-        MotSendData = gearRatio_Scalar({args...});
+        MotSendData = gearRatioScalar({args...});
         if (operationMode == '0') {
             // Normal motion with no sync-vec and no target change immediately
             int err = servoPP0(MotSendData, MotGetData);
@@ -238,6 +238,25 @@ public:
         this->sync_rpm = rpm;
     }
     /*!
+     *
+     * @param target_c_position
+     * @param eor0  1:jacobe 0:jacob0
+     * @return
+     */
+    int operationalSpaceControl(const vector<float>& target_c_position,bool eor0);
+    /*!
+     *
+     * @param cDotEndEffector
+     * @param eor0 1:jacobe 0:jacob0
+     * @return
+     */
+    int visualMotion(const vector<float>&cDotEndEffector,bool eor0);
+    /*！
+     *
+     *
+     */
+    void showOperationalSpaceData();
+    /*!
      * @details 返回MotionV1内部的发送数据
      * @return
      */
@@ -248,6 +267,7 @@ public:
 
 private:
     vector<DTS> MotSendData{vector<DTS>(servoNums)};
-    vector<DTS> &gearRatio_Scalar(initializer_list<float> args);
+    vector<DTS> &gearRatioScalar(initializer_list<float> args);
     int sync_rpm{50};
 };
+
