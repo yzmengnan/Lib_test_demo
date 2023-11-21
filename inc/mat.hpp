@@ -21,6 +21,13 @@ public:
         } else
             n = 0;
     };
+    mat(const vector<float> &a){
+        m=a.size();
+        n=1;
+        for(int i{};i<m;i++){
+            data.push_back(vector<float>{a[i]});
+        }
+    }
     mat(const int &m, const int &n) : m{m}, n{n} {
         vector<float> a(n, 0);
         vector<vector<float>> b(m, a);
@@ -92,24 +99,34 @@ public:
             }
         }
         //make left part all be 1
-        for(int j = A_Expand.m-2;j>=0;j--){
-            for(int i{};i<=j;i++) {
-                auto Ajj1 = A_Expand.data[j-i][j + 1];
+        for (int j = A_Expand.m - 2; j >= 0; j--) {
+            for (int i{}; i <= j; i++) {
+                auto Ajj1 = A_Expand.data[j - i][j + 1];
                 for (int k = j + 1; k < A_Expand.n; k++) {
-                    A_Expand.data[j-i][k] -= Ajj1 * A_Expand.data[j + 1][k];
+                    A_Expand.data[j - i][k] -= Ajj1 * A_Expand.data[j + 1][k];
                 }
             }
         }
-        for(int i=0;i<res.m;i++){
-            for(int j=0;j<res.n;j++){
-               res.data[i][j] = A_Expand.data[i][res.n+j];
+        for (int i = 0; i < res.m; i++) {
+            for (int j = 0; j < res.n; j++) {
+                res.data[i][j] = A_Expand.data[i][res.n + j];
             }
         }
         return res;
     }
+    vector<float> getColumnData(const int& i){
+        vector<float> res{};
+        int j{};
+        for(const auto&d :data){
+           res.push_back(data[j++][i]);
+        }
+        return res;
+    }
+
+public:
     int m{}, n{};
 };
-mat operator*(const mat &a, const mat &b) {
+inline mat operator*(const mat &a, const mat &b) {
     // 第一步，判断是否满足矩阵相乘法则
     if (a.n != b.m) {
         mat res{};
