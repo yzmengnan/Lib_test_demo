@@ -1,35 +1,32 @@
 #include "Transform.hpp"
-#include "mat.hpp"
-#define TESTCOUNTS 5000
+#include <armadillo>
+using namespace arma;
+#define TESTCOUNTS 5000000
 clock_t invCount_start, invCount_end;
 int main() {
-    vector<float> q0(6, 0.0f);
-    vector<float> q1(6, 3.1415927 / 6);
-    //forward kinematic
-    auto res = joint2Position(q0);
-    //jacob0
-    auto jacob0_1_3_pi = jacob0(q1);
-    auto jacob0_1_3_pi_e = jacobe(q1);
-    cout<<"jacob0:"<<endl;
-        jacob0_1_3_pi.disp();
-    cout<<"jacobe:"<<endl;
-    jacob0_1_3_pi_e.disp();
+#ifdef testCOST
     invCount_start = clock();
+    mat data{};
     for (int i = 0; i < TESTCOUNTS; i++)
-        jacob0_1_3_pi.inv();
+        data = inv(j0_1_3PI);
     invCount_end = clock();
-//    jacob0_1_3_pi.inv().disp();
-//    auto E = jacob0_1_3_pi*(jacob0_1_3_pi.inv());
-//    E.disp();
     auto timeCount = (invCount_end - invCount_start) / CLOCKS_PER_SEC;
     cout << "test total time: " << timeCount * 1000 << endl;
     cout << "test for singlet time consumption: " << (double) timeCount / TESTCOUNTS << endl;
     cout << "frequency: " << (double) TESTCOUNTS / timeCount << endl;
-    //matrix 3*3 for time cost at 2us
-    //matrix 6*6 for time cost at 8us
-    vector<float>c_dot(6,0.2f);
-    auto c_dot_m = mat(c_dot);
-    auto q_dot = jacob0_1_3_pi.inv()*mat(c_dot);
-    q_dot.disp();
+#endif
+//    vector<double> c_target{1.399, 1.461, 0.278, -146.922, 49.863, -15.719};
+    vector<double> q10{30,90,80,40,40,40};
+    auto q10_C =vec(fkine(q10));
+    q10_C.print("q10_c");
+    auto qd_f = ikine(vector<double>{q10_C.begin(),q10_C.end()},vector<double>(6,0));
+    auto qdouble =vector<double>{qd_f.begin(),qd_f.end()};
+    vec qd(qdouble);
+    qd.print("qd: ");
+    vector<double>a {qd.begin(),qd.end()};
+    auto qd_Check = vec(fkine(a));
+    qd_Check.print("qd check:");
+    system("pause");
     return 0;
+
 }
