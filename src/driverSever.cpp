@@ -231,8 +231,10 @@ void driverSever::servoData_to_socketData(const Driver &d, const vector<DFS> &da
         this->socketSend->Status |= (cspFlag << 3);
     }
 
-    this->socketSend->Joint_Position = MDT::getAngles(d, data);
-    this->socketSend->Joint_Velocity = MDT::getVecs(d, data);
-    auto c_Position =joint2Position(MDT::getAngles(d,data));
-    this->socketSend->Cartesian_Position = c_Position;
+    vector<double> j_angles = MDT::getAngles(d, data);
+    this->socketSend->Joint_Position = vector<float>(j_angles.begin(),j_angles.end());
+    vector<double> j_vec = MDT::getVecs(d, data);
+    this->socketSend->Joint_Velocity = vector<float>(j_vec.begin(),j_vec.end());
+    vector<double> c_Position = fkine(MDT::getAngles(d, data));
+    this->socketSend->Cartesian_Position = vector<float>(c_Position.begin(),c_Position.end());
 }
