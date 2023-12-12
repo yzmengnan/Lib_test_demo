@@ -72,7 +72,7 @@ void monitorData::sendMessage(const MotionV1 &m1, const string &name) {
                 s = " " + s;
             return s;
         };
-        vector<vector<float>> data{MDT::getAngles(m1, m1.MotGetData),
+        vector<vector<double>> data{MDT::getAngles(m1, m1.MotGetData),
                                    MDT::getVecs(m1, m1.MotGetData),
                                    MDT::getMoments(m1, m1.MotGetData)};
         vector<string> keys{"angles: ", "vecs: ", "moments: "};
