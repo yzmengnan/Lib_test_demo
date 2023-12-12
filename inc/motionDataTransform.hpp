@@ -12,9 +12,9 @@
 using namespace std;
 using MDT = class motionDataTransform {
 public:
-public:
-    static vector<float> getAngles(const Driver &d, const vector<DFS> &getData) {
-        vector<float> result{};
+
+    static auto getAngles(const Driver &d, const vector<DFS> &getData) -> vector<double> {
+        vector<double> result{};
         int i{};
         for (auto g: getData) {
             result.push_back((g.Actual_Pos + pulse_offset[i]) / d._driver_gearRatioScalar[i]);
@@ -22,7 +22,7 @@ public:
         }
 #ifdef UP_NEEDED
         while (result.size() != 9) {
-            result.push_back(0.0f);
+            result.push_back(0.0F);
         }
 #endif
         return result;
@@ -37,8 +37,8 @@ public:
             i++;
         }
     }
-    static vector<float> getMoments(const Driver &d, const vector<DFS> &getData) {
-        vector<float> result{};
+    static vector<double> getMoments(const Driver &d, const vector<DFS> &getData) {
+        vector<double> result{};
         for (auto g: getData) {
             result.push_back(g.Actual_Torque * 1.21 / 1000);
         }
@@ -48,8 +48,8 @@ public:
 #endif
         return result;
     }
-    static vector<float> getVecs(const Driver &d, const vector<DFS> &getData) {
-        vector<float> result{};
+    static vector<double> getVecs(const Driver &d, const vector<DFS> &getData) {
+        vector<double> result{};
         int i{};
         for (auto g: getData) {
             result.push_back(g.Actual_Vec / d._driver_gearRatioScalar[i]);
