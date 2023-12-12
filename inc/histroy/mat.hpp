@@ -126,23 +126,23 @@ public:
 public:
     int m{}, n{};
 };
-inline mat operator*(const mat &a, const mat &b) {
-    // 第一步，判断是否满足矩阵相乘法则
-    if (a.n != b.m) {
-        mat res{};
-        return res;
-    }
-    mat res(a.m, b.n);
-    for (int i{}; i < a.m; i++) {
-        for (int j{}; j < b.n; j++) {
-            float temp{};
-            for (int k{}; k < b.n; k++) {
-                temp += a.data[i][k] * b.data[k][j];
-            }
-            res.data[i][j] = temp;
-        }
-    }
-    return res;
-}
+//inline mat operator*(const mat &a, const mat &b) {
+//    // 第一步，判断是否满足矩阵相乘法则
+//    if (a.n != b.m) {
+//        mat res{};
+//        return res;
+//    }
+//    mat res(a.m, b.n);
+//    for (int i{}; i < a.m; i++) {
+//        for (int j{}; j < b.n; j++) {
+//            float temp{};
+//            for (int k{}; k < a.n; k++) {
+//                temp += a.data[i][k] * b.data[k][j];
+//            }
+//            res.data[i][j] = temp;
+//        }
+//    }
+//    return res;
+//}
 
 #endif//JACOBDEMO_MAT_HPP
