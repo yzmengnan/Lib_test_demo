@@ -431,6 +431,108 @@ auto Driver::cutToolOperation(const int8_t &flag) -> int {
     cout << "Warning! Work in distribute break connections!" << endl;
 #endif
 }
+/*
+ * servoPP0: point to point move continusly!
+ */
+auto Driver::servoPP1(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int {
+    //若伺服未使能
+    if (!enableFlag) {
+        cout << "禁止！请上使能！" << '\n';
+        return -2999;
+    }
+    // 若此时伺服未设置PP模式
+    if (static_cast<int>(pp_Flag) == 0) {
+        //设置PP工作模式
+        for (auto &child_servo: SendData) {
+            child_servo.Mode_of_Operation = 1;
+            child_servo.Max_Velocity = 3000;
+        }
+        error_code = p_ads->set(SendData);
+        if (error_code < 0) {
+            return error_code;
+        }
+        this_thread::sleep_for(chrono::milliseconds(120));
+        error_code = p_ads->get(GetData);
+        if (error_code < 0) {
+            return error_code;
+        }
+        //检查伺服是否为PP工作模式
+        for (auto child_servo: GetData) {
+            if (child_servo.Mode_of_Operation_disp != 1) {
+                std::cout << "Servo Operation Mode Change Failure!" << '\n';
+                error_code = -3000;
+                return error_code;
+            }
+        }
+        //若未return，则设置伺服模式标志位
+        pp_Flag = true;
+        cst_Flag = false;
+        csp_Flag = false;
+    }
+
+    //伺服已设置为PP模式
+    adsLock.lock();
+    // 更新607Ah（Target Position）的值
+    error_code = p_ads->set(SendData);
+    adsLock.unlock();
+    if (error_code < 0) {
+        return error_code;
+    }
+    //控制字BIT4为1，通知伺服器目标位置开始有效
+    //BIT5=1 move cotinuesly
+    for (auto &child_servo: SendData)
+        child_servo.Control_Word |= (0x10 | 0b100000);
+    adsLock.lock();
+    error_code = p_ads->set(SendData);
+    adsLock.unlock();
+    // 检查伺服是否收到目标点，否则，循环发送控制字的bit4为1；
+    if (error_code < 0) {
+        return error_code;
+    }
+    // 开启线程th1，设置延迟最大20ms即退出
+    //标志位指针
+    shared_ptr<bool> servoLag_flag = make_shared<bool>(true);
+    auto th = [servoLag_flag] {
+        this_thread::sleep_for(chrono::milliseconds(80));
+        *servoLag_flag = false;
+    };
+
+    thread th1(th);
+    th1.detach();
+    bool target_ack = true;
+    while (target_ack && *servoLag_flag) {
+        int statusReadyCount = 0;
+        // 获取伺服状态字
+        adsLock.lock();
+        error_code = p_ads->get(GetData);
+        adsLock.unlock();
+        if (error_code != 0) {
+            return error_code;
+        }
+        for (auto child_servo: GetData) {
+            if ((child_servo.Status_Word & 0x1000) != 0)
+                statusReadyCount++;
+        }
+        if (statusReadyCount == servoNums) {
+            target_ack = false;
+        }
+    }
+    // 如果是伺服均收到新的坐标位置，更新控制字，准备下一次位置更新
+    if (!target_ack) {
+        for (auto &child_servo: SendData) {
+            child_servo.Control_Word &= 0xffef;//控制字BIT4置0
+        }
+        adsLock.lock();
+        error_code = p_ads->set(SendData);
+        adsLock.unlock();
+        return error_code;
+    }
+    // 否则，则是*servoLag_flag=0退出 由th1最大延时后，伺服依旧没有响应
+    std::cout << "Servo lag!" << '\n';
+    error_code = -3001;
+    return error_code;
+}
+
 MotionV1::MotionV1(Tc_Ads &ads_handle) : Driver{ads_handle} {
     cout << "MotionV1 control module built!" << '\n';
     auto dataUpdating_MOTIONV1 = [&]() {
@@ -461,7 +563,7 @@ int MotionV1::Disable() {
     }
     return err;
 }
-vector<DTS> &MotionV1::gearRatioScalar(initializer_list<float> args) {
+vector<DTS> &MotionV1::gearRatioScalar(initializer_list<double> args) {
     char i{};
     vector<float> angles;
     for (auto index = args.begin(); index != args.end(); index++, i++) {
@@ -478,46 +580,43 @@ MotionV1::~MotionV1() {
     this->Disable();
     cout << "Motion V1 controller disable!" << '\n';
 }
-auto MotionV1::operationalSpaceControl(const vector<float> &target_c_position, bool eor0) -> int {
-    auto currentCPosition = joint2Position(MDT::getAngles(*this, MotGetData));
-    vector<float> cDot;
-    int i{};
-    for (const auto &dot: currentCPosition) {
-        cDot.push_back(target_c_position[i++] - dot);
-    }
-    auto cDotM = mat{cDot};
-    //check distances
-    cDotM.disp();
+auto MotionV1::opSpaceMotion(const vector<double> &target_c_position ) -> int {
+    auto qd = ikine(target_c_position,MDT::getAngles(*this,this->MotGetData));
+    return this->Write('2', qd[0], qd[1], qd[2], qd[3], qd[4], qd[5]);
+}
 
-    auto qPosition = MDT::getAngles(*this, MotGetData);
-    auto J = eor0 ? jacobe(qPosition) : jacob0(qPosition);
-    auto qDot = J.inv() * mat(cDot);
-    vector<float> q_target = qDot.getColumnData(0);
-    i = 0;
-    for (auto &t: q_target) {
-        t += qPosition[i++];
-    }
-    MDT::fromAnglesToPulses(*this, q_target, this->MotSendData);
-    return this->servoPP0(this->MotSendData, this->MotGetData);
-}
-auto MotionV1::visualMotion(const vector<float> &cDotEndEffector, bool eor0) -> int {
-    auto qPosition = MDT::getAngles(*this, MotGetData);
-    auto J = eor0 ? jacobe(qPosition) : jacob0(qPosition);
-    auto qDot = J.inv() * mat(cDotEndEffector);
-    vector<float> qTarget = qDot.getColumnData(0);
-    int i{};
-    for (auto &t: qTarget) {
-        t += qPosition[i++];
-    }
-    MDT::fromAnglesToPulses(*this, qTarget, this->MotSendData);
-    return this->servoPP0(this->MotSendData, this->MotGetData);
-}
 void MotionV1::showOperationalSpaceData() {
-    auto data = joint2Position(MDT::getAngles(*this, this->MotGetData));
+    auto data = fkine(MDT::getAngles(*this, this->MotGetData));
     for (const auto &d: data) {
         cout << d << ",";
     }
     cout << '\n';
+}
+int MotionV1::opSpaceMotionByJacob(const vector<float> &c_vecs) {
+    //modify operational velocities
+    vec c_temp = mat(vector<double>{c_vecs.begin(),c_vecs.end()});
+    auto c_max = abs(c_temp).max();
+    vector<double> c_vecs_Modified{};
+    for (const auto &c: c_vecs) {
+        c_vecs_Modified.push_back(c / c_max);
+    }
+    //get current q position
+    auto q = MDT::getAngles(*this, this->MotGetData);
+    //modify q position, only need the formar 6 axis
+    vector<double> q_6Axis{q.begin(),q.begin()+6};
+//    vec c_now = vec(fkine(q_6Axis));
+//    c_now.print("c_now:");
+    //get jacob matrix of the end effector
+    mat J = jacobe(q_6Axis);
+    //bad condition
+    if (cond(J) > 300) {
+        return -1;
+    }
+    vec q_dot = inv(J) * vec(c_vecs_Modified);
+//    q_dot.print("q_dot: ");
+    vec qd = vec(q_6Axis)+q_dot*0.01;
+//    cout<<"manipulability: "<<getManipulability(J)<<'\n';
+    return this->Write('3', qd(0), qd(1), qd(2), qd(3), qd(4), qd(5));
 }
 
 #pragma clang diagnostic pop
