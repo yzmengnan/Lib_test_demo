@@ -18,17 +18,17 @@
 #include <vector>
 using namespace std;
 extern mutex adsLock;
-#define angles2Pulses 8388608 / 360
-#define pulsetoMotorSpeedRate 0.000715
+#define ANGLES_2_PULSES (8388608 / 360)
+#define PULSETO_MOTOR_SPEED_RATE 0.000715
 using sd = class Driver {
 public:
-    vector<float> _driver_gearRatioScalar{vector<float>{-284.9231 * angles2Pulses,
-                                                        -213.7 * angles2Pulses,
-                                                        -171.0 * 5 / 3 * angles2Pulses,
-                                                        -181.22 * angles2Pulses,
-                                                        -144.9 * 5 / 3 * angles2Pulses,
-                                                        -33.0 * 5 / 3 * angles2Pulses,
-                                                        -25*1.5 * angles2Pulses}};
+    vector<double> _driver_gearRatioScalar{-284.9231 * ANGLES_2_PULSES,
+                                                        -213.7 * ANGLES_2_PULSES,
+                                                        -171.0 * 5 / 3 * ANGLES_2_PULSES,
+                                                        -181.22 * ANGLES_2_PULSES,
+                                                        -144.9 * 5 / 3 * ANGLES_2_PULSES,
+                                                        -33.0 * 5 / 3 * ANGLES_2_PULSES,
+                                                        -25*1.5 * ANGLES_2_PULSES};
 
 
 public:
@@ -73,6 +73,7 @@ public:
      * @description: PP运动驱动程序,动作例1,执行点到点单独运动
      */
     auto servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int;
+    auto servoPP1(std::vector<DTS>&SendData,std::vector<DFS>&GetData)->int;
     auto servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int;
     auto servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int;
     void servoOperationModeSet(int pp, int csp, int cst) {
@@ -121,9 +122,9 @@ private:
             int i{};
             for (auto &data: SendData) {
 #ifdef electronicGear
-                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos) * pulsetoMotorSpeedRate / motorLagRate ;
+                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos) * PULSETO_MOTOR_SPEED_RATE / motorLagRate ;
 #else
-                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos) * pulsetoMotorSpeedRate / motorLagRate;
+                data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos) * PULSETO_MOTOR_SPEED_RATE / motorLagRate;
 #endif
             }
             i = 0;
@@ -168,7 +169,7 @@ public:
      *                          新的位置作为缓存进入伺服器的缓存器中，当前位置执行结束后，立即执行有效的缓存器内的动作
      *                       '1': 此状态下，执行各轴同步速度的'0'
      *                       '2': 此状态下，执行无缓冲的Profile运动，当前位置执行中，新的位置发送时，
-     *                          立即运行到新的位置。
+     *                          立即运行到新的位置，设置同步速度为最高关节速度。
      *                       '3': 此状态下，执行各轴同步速度的'2'
      *
      *                        请使用setSyncrpm函数调整同步速度大小
@@ -178,6 +179,7 @@ public:
      */
     int Write(T operationMode = '0', T2... args) {
         //update the actual position to the command first
+        //this part is to ensure the joint with no signals can do nothing
         for (int i{}; i < servoNums; i++) {
             MotSendData[i].Target_Pos = MotGetData[i].Actual_Pos;
         }
@@ -192,16 +194,7 @@ public:
             }
             return 0;
         } else if (operationMode == '1') {
-            vector<uint32_t> Delta{};
-            for (int i = 0; i < servoNums; i++) {
-                Delta.push_back(abs(MotSendData[i].Target_Pos - MotGetData[i].Actual_Pos));
-            }
-            uint32_t maxDelta = *max_element(Delta.begin(), Delta.end());
-            //calculate and update each joint`s velocity
-            for (int vec_index = 0; vec_index < servoNums; vec_index++) {
-                MotSendData[vec_index].Profile_Velocity = sync_rpm * (float) Delta[vec_index] / maxDelta * 8388608 / 60;
-                MotSendData[vec_index].Max_Velocity = 3000;
-            }
+            setLowestSyncSpeed();
             auto err = servoPP0(MotSendData, MotGetData);
             if (err < 0) {
                 cout << "MotionV1 :pp1 error" << err << endl;
@@ -210,14 +203,26 @@ public:
             return 0;
 
         } else if (operationMode == '2') {
-            //motion with target change immediately
+            //motion with target changing immediately， sync speed is the highest speed
+            setLowestSyncSpeed();
+            auto err = servoPP1(MotSendData, MotGetData);
+            if (err < 0) {
+                cout << "MotionV1 :pp1 error" << err << endl;
+                return err;
+            }
+            return 0;
         } else if (operationMode == '3') {
-            //motion with both sync-vec and target change immediately
-        } else {
+            //motion with target changing immediately, sync speed is the lowest speed
+            setHighestSyncSpeed();
+            auto err = servoPP1(MotSendData, MotGetData);
+            if (err < 0) {
+                cout << "MotionV1 :pp1 error" << err << endl;
+                return err;
+            }
+            return 0;
+        }
             cout << "wrong operation mode set!" << endl;
             return -2;
-        }
-        return -1;
     }
     template<typename... T>
     void setProfileVelocity(T... args) {
@@ -243,14 +248,9 @@ public:
      * @param eor0  1:jacobe 0:jacob0
      * @return
      */
-    int operationalSpaceControl(const vector<float>& target_c_position,bool eor0);
-    /*!
-     *
-     * @param cDotEndEffector
-     * @param eor0 1:jacobe 0:jacob0
-     * @return
-     */
-    int visualMotion(const vector<float>&cDotEndEffector,bool eor0);
+    int opSpaceMotion(const vector<double>& target_c_position);
+    int opSpaceMotionByJacob(const vector<float>&c_vecs);
+
     /*！
      *
      *
@@ -264,10 +264,35 @@ public:
         return this->MotSendData;
     }
     vector<DFS> MotGetData{vector<DFS>(servoNums)};
+    void setLowestSyncSpeed(){
+        vector<uint32_t> Delta{};
+        for (int i = 0; i < servoNums; i++) {
+            Delta.push_back(abs(MotSendData[i].Target_Pos - MotGetData[i].Actual_Pos));
+        }
+        uint32_t maxDelta = *max_element(Delta.begin(), Delta.end());
+        //calculate and update each joint`s velocity
+        for (int vec_index = 0; vec_index < servoNums; vec_index++) {
+            MotSendData[vec_index].Profile_Velocity = sync_rpm * (float) Delta[vec_index] / maxDelta * 8388608 / 60;
+            MotSendData[vec_index].Max_Velocity = 3000;
+        }
 
+    }
+    void setHighestSyncSpeed(){
+        vector<uint32_t> Delta{};
+        for (int i = 0; i < servoNums; i++) {
+            Delta.push_back(abs(MotSendData[i].Target_Pos - MotGetData[i].Actual_Pos));
+        }
+        uint32_t minDelta = *min_element(Delta.begin(), Delta.end());
+        minDelta = minDelta<10000?10000:minDelta;
+        //calculate and update each joint`s velocity
+        for (int vec_index = 0; vec_index < servoNums; vec_index++) {
+            MotSendData[vec_index].Profile_Velocity = sync_rpm * (float) Delta[vec_index] / minDelta * 8388608 / 60;
+            MotSendData[vec_index].Max_Velocity = 3000;
+        }
+    }
 private:
     vector<DTS> MotSendData{vector<DTS>(servoNums)};
-    vector<DTS> &gearRatioScalar(initializer_list<float> args);
+    vector<DTS> &gearRatioScalar(initializer_list<double> args);
     int sync_rpm{50};
 };
 
