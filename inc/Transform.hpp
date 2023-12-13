@@ -130,15 +130,14 @@ inline auto ikine(const vector<double> &positionData, const vector<double> &curr
     const float d2 = 1.002;
     const auto r = (pow(p[0], 2) + pow(p[1], 2) + pow(p[2], 2));
     jointData[2] = acos((r - d4 * d4 - d2 * d2) / (2 * d4 * d2));
-//    jointData[2] = abs(jointData[2] - ca[2]) > abs(-jointData[2] - ca[2]) ? -jointData[2] : jointData[2];
+    jointData[2] = abs(jointData[2] - ca[2]) > abs(-jointData[2] - ca[2]) ? -jointData[2] : jointData[2];
     jointData[1] = asin(p[2] / d4 / sin(jointData[2]));
-//    jointData[1] = abs(jointData[1] - ca[1]) > abs(M_PI - jointData[1] - ca[1]) ? M_PI - jointData[1] : jointData[1];
+    jointData[1] = abs(jointData[1] - ca[1]) > abs(M_PI - jointData[1] - ca[1]) ? M_PI - jointData[1] : jointData[1];
     auto a = 1.1115 * cos(jointData[1]) * sin(jointData[2]);
     auto b = 1.1115 * cos(jointData[2]) + 1.002;
     auto c = -p[0];
     jointData[0] = asin(c / sqrt(pow(a, 2) + pow(b, 2))) - atan(a / b);
     jointData[0] = abs(jointData[0] - ca[0]) > abs(M_PI - jointData[0] - ca[0]) ? M_PI - jointData[0] : jointData[0];
-//    jointData[0] = jointData[2] > M_PI ? M_PI * 2 - jointData[2] : jointData[2];
     double c1 = cos(jointData[0]);
     double c2 = cos(jointData[1]);
     double c3 = cos(jointData[2]);
@@ -178,7 +177,6 @@ inline auto ikine(const vector<double> &positionData, const vector<double> &curr
         jointData[3] = atan2(r36(2, 2) / sin(jointData[4]), -r36(0, 2) / sin(jointData[4]));
         jointData[3] = abs(jointData[3] - ca[3]) > abs(M_PI - jointData[3] - ca[3]) ? M_PI - jointData[3] : jointData[3];
         jointData[5] = acos(r36(1, 0) / sin(jointData[4]));
-        jointData[5] = abs(jointData[5] - ca[5]) > abs(-jointData[5] - ca[5]) ? -jointData[5] : jointData[5];
     }
     return rad2Angles(jointData);
 }
