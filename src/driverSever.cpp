@@ -51,12 +51,26 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                         ppFlag = 1;
                     }
                     this->setSyncrpm(100);
-                    driver_errcode = this->Write('1',
-                                                 this->socketRecv->Joint_Position_set[0], this->socketRecv->Joint_Position_set[1],
-                                                 this->socketRecv->Joint_Position_set[2], this->socketRecv->Joint_Position_set[3],
-                                                 this->socketRecv->Joint_Position_set[4], this->socketRecv->Joint_Position_set[5],
-                                                 this->socketRecv->Joint_Position_set[6], this->socketRecv->Joint_Position_set[7],
-                                                 this->socketRecv->Joint_Position_set[8]);
+                    //operational space motion
+                    if (this->socketRecv->Command & 0x10000000) {
+                        driver_errcode = this->opSpaceMotion(vector<double>{
+                                this->socketRecv->Cartesian_Position_set[0],
+                                this->socketRecv->Cartesian_Position_set[1],
+                                this->socketRecv->Cartesian_Position_set[2],
+                                this->socketRecv->Cartesian_Position_set[3],
+                                this->socketRecv->Cartesian_Position_set[4],
+                                this->socketRecv->Cartesian_Position_set[5]});
+
+                    } else if (this->socketRecv->Command & 0x20000000) {
+                        driver_errcode = this->opSpaceMotionByJacob(this->socketRecv->Cartesian_Velocity_set);
+                    } else {
+                        driver_errcode = this->Write('1',
+                                                     this->socketRecv->Joint_Position_set[0], this->socketRecv->Joint_Position_set[1],
+                                                     this->socketRecv->Joint_Position_set[2], this->socketRecv->Joint_Position_set[3],
+                                                     this->socketRecv->Joint_Position_set[4], this->socketRecv->Joint_Position_set[5],
+                                                     this->socketRecv->Joint_Position_set[6], this->socketRecv->Joint_Position_set[7],
+                                                     this->socketRecv->Joint_Position_set[8]);
+                    }
 #ifndef SOCKET_TEST
                     if (driver_errcode < 0) {
                         cout << "Command error in PP! check: " << driver_errcode << '\n';
@@ -107,84 +121,81 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     this->servoOperationModeSet(ppFlag, cspFlag, 0);
                 }
                 //CSP--offline
-                //data buffer
-                if ((this->socketRecv->Command & 0b10000) != 0) {
-                    //                    if (offline_pathPointsNums == 0){
-                    //                        offline_pathPointsNums = this->socketRecv->Tail_check;
-                    //                        this->socketRecv->Tail_check=0;
-                    //                    }
-                    //此处更新csp的位置数据
-                    if (offline_pathPoints.size() == this->socketRecv->Tail_check - 1) {
-                        cout << "Tail Check: " << this->socketRecv->Tail_check << endl;
-                        vector<float> angles{
-                                this->socketRecv->Joint_Position_set[0],
-                                this->socketRecv->Joint_Position_set[1],
-                                this->socketRecv->Joint_Position_set[2],
-                                this->socketRecv->Joint_Position_set[3],
-                                this->socketRecv->Joint_Position_set[4],
-                                this->socketRecv->Joint_Position_set[5],
-                                this->socketRecv->Joint_Position_set[6],
-                                this->socketRecv->Joint_Position_set[7],
-                                this->socketRecv->Joint_Position_set[8],
-                        };
-                        offline_pathPoints.push_back(angles);
-                        for (const auto &data: offline_pathPoints) {
-                            for (const auto &data_second: data) {
-                                cout << data_second << ",";
+                {
+                    //data buffer
+                    if ((this->socketRecv->Command & 0b10000) != 0) {
+                        //此处更新csp的位置数据
+                        if (offline_pathPoints.size() == this->socketRecv->Tail_check - 1) {
+                            cout << "Tail Check: " << this->socketRecv->Tail_check << endl;
+                            vector<float> angles{
+                                    this->socketRecv->Joint_Position_set[0],
+                                    this->socketRecv->Joint_Position_set[1],
+                                    this->socketRecv->Joint_Position_set[2],
+                                    this->socketRecv->Joint_Position_set[3],
+                                    this->socketRecv->Joint_Position_set[4],
+                                    this->socketRecv->Joint_Position_set[5],
+                                    this->socketRecv->Joint_Position_set[6],
+                                    this->socketRecv->Joint_Position_set[7],
+                                    this->socketRecv->Joint_Position_set[8],
+                            };
+                            offline_pathPoints.push_back(angles);
+                            for (const auto &data: offline_pathPoints) {
+                                for (const auto &data_second: data) {
+                                    cout << data_second << ",";
+                                }
+                                cout << endl;
                             }
-                            cout << endl;
                         }
                     }
-                }
-                //data runner
-                //此处启动offline csp运动，生成轨迹，并本地csp方式执行轨迹
-                if ((this->socketRecv->Command & 0b100000) != 0 && offline_pathPoints.size()) {
-                    if (ppFlag != 0) {
-                        //若指令为0b1110,则PP模式与CSP共存，此时以PP优先，并warning
-                        cout << "Command error: pp is enable now!" << '\n';
-                        continue;
-                    }
-                    if (!cspFlag) {
-                        cout << "Command: CSP Enable!" << '\n';
-                        //refresh sendData
-                        for (auto &s: sendData) {
-                            s.Control_Word = 15;
+                    //data runner
+                    //此处启动offline csp运动，生成轨迹，并本地csp方式执行轨迹
+                    if ((this->socketRecv->Command & 0b100000) != 0 && offline_pathPoints.size()) {
+                        if (ppFlag != 0) {
+                            //若指令为0b1110,则PP模式与CSP共存，此时以PP优先，并warning
+                            cout << "Command error: pp is enable now!" << '\n';
+                            continue;
                         }
-                    }
-                    //清空路径插值数据
-                    vector<vector<float>>().swap(offline_traj_data);
-                    offline_traj_data = my_traj::_jtraj_Linear(offline_pathPoints, 10);
-                    //清空获取的路径点数据
-                    vector<vector<float>>().swap(offline_pathPoints);
-                    MDT::fromAnglesToPulses(*this, offline_traj_data[0], sendData);
-                    //demo版本，本地执行固定轨迹
-                    driver_errcode = this->servoCSP(sendData, this->MotGetData);
+                        if (!cspFlag) {
+                            cout << "Command: CSP Enable!" << '\n';
+                            //refresh sendData
+                            for (auto &s: sendData) {
+                                s.Control_Word = 15;
+                            }
+                        }
+                        //清空路径插值数据
+                        vector<vector<float>>().swap(offline_traj_data);
+                        offline_traj_data = my_traj::_jtraj_Linear(offline_pathPoints, 10);
+                        //清空获取的路径点数据
+                        vector<vector<float>>().swap(offline_pathPoints);
+                        MDT::fromAnglesToPulses(*this, offline_traj_data[0], sendData);
+                        //demo版本，本地执行固定轨迹
+                        driver_errcode = this->servoCSP(sendData, this->MotGetData);
 #ifndef SOCKET_TEST
-                    if (driver_errcode < 0) {
-                        cout << "offline csp error!" << endl;
-                        break;
-                    }
-#endif
-                    auto offline_csp = [&]() {
-                        cspFlag = 1;
-                        for (const auto &data: offline_traj_data) {
-                            MDT::fromAnglesToPulses(*this, data, sendData);
-                            this_thread::sleep_for(chrono::milliseconds(10));
+                        if (driver_errcode < 0) {
+                            cout << "offline csp error!" << endl;
+                            break;
                         }
-                        cout << "offline csp finish!" << endl;
-                        servoFinishCS();
-                    };
-                    if (cspFlag == 0) {
-                        thread t_offline_csp(offline_csp);
-                        t_offline_csp.detach();
+#endif
+                        auto offline_csp = [&]() {
+                            cspFlag = 1;
+                            for (const auto &data: offline_traj_data) {
+                                MDT::fromAnglesToPulses(*this, data, sendData);
+                                this_thread::sleep_for(chrono::milliseconds(10));
+                            }
+                            cout << "offline csp finish!" << endl;
+                            servoFinishCS();
+                        };
+                        if (cspFlag == 0) {
+                            thread t_offline_csp(offline_csp);
+                            t_offline_csp.detach();
+                            this->servoOperationModeSet(ppFlag, cspFlag, 0);
+                        }
+
+                    } else {
+                        cspFlag = 0;
                         this->servoOperationModeSet(ppFlag, cspFlag, 0);
                     }
-
-                } else {
-                    cspFlag = 0;
-                    this->servoOperationModeSet(ppFlag, cspFlag, 0);
                 }
-
 
             }
             // 如果没有上使能指令，则下使能
@@ -232,9 +243,9 @@ void driverSever::servoData_to_socketData(const Driver &d, const vector<DFS> &da
     }
 
     vector<double> j_angles = MDT::getAngles(d, data);
-    this->socketSend->Joint_Position = vector<float>(j_angles.begin(),j_angles.end());
+    this->socketSend->Joint_Position = vector<float>(j_angles.begin(), j_angles.end());
     vector<double> j_vec = MDT::getVecs(d, data);
-    this->socketSend->Joint_Velocity = vector<float>(j_vec.begin(),j_vec.end());
+    this->socketSend->Joint_Velocity = vector<float>(j_vec.begin(), j_vec.end());
     vector<double> c_Position = fkine(MDT::getAngles(d, data));
-    this->socketSend->Cartesian_Position = vector<float>(c_Position.begin(),c_Position.end());
+    this->socketSend->Cartesian_Position = vector<float>(c_Position.begin(), c_Position.end());
 }
