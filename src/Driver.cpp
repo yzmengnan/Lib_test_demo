@@ -582,9 +582,39 @@ MotionV1::~MotionV1() {
 }
 auto MotionV1::opSpaceMotion(const vector<double> &target_c_position ) -> int {
     auto qd = ikine(target_c_position,MDT::getAngles(*this,this->MotGetData));
+//    vec qd_vec =qd;
+//    qd_vec.print("qdesired");
     return this->Write('2', qd[0], qd[1], qd[2], qd[3], qd[4], qd[5]);
 }
-
+auto MotionV1::opSpaceMotion(const vector<double> &target_c_position,int rate ) -> int {
+    //first, get cartisen vecs
+    auto qNow = MDT::getAngles(*this,this->MotGetData);
+    vec c_Now = fkine(vector<double>(qNow.begin(),qNow.begin()+6));
+    c_Now.print("c_Now");
+    vec c_Target = target_c_position;
+    const vec c_vecs = (c_Target-c_Now)/(double)rate;
+    c_vecs.print("c_vecs");
+    // run c_vecs each time
+    while(true) {
+        qNow = MDT::getAngles(*this,this->MotGetData);
+        c_Now = fkine(vector<double>(qNow.begin(),qNow.begin()+6));
+        //for some reason ,some element of c_Now will be changed
+        //one method here is to compensate the deviation
+        vec delta = c_Now-c_Target;
+        for(int i{};i<delta.n_rows;i++) {
+            delta(i) = c_vecs(i)==0?delta(i)/10:0;
+        }
+        vec c_vecs_modified =c_vecs -  delta;
+        vec cdesired = c_vecs_modified+ c_Now;
+        auto qd = ikine(vector<double>(cdesired.begin(),cdesired.end()), MDT::getAngles(*this, this->MotGetData));
+        this->Write('2', qd[0], qd[1], qd[2], qd[3], qd[4], qd[5]);
+        cout<<"sum: "<<sum(abs(delta))<<endl;
+        if(sum(abs(delta))<0.03){
+            break;
+        }
+    }
+    return 0;
+}
 void MotionV1::showOperationalSpaceData() {
     auto data = fkine(MDT::getAngles(*this, this->MotGetData));
     for (const auto &d: data) {
@@ -597,6 +627,10 @@ int MotionV1::opSpaceMotionByJacob(const vector<float> &c_vecs) {
     vec c_temp = mat(vector<double>{c_vecs.begin(),c_vecs.end()});
     auto c_max = abs(c_temp).max();
     vector<double> c_vecs_Modified{};
+    if(c_max ==0){
+        cout<<"no capable velocity!"<<endl;
+        return 0;
+    }
     for (const auto &c: c_vecs) {
         c_vecs_Modified.push_back(c / c_max);
     }
@@ -604,8 +638,6 @@ int MotionV1::opSpaceMotionByJacob(const vector<float> &c_vecs) {
     auto q = MDT::getAngles(*this, this->MotGetData);
     //modify q position, only need the formar 6 axis
     vector<double> q_6Axis{q.begin(),q.begin()+6};
-//    vec c_now = vec(fkine(q_6Axis));
-//    c_now.print("c_now:");
     //get jacob matrix of the end effector
     mat J = jacobe(q_6Axis);
     //bad condition
@@ -613,7 +645,7 @@ int MotionV1::opSpaceMotionByJacob(const vector<float> &c_vecs) {
         return -1;
     }
     vec q_dot = inv(J) * vec(c_vecs_Modified);
-//    q_dot.print("q_dot: ");
+//        q_dot.print("q_dot: ");
     vec qd = vec(q_6Axis)+q_dot*0.01;
 //    cout<<"manipulability: "<<getManipulability(J)<<'\n';
     return this->Write('3', qd(0), qd(1), qd(2), qd(3), qd(4), qd(5));
