@@ -170,7 +170,7 @@ public:
      *                       '1': 此状态下，执行各轴同步速度的'0'
      *                       '2': 此状态下，执行无缓冲的Profile运动，当前位置执行中，新的位置发送时，
      *                          立即运行到新的位置，设置同步速度为最高关节速度。
-     *                       '3': 此状态下，执行各轴同步速度的'2'
+     *                       '3': 此状态下，执行各轴同步速度的'2',设置同步速度为最低关节速度
      *
      *                        请使用setSyncrpm函数调整同步速度大小
      *
@@ -221,6 +221,20 @@ public:
             }
             return 0;
         }
+        else if(operationMode =='x'||operationMode=='X'){
+            setLowestSyncSpeed();
+            auto err = servoPP0(MotSendData,MotGetData);
+            while(true){
+                int delta{};
+                for(int i{};i<servoNums;i++){
+                   delta+=abs( MotSendData[i].Target_Pos-MotGetData[i].Actual_Pos);
+                }
+                if(delta<20000){
+                   this_thread::sleep_for(chrono::milliseconds (200));
+                   break;
+                }
+            }
+        }
             cout << "wrong operation mode set!" << endl;
             return -2;
     }
@@ -249,6 +263,7 @@ public:
      * @return
      */
     int opSpaceMotion(const vector<double>& target_c_position);
+    int opSpaceMotion(const vector<double>& target_c_position,int rate );
     int opSpaceMotionByJacob(const vector<float>&c_vecs);
 
     /*！
