@@ -16,12 +16,12 @@ int main() {
     cout << "frequency: " << (double) TESTCOUNTS / timeCount << endl;
 #endif
 //    vector<double> c_target{1.399, 1.461, 0.278, -146.922, 49.863, -15.719};
-    vector<double> q10{30,90,80,40,40,40};
+    vector<double> q10{10,10,-20,0,10,-10};
     auto q10_C =vec(fkine(q10));
     q10_C.print("q10_c");
-    auto qd_f = ikine(vector<double>{q10_C.begin(),q10_C.end()},vector<double>(6,0));
-    auto qdouble =vector<double>{qd_f.begin(),qd_f.end()};
-    vec qd(qdouble);
+    vec delta = {0,0,0.08,0,0,0};
+    vec q10_C_end  = q10_C+delta;
+    vec qd = ikine(vector<double>{q10_C_end.begin(),q10_C_end.end()},q10);
     qd.print("qd: ");
     vector<double>a {qd.begin(),qd.end()};
     auto qd_Check = vec(fkine(a));
