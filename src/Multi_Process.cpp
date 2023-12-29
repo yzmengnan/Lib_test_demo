@@ -45,7 +45,7 @@ PROCESS_INFORMATION Multi_Process::safety_monitor_build(const string& name) {
                        NULL,                                                                 // Process handle not inheritable
                        NULL,                                                                 // Thread handle not inheritable
                        FALSE,                                                                // Set handle inheritance to FALSE
-                       CREATE_NEW_PROCESS_GROUP,                                                  // or  choose  CREATE_NEW_CONSOLE
+                       CREATE_NEW_PROCESS_GROUP|CREATE_NO_WINDOW,                                                  // or  choose  CREATE_NEW_CONSOLE
                        NULL,                                                                 // Use parent's environment block
                        NULL,                                                                 // Use parent's starting directory
                        &si,                                                                  // Pointer to STARTUPINFO structure
@@ -54,6 +54,8 @@ PROCESS_INFORMATION Multi_Process::safety_monitor_build(const string& name) {
         cout<<"CreateProcess failed! "<<GetLastError()<<endl;
         return pi;
     }
+    HWND hWnd = GetConsoleWindow();
+    ShowWindow(hWnd,SW_HIDE);
     cout<<"SAFETY PROCESS START!"<<endl;
     // Close process and thread handles.
     return pi;
