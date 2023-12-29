@@ -62,37 +62,35 @@ inline vector<double> fkine(const vector<double> &jointData) {
     mat t04 = t03 * t34;
     mat t05 = t04 * t45;
     mat t06 = t05 * t56;
-//    t06.print("t06: ");
+    //    t06.print("t06: ");
     double alpha{};
     double gama{};
     double beta = atan2(-t06(2, 0), sqrt(t06(0, 0) * t06(0, 0) + t06(1, 0) * t06(1, 0)));
-    if(abs(abs(t06(0,2))-1)<0.001){
+    if (abs(abs(t06(0, 2)) - 1) < 0.001) {
         alpha = 0;
-        if(t06(0,2)>0){
-            gama = atan2(t06(2,1),t06(1,1));
+        if (t06(0, 2) > 0) {
+            gama = atan2(t06(2, 1), t06(1, 1));
+        } else {
+            gama = -atan2(t06(1, 0), t06(2, 0));
         }
-        else{
-            gama = -atan2(t06(1,0),t06(2,0));
-        }
-        beta = asin(t06(0,2));
-    }
-    else{
-        alpha = -atan2(t06(0,1),t06(0,0));
-        gama  = -atan2(t06(1,2),t06(2,2));
-        vector<double> temp_data = {abs(t06(0,0)),abs(t06(0,1)),abs(t06(1,2)),abs(t06(2,2))};
-        auto k = std::distance(temp_data.begin(), max_element(temp_data.begin(),temp_data.end()));
-        switch (k){
+        beta = asin(t06(0, 2));
+    } else {
+        alpha = -atan2(t06(0, 1), t06(0, 0));
+        gama = -atan2(t06(1, 2), t06(2, 2));
+        vector<double> temp_data = {abs(t06(0, 0)), abs(t06(0, 1)), abs(t06(1, 2)), abs(t06(2, 2))};
+        auto k = std::distance(temp_data.begin(), max_element(temp_data.begin(), temp_data.end()));
+        switch (k) {
             case 0:
-                beta = atan(t06(0,2)*cos(alpha)/t06(0,0));
+                beta = atan(t06(0, 2) * cos(alpha) / t06(0, 0));
                 break;
             case 1:
-                beta = -atan(t06(0,2)*sin(alpha)/t06(0,1));
+                beta = -atan(t06(0, 2) * sin(alpha) / t06(0, 1));
                 break;
             case 2:
-                beta = -atan(t06(0,2)*sin(gama)/t06(1,2));
+                beta = -atan(t06(0, 2) * sin(gama) / t06(1, 2));
                 break;
             case 3:
-                beta = atan(t06(0,2)*cos(gama)/t06(2,2));
+                beta = atan(t06(0, 2) * cos(gama) / t06(2, 2));
                 break;
         };
     }
@@ -111,6 +109,96 @@ inline vector<double> fkine(const vector<double> &jointData) {
     }
      */
     return vector<double>{t06(0, 3), t06(1, 3), t06(2, 3), alpha * 180 / M_PI, beta * 180 / M_PI, gama * 180 / M_PI};
+}
+/*!
+ * @details from joint angles(degrees) to operational space positions, the posture is shown
+ *          as RPY angles
+ * @param jointData degrees
+ * @return
+ */
+inline vector<double> fkine_W(const vector<double> &jointData) {
+    if (jointData.size() < 6) {
+        return vector<double>{};
+    }
+    auto jointRad = angles2Rad(jointData);
+    mat t01 = {{cos(jointRad[0]), -sin(jointRad[0]), 0, 0},
+               {sin(jointRad[0]), cos(jointRad[0]), 0, 0},
+               {0, 0, 1, 0},
+               {0, 0, 0, 1}};
+    mat t12 = {{cos(jointRad[1]), -sin(jointRad[1]), 0, 0},
+               {0, 0, 1, 1.002},
+               {-sin(jointRad[1]), -cos(jointRad[1]), 0, 0},
+               {0, 0, 0, 1}};
+    mat t23 = {{cos(jointRad[2]), -sin(jointRad[2]), 0, 0},
+               {0, 0, -1, 0},
+               {sin(jointRad[2]), cos(jointRad[2]), 0, 0},
+               {0, 0, 0, 1}};
+    mat t34 = {{cos(jointRad[3]), -sin(jointRad[3]), 0, 0},
+               {0, 0, 1, 1.1115},
+               {-sin(jointRad[3]), -cos(jointRad[3]), 0, 0},
+               {0, 0, 0, 1}};
+    mat t45 = {{cos(jointRad[4]), -sin(jointRad[4]), 0, 0},
+               {0, 0, -1, 0},
+               {sin(jointRad[4]), cos(jointRad[4]), 0, 0},
+               {0, 0, 0, 1}};
+    mat t56 = {{cos(jointRad[5]), -sin(jointRad[5]), 0, 0},
+               {0, 0, 1, 0},
+               {-sin(jointRad[5]), -cos(jointRad[5]), 0, 0},
+               {0, 0, 0, 1}};
+    mat t02 = t01 * t12;
+    mat t03 = t02 * t23;
+    mat t04 = t03 * t34;
+    mat t05 = t04 * t45;
+    mat t06 = t05 * t56;
+    mat tw0 = {{1, 0, 0, 0}, {0, 0, -1, 0}, {0, 1, 0, 0}, {0, 0, 0, 1}};
+    mat tw6 = tw0 * t06;
+    //    t06.print("t06: ");
+    double alpha{};
+    double gama{};
+    double beta = atan2(-tw6(2, 0), sqrt(tw6(0, 0) * tw6(0, 0) + tw6(1, 0) * tw6(1, 0)));
+    if (abs(abs(tw6(0, 2)) - 1) < 0.001) {
+        alpha = 0;
+        if (tw6(0, 2) > 0) {
+            gama = atan2(tw6(2, 1), tw6(1, 1));
+        } else {
+            gama = -atan2(tw6(1, 0), tw6(2, 0));
+        }
+        beta = asin(tw6(0, 2));
+    } else {
+        alpha = -atan2(tw6(0, 1), tw6(0, 0));
+        gama = -atan2(tw6(1, 2), tw6(2, 2));
+        vector<double> temp_data = {abs(tw6(0, 0)), abs(tw6(0, 1)), abs(tw6(1, 2)), abs(tw6(2, 2))};
+        auto k = std::distance(temp_data.begin(), max_element(temp_data.begin(), temp_data.end()));
+        switch (k) {
+            case 0:
+                beta = atan(tw6(0, 2) * cos(alpha) / tw6(0, 0));
+                break;
+            case 1:
+                beta = -atan(tw6(0, 2) * sin(alpha) / tw6(0, 1));
+                break;
+            case 2:
+                beta = -atan(tw6(0, 2) * sin(gama) / tw6(1, 2));
+                break;
+            case 3:
+                beta = atan(tw6(0, 2) * cos(gama) / tw6(2, 2));
+                break;
+        };
+    }
+    /*
+    if (abs(beta - M_PI_2) < 0.001) {
+        beta = M_PI_2;
+        alpha = 0;
+        gama = atan2(tw6(0, 1), tw6(1, 1));
+    } else if (abs(beta + M_PI_2) < 0.001) {
+        beta = -M_PI_2;
+        alpha = 0;
+        gama = -atan2(tw6(0, 1), tw6(1, 1));
+    } else {
+        alpha = atan2(tw6(1, 0) / cos(beta), tw6(0, 0) / cos(beta));
+        gama = atan2(tw6(2, 1) / cos(beta), tw6(2, 2) / cos(beta));
+    }
+     */
+    return vector<double>{tw6(0, 3), tw6(1, 3), tw6(2, 3), alpha * 180 / M_PI, beta * 180 / M_PI, gama * 180 / M_PI};
 }
 /*!
  * @details from operational space position to joint space position, the posture should be discrbied as RPY angles
@@ -151,17 +239,17 @@ inline auto ikine(const vector<double> &positionData, const vector<double> &curr
     mat rzAlpha = {{cos(p[3]), -sin(p[3]), 0},
                    {sin(p[3]), cos(p[3]), 0},
                    {0, 0, 1}};
-//    rzAlpha.print("rz");
+    //    rzAlpha.print("rz");
     mat ryBeta = {{cos(p[4]), 0, sin(p[4])},
                   {0, 1, 0},
                   {-sin(p[4]), 0, cos(p[4])}};
-//    ryBeta.print("ry");
+    //    ryBeta.print("ry");
     mat rxGama = {{1, 0, 0},
                   {0, cos(p[5]), -sin(p[5])},
                   {0, sin(p[5]), cos(p[5])}};
-//    rxGama.print("rx");
+    //    rxGama.print("rx");
     mat r06 = mat(rxGama) * mat(ryBeta) * mat(rzAlpha);
-//    r06.print("r06: ");
+    //    r06.print("r06: ");
     mat r36 = (r03.t()) * r06;
     jointData[4] = atan2(sqrt(r36(1, 0) * r36(1, 0) + r36(1, 1) * r36(1, 1)), r36(1, 2));
     jointData[4] = abs(jointData[4] - ca[4]) > abs(M_PI - jointData[4] - ca[4]) ? M_PI - jointData[4] : jointData[4];
@@ -256,17 +344,17 @@ inline auto jacobe(vector<double> &joint_data) -> mat {
     }
     auto jointRad = angles2Rad(joint_data);
     rowvec jacobv1{-1.002F * cos(jointRad[0]) - 1.1115F * cos(jointRad[2]) * cos(jointRad[0]) + 1.1115F * sin(jointRad[0]) * cos(jointRad[1]) * sin(jointRad[2]),
-                1.1115F * cos(jointRad[0]) * sin(jointRad[1]) * sin(jointRad[2]),
-                1.1115F * sin(jointRad[2]) * sin(jointRad[0]) - 1.1115F * cos(jointRad[0]) * cos(jointRad[1]) * cos(jointRad[2]),
-                0, 0, 0};
+                   1.1115F * cos(jointRad[0]) * sin(jointRad[1]) * sin(jointRad[2]),
+                   1.1115F * sin(jointRad[2]) * sin(jointRad[0]) - 1.1115F * cos(jointRad[0]) * cos(jointRad[1]) * cos(jointRad[2]),
+                   0, 0, 0};
     rowvec jacobv2{-1.002F * sin(jointRad[0]) - 1.1115F * sin(jointRad[0]) * cos(jointRad[2]) - 1.1115F * cos(jointRad[1]) * cos(jointRad[0]) * sin(jointRad[2]),
-                1.1115F * sin(jointRad[0]) * sin(jointRad[1]) * sin(jointRad[2]),
-                -1.1115F * cos(jointRad[0]) * sin(jointRad[2]) - 1.1115F * sin(jointRad[0]) * cos(jointRad[1]) * cos(jointRad[2]),
-                0, 0, 0};
+                   1.1115F * sin(jointRad[0]) * sin(jointRad[1]) * sin(jointRad[2]),
+                   -1.1115F * cos(jointRad[0]) * sin(jointRad[2]) - 1.1115F * sin(jointRad[0]) * cos(jointRad[1]) * cos(jointRad[2]),
+                   0, 0, 0};
     rowvec jacobv3{0,
-                1.1115F * cos(jointRad[1]) * sin(jointRad[2]),
-                1.1115F * sin(jointRad[1]) * cos(jointRad[2]),
-                0, 0, 0};
+                   1.1115F * cos(jointRad[1]) * sin(jointRad[2]),
+                   1.1115F * sin(jointRad[1]) * cos(jointRad[2]),
+                   0, 0, 0};
 
     mat t01{{cos(jointRad[0]), -sin(jointRad[0]), 0, 0},
             {sin(jointRad[0]), cos(jointRad[0]), 0, 0},
