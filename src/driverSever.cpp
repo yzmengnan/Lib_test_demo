@@ -50,20 +50,33 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                         cout << "Command: PP Enable!" << '\n';
                         ppFlag = 1;
                     }
-                    this->setSyncrpm(100);
-                    //operational space motion
+                    //operational space motion by jacob0
                     if (this->socketRecv->Command & 0x10000000) {
-                        driver_errcode = this->opSpaceMotion(vector<double>{
-                                this->socketRecv->Cartesian_Position_set[0],
-                                this->socketRecv->Cartesian_Position_set[1],
-                                this->socketRecv->Cartesian_Position_set[2],
-                                this->socketRecv->Cartesian_Position_set[3],
-                                this->socketRecv->Cartesian_Position_set[4],
-                                this->socketRecv->Cartesian_Position_set[5]});
-
-                    } else if (this->socketRecv->Command & 0x20000000) {
-                        driver_errcode = this->opSpaceMotionByJacob(this->socketRecv->Cartesian_Velocity_set);
-                    } else {
+                        auto rate = abs(this->socketRecv->Cartesian_Velocity_set[0]) >= 0.01 ? this->socketRecv->Cartesian_Velocity_set[0] : 1.0f;
+                        this->setSyncrpm(rate * DEFAULT_SYNC_RPM_C);
+                        driver_errcode = this->opSpaceMotionByJacob0(this->socketRecv->Cartesian_Velocity_set);
+                    }
+                    //operation space moiton by jacobe
+                    else if (this->socketRecv->Command & 0x20000000) {
+                        auto rate = abs(this->socketRecv->Cartesian_Velocity_set[0]) >= 0.01 ? this->socketRecv->Cartesian_Velocity_set[0] : 1.0f;
+                        this->setSyncrpm(rate * DEFAULT_SYNC_RPM_C);
+                        driver_errcode = this->opSpaceMotionByJacobe(this->socketRecv->Cartesian_Velocity_set);
+                    }
+                    //PP set continus position motion
+                    else if (this->socketRecv->Command & 0x8000000) {
+                        auto rate = abs(this->socketRecv->Joint_Velocity_set[0]) >= 0.01 ? this->socketRecv->Joint_Velocity_set[0] : 1.0f;
+                        this->setSyncrpm(rate * DEFAULT_SYNC_RPM);
+                        driver_errcode = this->Write('3',
+                                                     this->socketRecv->Joint_Position_set[0], this->socketRecv->Joint_Position_set[1],
+                                                     this->socketRecv->Joint_Position_set[2], this->socketRecv->Joint_Position_set[3],
+                                                     this->socketRecv->Joint_Position_set[4], this->socketRecv->Joint_Position_set[5],
+                                                     this->socketRecv->Joint_Position_set[6], this->socketRecv->Joint_Position_set[7],
+                                                     this->socketRecv->Joint_Position_set[8]);
+                    }
+                    // PP set disceret position motion
+                    else {
+                        auto rate = abs(this->socketRecv->Joint_Velocity_set[0]) >= 0.01 ? this->socketRecv->Joint_Velocity_set[0] : 1.0f;
+                        this->setSyncrpm(rate * DEFAULT_SYNC_RPM);
                         driver_errcode = this->Write('1',
                                                      this->socketRecv->Joint_Position_set[0], this->socketRecv->Joint_Position_set[1],
                                                      this->socketRecv->Joint_Position_set[2], this->socketRecv->Joint_Position_set[3],
@@ -165,10 +178,24 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                         //清空路径插值数据
                         vector<vector<float>>().swap(offline_traj_data);
                         offline_traj_data = my_traj::_jtraj_Linear(offline_pathPoints, 10);
+                        //跑到初始位置
+                        cout<<"running to the first path point!"<<endl;
+                        driver_errcode = this->Write('x', offline_pathPoints[0][0],
+                                                     offline_pathPoints[0][1],
+                                                     offline_pathPoints[0][2],
+                                                     offline_pathPoints[0][3],
+                                                     offline_pathPoints[0][4],
+                                                     offline_pathPoints[0][5]);
+                        Sleep(100);
+                        this->Disable();
+                        Sleep(100);
+                        this->Enable();
+                        Sleep(100);
                         //清空获取的路径点数据
                         vector<vector<float>>().swap(offline_pathPoints);
                         MDT::fromAnglesToPulses(*this, offline_traj_data[0], sendData);
                         //demo版本，本地执行固定轨迹
+                        //open csp motion
                         driver_errcode = this->servoCSP(sendData, this->MotGetData);
 #ifndef SOCKET_TEST
                         if (driver_errcode < 0) {
@@ -176,6 +203,8 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                             break;
                         }
 #endif
+                        // lambda function:
+                        // only update the data, not excuate the driver
                         auto offline_csp = [&]() {
                             cspFlag = 1;
                             for (const auto &data: offline_traj_data) {
