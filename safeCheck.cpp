@@ -54,8 +54,11 @@ int main(void) {
 }
 
 void safety_behaviour() {
+    Sleep(50);
     Tc_Ads ads;
+    Sleep(50);
     Driver dev(ads);
+    Sleep(50);
     //force the enable flag equals 1 to force disable!
     dev.enableFlag = true;
     cout<<"This is Safety Check program!"<<endl;
