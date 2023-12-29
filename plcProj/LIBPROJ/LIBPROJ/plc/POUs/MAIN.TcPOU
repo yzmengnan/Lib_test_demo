@@ -3,15 +3,35 @@
   <POU Name="MAIN" Id="{a982cf38-ad16-4d38-b9a7-76eb3872ce8d}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
-	axis0_command AT%QD0:Axis_Command;
-	axis1_command AT%QD6:Axis_Command;
-	axis2_command AT%QD12:Axis_Command;
+	j1_command AT%QD0:Axis_Command;
+	j2_command AT%QD6:Axis_Command;
+	j3_command AT%QD12:Axis_Command;
+	j4_command AT%QD18:Axis_Command;
+	j5_command AT%QD24:Axis_Command;
+	j6_command AT%QD30:Axis_Command;
+	p1_command AT%QD36:Axis_Command;
 	
-	axis0_status AT%ID0:Axis_Status;
-	axis1_status AT%ID5:Axis_Status;
-	axis2_status AT%ID10:Axis_Status;
-	
+	j1_status AT%ID0:Axis_Status;
+	j2_status AT%ID5:Axis_Status;
+	j3_status AT%ID10:Axis_Status;
+	j4_status AT%ID15:Axis_Status;
+	j5_status AT%ID20:Axis_Status;
+	j6_status AT%ID25:Axis_Status;
+	p1_status AT%ID30:Axis_Status;
 	BREAK AT%QD100:WORD:=0;
+	j1_acc AT%Q*:UDINT :=4000000000;
+	j2_acc AT%Q*:UDINT :=4000000000;
+	j3_acc AT%Q*:UDINT :=4000000000;
+	j4_acc AT%Q*:UDINT :=4000000000;
+	j5_acc AT%Q*:UDINT :=4000000000;
+	j6_acc AT%Q*:UDINT :=4000000000;
+	j1_dacc AT%Q*:UDINT :=4000000000;
+	j2_dacc AT%Q*:UDINT :=4000000000;
+	j3_dacc AT%Q*:UDINT :=4000000000;
+	j4_dacc AT%Q*:UDINT :=4000000000;
+	j5_dacc AT%Q*:UDINT :=4000000000;
+	j6_dacc AT%Q*:UDINT :=4000000000;
+	
 END_VAR
 ]]></Declaration>
     <Implementation>
