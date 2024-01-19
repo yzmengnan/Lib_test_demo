@@ -37,6 +37,16 @@ public:
             i++;
         }
     }
+    static void fromAnglesToPulses(const Driver &d, const vector<double> &angles, vector<DTS> &SendData) {
+        int i{};
+        for (auto &s: SendData) {
+            if (i >= angles.size()) {
+                break;
+            }
+            s.Target_Pos = (angles[i]) * d._driver_gearRatioScalar[i] - pulse_offset[i];
+            i++;
+        }
+    }
     static vector<double> getMoments(const Driver &d, const vector<DFS> &getData) {
         vector<double> result{};
         for (auto g: getData) {

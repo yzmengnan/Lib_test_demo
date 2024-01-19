@@ -15,6 +15,9 @@
 #define UP_NEEDED
 #define electronicGear
 #include "winsock2.h"
+//TODO: hpp 文件请在最头文件加载，并且pragma once
+//  或者在cpp中直接使用头文件
+#include <libInterpolate/Interpolate.hpp>
 //
 #include <memory>
 #include <vector>

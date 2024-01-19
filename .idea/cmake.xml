@@ -2,6 +2,20 @@
 <project version="4">
   <component name="CMakeSharedSettings">
     <configurations>
+      <configuration PROFILE_NAME="VISUAL" ENABLED="false" GENERATION_DIR="_VISUAL" CONFIG_NAME="Debug" TOOLCHAIN_NAME="MinGW_LOCAL">
+        <ADDITIONAL_GENERATION_ENVIRONMENT>
+          <envs>
+            <env name="OPENCV_NEEDED" value="true" />
+          </envs>
+        </ADDITIONAL_GENERATION_ENVIRONMENT>
+      </configuration>
+      <configuration PROFILE_NAME="TEMP" ENABLED="true" GENERATION_DIR="_TEMP" CONFIG_NAME="Release">
+        <ADDITIONAL_GENERATION_ENVIRONMENT>
+          <envs>
+            <env name="interTemp" value="true" />
+          </envs>
+        </ADDITIONAL_GENERATION_ENVIRONMENT>
+      </configuration>
       <configuration PROFILE_NAME="Local" ENABLED="true" GENERATION_DIR="_LOCAL" CONFIG_NAME="Debug">
         <ADDITIONAL_GENERATION_ENVIRONMENT>
           <envs>
@@ -9,7 +23,7 @@
           </envs>
         </ADDITIONAL_GENERATION_ENVIRONMENT>
       </configuration>
-      <configuration PROFILE_NAME="Online" ENABLED="true" GENERATION_DIR="_Online" CONFIG_NAME="Debug">
+      <configuration PROFILE_NAME="Online" ENABLED="true" GENERATION_DIR="_Online" CONFIG_NAME="Debug" TOOLCHAIN_NAME="MinGW">
         <ADDITIONAL_GENERATION_ENVIRONMENT>
           <envs>
             <env name="isSocket" value="true" />

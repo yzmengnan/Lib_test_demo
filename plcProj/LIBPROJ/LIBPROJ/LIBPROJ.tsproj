@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.47">
+<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.55">
 	<DataTypes>
 		<DataType>
 			<Name GUID="{1D0DE770-7BC3-51CD-F82F-D03C4E305915}" AutoDeleteType="true">Axis_Status</Name>
@@ -157,7 +157,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{C071F4B8-A408-4C1F-AD34-FFD13638167B}" Name="plc" PrjFilePath="plc\plc.plcproj" TmcFilePath="plc\plc.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plc\plc.tmc" TmcHash="{7C800953-F4CB-E565-B3D0-94A283A1C1F0}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plc\plc.tmc" TmcHash="{BCE3CB28-F6FB-CC58-C99F-9FCC61D17443}">
 					<Name>plc Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
@@ -273,6 +273,14 @@
 							<Name>MAIN.j6_dacc</Name>
 							<Type>UDINT</Type>
 						</Var>
+						<Var>
+							<Name>MAIN.q1_acc</Name>
+							<Type>UDINT</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.q1_dacc</Name>
+							<Type>UDINT</Type>
+						</Var>
 					</Vars>
 					<Contexts>
 						<Context>
@@ -296,9 +304,9 @@
 				<Name>Device 2 (EtherCAT)</Name>
 				<AddressInfo>
 					<Pnp>
-						<DeviceDesc>? 2 (Intel(R) Ethernet Connection (16) I219-V)</DeviceDesc>
-						<DeviceName>\DEVICE\{6239ECA9-B202-4DF6-857E-0F36B9ED5BE1}</DeviceName>
-						<DeviceData>6c240851b939</DeviceData>
+						<DeviceDesc>ÒÔÌ«Íø (Intel(R) Ethernet Connection (22) I219-LM)</DeviceDesc>
+						<DeviceName>\DEVICE\{E8C5C5AE-5D00-4DCC-87C3-897CDC669F53}</DeviceName>
+						<DeviceData>047c16f55932</DeviceData>
 					</Pnp>
 				</AddressInfo>
 				<Image Id="1" AddrType="9" ImageType="3">
@@ -669,7 +677,7 @@
 					<EtherCAT SlaveType="2" PdiType="#x0c05" MboxDataLinkLayer="true" StateMBoxPolling="true" CycleMBoxPollingTime="0" CoeType="15" VendorId="#x0000066f" ProductCode="#x60380007" RevisionNo="#x00010000" InfoDataAddr="true" InfoDataSoeDS401="true" InfoDataDcTimes="true" EnableWdDivider0400="true" EnableWdTime0420="true" TimeoutMailbox2="10000" PortPhys="17" IdentificationAdo="308" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="MCDLN35BE" Desc="MCDLN35BE" PortABoxInfo="#x01000002">
 						<SyncMan>001000012600010001000000200000010001001026010000</SyncMan>
 						<SyncMan>001200012200010002000000280000010001001222010000</SyncMan>
-						<SyncMan>001413006400010003000000000000000900001464010000</SyncMan>
+						<SyncMan>00141b006400010003000000000000000900001464010000</SyncMan>
 						<SyncMan>001613002000010004000000000000001700001620010000</SyncMan>
 						<Fmmu>0000000000000000001400020100000001000000000000000000000000000000</Fmmu>
 						<Fmmu>0000000000000000001600010100000002000000000000000000000000000000</Fmmu>
@@ -808,6 +816,12 @@
 							</Entry>
 							<Entry Name="Target position" Index="#x607a">
 								<Type>DINT</Type>
+							</Entry>
+							<Entry Name="Profile acceleration" Index="#x6083">
+								<Type>UDINT</Type>
+							</Entry>
+							<Entry Name="Profile deceleration" Index="#x6084">
+								<Type>UDINT</Type>
 							</Entry>
 						</Pdo>
 						<Pdo Name="Receive PDO mapping 2" Index="#x1601" InOut="1" Flags="#x0000">
@@ -2238,7 +2252,7 @@
 						<CoeProfile ProfileNo="402"/>
 					</EtherCAT>
 				</Box>
-				<EtherCAT WcStateTolerance="4" DcSyncMode="3"/>
+				<EtherCAT WcStateTolerance="16" DcSyncMode="3"/>
 			</Device>
 		</Io>
 	</Project>
@@ -2364,6 +2378,8 @@
 				<Link VarA="PlcTask Outputs^MAIN.p1_command^Profile_Velocity" VarB="Receive PDO mapping 1^Profile velocity"/>
 				<Link VarA="PlcTask Outputs^MAIN.p1_command^Target_Position" VarB="Receive PDO mapping 1^Target position"/>
 				<Link VarA="PlcTask Outputs^MAIN.p1_command^Target_Torque" VarB="Receive PDO mapping 1^Target torque"/>
+				<Link VarA="PlcTask Outputs^MAIN.q1_acc" VarB="Receive PDO mapping 1^Profile acceleration"/>
+				<Link VarA="PlcTask Outputs^MAIN.q1_dacc" VarB="Receive PDO mapping 1^Profile deceleration"/>
 			</OwnerB>
 		</OwnerA>
 	</Mappings>

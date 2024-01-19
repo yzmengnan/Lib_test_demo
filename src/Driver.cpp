@@ -231,7 +231,7 @@ auto Driver::servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> 
     //标志位指针
     shared_ptr<bool> servoLag_flag = make_shared<bool>(true);
     auto th = [servoLag_flag] {
-        this_thread::sleep_for(chrono::milliseconds(80));
+        this_thread::sleep_for(chrono::milliseconds(120));
         *servoLag_flag = false;
     };
 
@@ -362,6 +362,11 @@ auto Driver::servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
  * @return
  */
 auto Driver::servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
+    //如何未使能，则直接退出
+    if(!enableFlag){
+        cout<<"禁止！请先上使能！"<<endl;
+        return -2998;
+    }
     //如果CSP模式已经进入，则直接退出
     if (csp_Flag) {
         //        cout << "CSP MODE is running:"<<endl;
@@ -639,16 +644,19 @@ int MotionV1::opSpaceMotionByJacobe(const vector<float> &c_vecs) {
     for (const auto &c: c_vecs) {
         c_vecs_Modified.push_back(c / c_max);
     }
+    rowvec c{c_vecs_Modified};
+//    c.print("vector");
     //get current q position
     auto q = MDT::getAngles(*this, this->MotGetData);
     //modify q position, only need the formar 6 axis
     vector<double> q_6Axis{q.begin(), q.begin() + 6};
     //get jacob matrix of the end effector
     mat J = jacobe(q_6Axis);
+//    J.print("J");
     //bad condition
-    if (cond(J) > 300) {
-        cout << "Bad posture!" << endl;
-    }
+//    if (cond(J) > 300) {
+//        cout << "Bad posture!" << endl;
+//    }
     mat Jinv{};
     try {
         Jinv = inv(J);
@@ -656,8 +664,10 @@ int MotionV1::opSpaceMotionByJacobe(const vector<float> &c_vecs) {
         Jinv = pinv(J);
     }
     vec q_dot = Jinv * vec(c_vecs_Modified);
-    q_dot.print("q_dot: ");
-    vec qd = vec(q_6Axis) + q_dot * 0.01;
+    vec qd = vec(q_6Axis) + q_dot * 0.1;
+//    rowvec q_dotShow  = q_dot.t();
+//    q_dotShow.print("q_dot: ");
+    qd.t().print("qd:");
     //    cout<<"manipulability: "<<getManipulability(J)<<'\n';
     return this->Write('3', qd(0), qd(1), qd(2), qd(3), qd(4), qd(5));
 }
@@ -690,10 +700,38 @@ int MotionV1::opSpaceMotionByJacob0(const vector<float> &c_vecs) {
         Jinv = pinv(J);
     }
     vec q_dot = Jinv * vec(c_vecs_Modified);
-    q_dot.print("q_dot: ");
+//    q_dot.print("q_dot: ");
     vec qd = vec(q_6Axis) + q_dot * 0.01;
     //    cout<<"manipulability: "<<getManipulability(J)<<'\n';
     return this->Write('3', qd(0), qd(1), qd(2), qd(3), qd(4), qd(5));
+}
+int MotionV1::opSpaceMotionByJacobe_RL(const vector<float> &c_vecs,Robot&robot) {
+    //modify operational velocities
+    Eigen::VectorXd c_temp(6);
+    c_temp<<c_vecs[0],c_vecs[1],c_vecs[2],c_vecs[3],c_vecs[4],c_vecs[5];
+    Eigen::VectorXd c_temp_abs = c_temp.array().abs();
+    double bigone = c_temp_abs.maxCoeff();
+    if(bigone<=0.001)
+    {
+//        cout<<"no capable order velocity!"<<endl;
+        return 0;
+    }
+    else{
+        cout<<endl<<c_temp<<endl;
+    }
+    c_temp.normalize();
+    cout<<"order operational vecs:"<<c_temp<<endl;
+    //get current q position
+    auto q = MDT::getAngles(*this, this->MotGetData);
+    //modify q position, only need the formar 6 axis
+    vector<double> q_6Axis{q.begin(), q.begin() + 6};
+    //get jacob matrix of the end effector
+    auto Jinv = robot.getInverseJacobe(q_6Axis);
+    rl::math::Vector6 q_dot = Jinv*c_temp;
+    rl::math::Vector6 q_now;
+    q_now<<q_6Axis[0],q_6Axis[1],q_6Axis[2],q_6Axis[3],q_6Axis[4],q_6Axis[5];
+    auto qd = q_now+q_dot*0.01;
+    return this->Write('3', qd[0], qd[1], qd[2], qd[3], qd[4], qd[5]);
 }
 
 #pragma clang diagnostic pop

@@ -5,12 +5,13 @@
 #ifndef MAIN_DRIVERSEVER_H
 #define MAIN_DRIVERSEVER_H
 
-
+//
 #include "DATA_STRUCT.h"
 #include "Driver.h"
+#include "Transform.hpp"
 #include "comSocket.h"
 #include "iostream"
-#include "traj.hpp"
+#include "pathInterpolation.h"
 using namespace std;
 class driverSever :  public MotionV1,comSocket{
 public:
@@ -21,12 +22,14 @@ public:
     int state{};
 private:
     void servoData_to_socketData(const Driver &d, const vector<DFS> &data);
-    int enableFlag{};
-    int ppFlag{};
-    bool cspFlag;
+    bool& enableFlag{MotionV1::enableFlag};
+    bool& ppFlag{MotionV1::pp_Flag};
+    bool& cspFlag{MotionV1::csp_Flag};
+    bool offlinecspFlag{false};
+    bool cspFirststep{true};
     vector<DTS> sendData{vector<DTS>(servoNums)};
-    vector<vector<float>> offline_pathPoints{};
-    vector<vector<float>>offline_traj_data{};
+    vector<vector<double>> offline_pathPoints{};
+    vector<vector<double>>offline_traj_data{};
     uint32_t offline_pathPointsNums{};
 };
 
