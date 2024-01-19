@@ -1,0 +1,165 @@
+<rlmdl xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="rlmdl.xsd">
+    <model>
+        <manufacturer>Yang Qiang email:914181249@shu.edu.cn</manufacturer>
+        <name>changeToolRobot Version 1.0 alpha</name>
+        <world id="world">
+            <rotation/>
+            <translation/>
+            <g>
+                <x>0</x>
+                <y>0</y>
+                <z>9.8</z>
+            </g>
+        </world>
+        <body id="body0"/>
+        <frame id="frame0"/>
+        <frame id="frame1"/>
+        <body id="body1"/>
+        <frame id="frame2"/>
+        <body id="body2"/>
+        <frame id="frame3"/>
+        <body id="body3"/>
+        <frame id="frame4"/>
+        <body id="body4"/>
+        <frame id="frame5"/>
+        <body id="body5"/>
+        <frame id="frame6"/>
+        <body id="body6"/>
+        <frame id="frame7"/>
+        <!--fixed 0-->
+        <fixed id="fixed0">
+            <frame>
+                <a idref="world"/>
+                <b idref="body0"/>
+            </frame>
+            <rotation/>
+            <translation/>
+        </fixed>
+        <!--fixed 1-->
+        <fixed id="fixed1">
+            <frame>
+                <a idref="body0"/>
+                <b idref="frame0"/>
+            </frame>
+        </fixed>
+        <!--joint 0 -->
+        <revolute id="joint0">
+            <frame>
+                <a idref="frame0"/>
+                <b idref="frame1"/>
+            </frame>
+            <axis>
+                <x>0</x>
+                <y>0</y>
+                <z>1</z>
+            </axis>
+        </revolute>
+        <fixed id="fixed2">
+            <frame>
+                <a idref="frame1"/>
+                <b idref="body1"/>
+            </frame>
+            <rotation>
+                <x>-90</x>
+                <y>0</y>
+                <z>0</z>
+            </rotation>
+            <translation>
+                <x>0</x>
+                <y>1.002</y>
+                <z>0</z>
+            </translation>
+        </fixed>
+        <revolute id="joint1">
+            <frame>
+                <a idref="body1"/>
+                <b idref="frame2"/>
+            </frame>
+        </revolute>
+        <fixed id="fixed3">
+            <frame>
+                <a idref="frame2"/>
+                <b idref="body2"/>
+            </frame>
+            <rotation>
+                <x>90</x>
+            </rotation>
+        </fixed>
+        <revolute id="joint2">
+            <frame>
+                <a idref="body2"/>
+                <b idref="frame3"/>
+            </frame>
+        </revolute>
+        <fixed id="fixed4">
+            <frame>
+                <a idref="frame3"/>
+                <b idref="body3"/>
+            </frame>
+            <rotation>
+                <x>-90</x>
+            </rotation>
+            <translation>
+                <y>1.1115</y>
+            </translation>
+        </fixed>
+        <revolute id="joint3">
+            <frame>
+                <a idref="body3"/>
+                <b idref="frame4"/>
+            </frame>
+            <axis>
+                <z>1</z>
+            </axis>
+        </revolute>
+        <fixed id="fixed5">
+            <frame>
+                <a idref="frame4"/>
+                <b idref="body4"/>
+            </frame>
+            <rotation>
+                <x>90</x>
+            </rotation>
+        </fixed>
+        <revolute id="joint4">
+            <frame>
+                <a idref="body4"/>
+                <b idref="frame5"/>
+            </frame>
+        </revolute>
+        <fixed id="fixed6">
+            <frame>
+                <a idref="frame5"/>
+                <b idref="body5"/>
+            </frame>
+            <rotation>
+                <x>-90</x>
+            </rotation>
+        </fixed>
+        <revolute id="joint5">
+            <frame>
+                <a idref="body5"/>
+                <b idref="frame6"/>
+            </frame>
+        </revolute>
+        <fixed id="fixed7">
+            <frame>
+                <a idref="frame6"/>
+                <b idref="frame7"/>
+            </frame>
+            <translation>
+                <!--                <z>0.5</z>-->
+            </translation>
+        </fixed>
+        <!--
+        <home>
+            <q unit="deg">0</q>
+            <q unit="deg">0</q>
+            <q unit="deg">-90</q>
+            <q unit="deg">0</q>
+            <q unit="deg">0</q>
+            <q unit="deg">0</q>
+        </home>
+        -->
+    </model>
+</rlmdl>

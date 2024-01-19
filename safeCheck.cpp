@@ -10,6 +10,8 @@
 // and compile with -DPSAPI_VERSION=1
 #ifdef libtest
 #define targetName "noSocketMain.exe"
+#elif defined visualtest
+#define targetName "VISUAL.exe"
 #else
 #define targetName "Lib_Demo.exe"
 #endif
