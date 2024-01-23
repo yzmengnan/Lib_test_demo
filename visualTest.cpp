@@ -1,8 +1,8 @@
-#include "Multi_Process.h"
 #include "driverSever.h"
+//
+#include "Multi_Process.h"
 #include <iostream>
 #include <thread>
-#include <windows.h>
 using namespace std;
 
 // DVP API 依赖
@@ -33,12 +33,14 @@ public:
         status = dvpStop(h);
         status = dvpClose(h);
         run = false;
+        return status;
     }
     bool getMat(cv::Mat &srcImg) {
         if (run)
-            status = dvpGetFrame(h, &frame, &pBuffer, 3000);
+            status = dvpGetFrame(h, &frame, &pBuffer, 2000);
         if (status != DVP_STATUS_OK) {
             cout << "Failed to get a frame in continuous mode" << endl;
+//            cout << status << endl;
         }
         srcImg = cv::Mat(frame.iHeight, frame.iWidth, CV_8UC3, (unsigned char *) pBuffer);
         if (NULL == srcImg.data) {
@@ -62,8 +64,8 @@ int main(int argc, char *argv[]) {
     Multi_Process pp;
     auto pi = pp.safety_monitor_build("SAFE-CHECK.exe");
     d->Enable();
-    d->setSyncrpm(10);
-
+    d->setSyncrpm(100);
+    d->Write('x', -10.32, 34.93, 29.99, 4.79, -27.63, -61.23);
     cv::Mat showImage;
     dvpUint32 count = 0, num = -1;
     dvpCameraInfo info[8];
@@ -79,12 +81,15 @@ int main(int argc, char *argv[]) {
     }
     num = 0;
     auto c = myCamera(&num);
-    c.start();
+    cout << "start number: " << c.start();
     c.getMat(showImage);
+    this_thread::sleep_for(chrono::seconds(5));
+#ifdef USE_RL
+    static Robot r("../myrobot.xml");
+#endif
     if (argc >= 2) {
         int movingflag = atoi(argv[1]);
         auto movef = [&]() {
-            this_thread::sleep_for(chrono::milliseconds(3000));
             vector<float> c_vecs{};
             string name;
             for (int i{}; i < MOVE_DISTANCE; i++) {
@@ -92,24 +97,38 @@ int main(int argc, char *argv[]) {
                 switch (movingflag) {
                     case 0:
                         c_vecs = {1, 0, 0, 0, 0, 0};
+#ifndef USE_RL
                         d->opSpaceMotionByJacobe(c_vecs);
+#else
+                        d->opSpaceMotionByJacobe_RL(c_vecs, r);
+#endif
                         name = "../img/0/";
                         break;
-
                     case 1:
                         c_vecs = {0, 1, 0, 0, 0, 0};
+#ifndef USE_RL
                         d->opSpaceMotionByJacobe(c_vecs);
+#else
+                        d->opSpaceMotionByJacobe_RL(c_vecs, r);
+#endif
                         name = "../img/1/";
                         break;
-
                     case 2:
                         c_vecs = {-1, 0, 0, 0, 0, 0};
+#ifndef USE_RL
                         d->opSpaceMotionByJacobe(c_vecs);
+#else
+                        d->opSpaceMotionByJacobe_RL(c_vecs, r);
+#endif
                         name = "../img/2/";
                         break;
                     case 3:
                         c_vecs = {0, -1, 0, 0, 0, 0};
+#ifndef USE_RL
                         d->opSpaceMotionByJacobe(c_vecs);
+#else
+                        d->opSpaceMotionByJacobe_RL(c_vecs, r);
+#endif
                         name = "../img/3/";
                         break;
                 }
@@ -117,8 +136,8 @@ int main(int argc, char *argv[]) {
                 if (argc == 3) {
                     name += "reverse/";
                 }
+                this_thread::sleep_for(chrono::milliseconds(5));
                 cv::imwrite(name + to_string(i) + ".jpg", showImage);
-                //                this_thread::sleep_for(chrono::milliseconds(5));
 #endif
             }
             c.stop();
