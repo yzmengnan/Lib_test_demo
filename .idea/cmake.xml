@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CMakeSharedSettings">
     <configurations>
-      <configuration PROFILE_NAME="VISUAL" ENABLED="false" GENERATION_DIR="_VISUAL" CONFIG_NAME="Debug" TOOLCHAIN_NAME="MinGW_LOCAL">
+      <configuration PROFILE_NAME="VISUAL" ENABLED="true" GENERATION_DIR="_VISUAL" CONFIG_NAME="Debug" TOOLCHAIN_NAME="MinGW_LOCAL">
         <ADDITIONAL_GENERATION_ENVIRONMENT>
           <envs>
             <env name="OPENCV_NEEDED" value="true" />
