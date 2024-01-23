@@ -23,8 +23,11 @@ public:
     void comSocket_receive();
     int socketResult{0};
 protected:
+#ifdef SOCKET_PORT
+    int port{SOCKET_PORT};
+#else
     int port{1115};
-
+#endif
 public:
     mutex servoStatusLock{};
 private:
