@@ -10,7 +10,7 @@ int main() {
     Tc_Ads ads_ptr;
     Multi_Process p;
     auto pi = p.safety_monitor_build("SAFE-CHECK.exe");
-    auto server = make_shared<driverSever>(1115, ads_ptr);
+    auto server = make_shared<driverSever>(SOCKET_PORT, ads_ptr);
     //    monitorData md;
     //    thread monitor(&monitorData::sendMessage,md,ref(*server),"dataMonitor.exe");
     //    monitor.detach();
