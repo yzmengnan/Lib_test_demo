@@ -227,8 +227,8 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                         //清空路径插值数据
                         vector<vector<double>>().swap(offline_traj_data);
                         //: TODO check the new interpolation method
-//                        offline_traj_data = _interpolation::_1_Order_Linear_no_time_adjustment(offline_pathPoints, COST_TIME);
-                        offline_traj_data = _interpolation::_3_Order_CubicSpline_is_time_adjustment(offline_pathPoints, COST_TIME);
+                        offline_traj_data = _interpolation::_1_Order_Linear_no_time_adjustment(offline_pathPoints, COST_TIME);
+//                        offline_traj_data = _interpolation::_3_Order_CubicSpline_is_time_adjustment(offline_pathPoints, COST_TIME);
                         //                        //跑到初始位置
                         auto jointDataNow = vec(MDT::getAngles(*this, this->MotGetData).data(), 6);
                         auto jointDataFirstTarget = vec(vector<double>{offline_pathPoints[0].begin(), offline_pathPoints[0].begin() + 6});
