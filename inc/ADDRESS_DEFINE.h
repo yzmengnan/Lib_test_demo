@@ -14,7 +14,9 @@
 #define OUTPUT_OFFSET 0x3e800
 #define INPUT_BASE 0xf020
 #define INPUT_OFFSET 0x1f400
+//TODO: Update the Ads address of the torque grap motor
+#define OUTPUT_OFFSET_GRAP_TORQUE 0x3e800
+#define INPUT_OFFSET_GRAP_TORQUE 0x1f400
 #define DIGITAL_IO_OFFSET 0x3e990
-
 
 #endif
