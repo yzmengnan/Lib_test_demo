@@ -735,3 +735,116 @@ int MotionV1::opSpaceMotionByJacobe_RL(const vector<float> &c_vecs, Robot &robot
 }
 
 #pragma clang diagnostic pop
+/*!
+auto Grap_Driver::Enable() -> int {
+    for (int enable_try_count{}; enable_try_count < 3; enable_try_count++) {
+        uint8_t state{};
+        int16_t error_code{};
+        error_code = this->driver_p_ads->get(this->GetData_P);
+        if (error_code < 0)
+            cout << "GRAP SERVO ENABLE: GET DATA ERROR: " << error_code << endl;
+        Sleep(10);
+        //第一次检查，检验是否已经上过使能了
+        for (const auto child: GetData_P)
+            state += (child.Status_Word & 0x37) == 0x37;
+        if (state == Grap_Position_Servo_Nums) {
+            cout << "All servos has been Enabled!" << endl;
+            //需要更新当前控制字的引用
+            for (auto &child: this->SendData_P)
+                child.Control_Word |= 0xf;
+            state = 0;
+            this->enable_flag = true;
+            return 0;
+        }
+        //简化版本，根据当前零差伺服控制器版本，只校验状态字BIT12是否为0
+        //(BIT12为1状态时，可能需要重新上下电
+        for (const auto child: this->GetData_P)
+            state += (child.Status_Word & 0x1000) >> 12;
+        if (state != 0) {
+            cout << "Servo Enable Invalid! Please re-power the servo!" << endl;
+            return -1;
+        }
+        for (auto &child: this->SendData_P)
+            child.Control_Word = 0x26;
+        error_code = this->driver_p_ads->set(this->SendData_P);
+        Sleep(40);
+        for (auto &child: this->SendData_P)
+            child.Control_Word = 0x27;
+        error_code = this->driver_p_ads->set(this->SendData_P);
+        Sleep(40);
+        //Servo Enable!
+        for (auto &child: this->SendData_P)
+            child.Control_Word = 0x2f;
+        error_code = this->driver_p_ads->set(this->SendData_P);
+        if (error_code < 0)
+            cout << "SERVO ENABLE FAILURE: " << error_code << endl;
+        else {
+            Sleep(120);
+            error_code = this->driver_p_ads->get(this->GetData_P);
+            if (error_code < 0)
+                cout << "GRAP SERVO ENABLE: GET DATA ERROR: " << error_code << endl;
+            Sleep(10);
+            for (const auto child: GetData_P)
+                state += child.Status_Word & 0x37;
+            if (state == Grap_Position_Servo_Nums) {
+                cout << "All servos  Enabled Success!" << endl;
+                this->enable_flag = true;
+                return 0;
+            }
+        }
+        cout << "Grap Servo Enable Try counts: " << enable_try_count << endl;
+    }
+    cout << "Grap Serov Enable failure!" << endl;
+    return -2;
+}
+auto Grap_Driver::Disable() -> int {
+    for (auto &child: this->SendData_P)
+        child.Control_Word = 0x20;
+    auto error_code = this->driver_p_ads->set(this->SendData_P);
+    if (error_code < 0) {
+        cout << "SERVO DISABLE: Get Data Error:" << error_code << '\n';
+        return -1;
+    } else
+        cout << "SERVO DISABLE SUCCESS!" << endl;
+    this->enable_flag = false;
+    return 0;
+}
+ */
+int Grap_Driver_Position::Motion(initializer_list<int32_t> target_list) {
+    if (this->enable_flag != true) {
+        cout << "Error: Servos haven`t been enabled !" << endl;
+        return -1;
+    }
+    //set BIT4=0 before motion
+    for (auto &child: this->SendData_P)
+        child.Control_Word &= (~0x10);
+    //first check the BIT12 in the Status_Word(SW)
+    //which should be Zero
+    uint16_t state{};
+    int error_code = this->driver_p_ads->get(this->GetData_P);
+    for (const auto &child: this->GetData_P)
+        state += (child.Status_Word & 0x1000) >> 12;
+    if (state != 0) {
+        cout << "Servos aren`t ready for getting new position! Motion Failure!" << endl;
+        return -2;
+    }
+    auto position_len = target_list.size();
+    auto position_it = target_list.begin();
+    for (int i{}; i < Grap_Position_Servo_Nums; i++) {
+        this->SendData_P[i].Control_Word |= 0x10;
+        if (position_len <= i) {
+            this->SendData_P[i].Target_pos = this->GetData_P[i].Actual_Pos;
+        } else
+            this->SendData_P[i].Target_pos = *(position_it + i);
+    }
+    error_code = this->driver_p_ads->set(this->SendData_P);
+    if (error_code < 0) {
+        cout << "Driver motion for position error: Send Data error: " << error_code << endl;
+        return -3;
+    }
+    return 0;
+}
+//TODO: write the function for Grap Torque Control
+int Grap_Driver_Torque::Moition(initializer_list<int32_t> target_list) {
+    return 0;
+}
