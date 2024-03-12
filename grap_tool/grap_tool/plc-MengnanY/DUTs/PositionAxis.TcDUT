@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="PositionAxis" Id="{d505f6a1-6396-4eb5-a62e-49d920868637}">
+    <Declaration><![CDATA[TYPE PositionAxis :
+STRUCT
+	CONTROL_WORD :UINT;
+	TARGET_POSIION:DINT;
+	MODE_OF_OPERATION:SINT:=1;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

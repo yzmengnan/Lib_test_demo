@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{912dd12d-1b55-414e-be12-f9f02a64d7ff}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	P_Axis_1_COMMAND AT%QD0:P_Axis_Tx;
+	P_Axis_1_STATUS AT%ID0:P_Axis_Rx;
+	
+	P_Axis_2_COMMAND AT%QD3:P_Axis_Tx;
+	P_Axis_2_STATUS AT%ID2:P_Axis_Rx;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

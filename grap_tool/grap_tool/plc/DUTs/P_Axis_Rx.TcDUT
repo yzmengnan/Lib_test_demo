@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="P_Axis_Rx" Id="{5fe60f1f-614e-427c-8128-0a8b238093ee}">
+    <Declaration><![CDATA[TYPE P_Axis_Rx :
+STRUCT
+	STATUS_WORD:UINT;
+	POSITION_VALUE:DINT;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
