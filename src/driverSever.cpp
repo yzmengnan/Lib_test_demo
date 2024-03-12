@@ -83,7 +83,6 @@ driverSever::driverSever(const int &port, Tc_Ads &ads_handle) : MotionV1{ads_han
                     //PP set continus position motion
                     else if (this->socketRecv->Command & 0x8000000) {
                         //                        this->showSyncrpm();
-                        // TODO: 检查单关机连续点动
                         vector<double> singleJointNeedMoving(9, 0);
                         auto jointDataNow = MDT::getAngles(*this, this->MotGetData);
                         int index{};
