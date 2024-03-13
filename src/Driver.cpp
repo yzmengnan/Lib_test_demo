@@ -844,7 +844,19 @@ int Grap_Driver_Position::Motion(initializer_list<int32_t> target_list) {
     }
     return 0;
 }
-//TODO: write the function for Grap Torque Control
-int Grap_Driver_Torque::Moition(initializer_list<int32_t> target_list) {
+int Grap_Driver_Torque::Motion(initializer_list<int32_t> target_list) {
+    auto torque_len = target_list.size();
+    auto torque_it = target_list.begin();
+    for (int i{}; i < Grap_Torque_Servo_Nums; i++) {
+        if (torque_len <= i)
+            this->SendData_T[i].Target_torque = 0;
+        else
+            this->SendData_T[i].Target_torque = *(torque_it + i);
+    }
+    auto error_code = this->driver_t_ads->set(this->SendData_T);
+    if (error_code < 0) {
+        cout << "Driver motion for torque error: Send Data error: " << error_code << endl;
+        return -3;
+    }
     return 0;
 }
