@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="T_Axis_Rx" Id="{c6805180-e0ca-4654-aa8d-40a386bf92c6}">
+    <Declaration><![CDATA[TYPE T_Axis_Rx :
+STRUCT
+	STATUS_WORD:UINT;
+	TORQUE_VALUE:INT;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

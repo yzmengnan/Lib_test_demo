@@ -18,6 +18,22 @@
 			</SubItem>
 		</DataType>
 		<DataType>
+			<Name GUID="{E9FE0D76-05AB-7798-B3B8-97B1ECE2DD5C}" AutoDeleteType="true">T_Axis_Rx</Name>
+			<BitSize>32</BitSize>
+			<SubItem>
+				<Name>STATUS_WORD</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>TORQUE_VALUE</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000006}">INT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>16</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
 			<Name GUID="{9048BFA9-1A87-360F-5D22-393E8BB08040}" AutoDeleteType="true">P_Axis_Tx</Name>
 			<BitSize>96</BitSize>
 			<SubItem>
@@ -39,6 +55,40 @@
 				<BitOffs>64</BitOffs>
 				<Default>
 					<Value>1</Value>
+				</Default>
+			</SubItem>
+		</DataType>
+		<DataType>
+			<Name GUID="{D6B7E1FD-80E4-4612-6708-6C5D6F116046}" AutoDeleteType="true">T_Axis_Tx</Name>
+			<BitSize>96</BitSize>
+			<SubItem>
+				<Name>CONTROL_WORD</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>TARGET_TORQUE</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000006}">INT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>16</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>MODE_OF_OPERATION</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000003}">SINT</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>32</BitOffs>
+				<Default>
+					<Value>4</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>MAX_MOTOR_SPEED</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>64</BitOffs>
+				<Default>
+					<Value>2000000</Value>
 				</Default>
 			</SubItem>
 		</DataType>
@@ -69,7 +119,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{7A7FE211-B588-45FC-A4B4-D15662544C4D}" Name="plc" PrjFilePath="plc\plc.plcproj" TmcFilePath="plc\plc.tmc" ReloadTmc="true" AmsPort="852" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502040" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plc\plc.tmc" TmcHash="{D95FB4A3-4616-716C-4CBC-7969605E3F42}">
+				<Instance Id="#x08502040" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="plc\plc.tmc" TmcHash="{A70660A2-A18D-B3B6-0D18-F2FE71284B7C}">
 					<Name>plc Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">
@@ -82,6 +132,10 @@
 							<Name>MAIN.P_Axis_2_STATUS</Name>
 							<Type GUID="{676FD8A5-6D4C-887B-0C98-CE6A08C09E48}">P_Axis_Rx</Type>
 						</Var>
+						<Var>
+							<Name>MAIN.T_Axis_1_STATUS</Name>
+							<Type GUID="{E9FE0D76-05AB-7798-B3B8-97B1ECE2DD5C}">T_Axis_Rx</Type>
+						</Var>
 					</Vars>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
@@ -92,6 +146,10 @@
 						<Var>
 							<Name>MAIN.P_Axis_2_COMMAND</Name>
 							<Type GUID="{9048BFA9-1A87-360F-5D22-393E8BB08040}">P_Axis_Tx</Type>
+						</Var>
+						<Var>
+							<Name>MAIN.T_Axis_1_COMMAND</Name>
+							<Type GUID="{D6B7E1FD-80E4-4612-6708-6C5D6F116046}">T_Axis_Tx</Type>
 						</Var>
 					</Vars>
 					<Contexts>
@@ -116,7 +174,7 @@
 				<Name>Device 3 (EtherCAT)</Name>
 				<AddressInfo>
 					<Pnp>
-						<DeviceDesc>? 2 (Intel(R) Ethernet Connection (16) I219-V)</DeviceDesc>
+						<DeviceDesc>ÒÔÌ«Íø 2 (Intel(R) Ethernet Connection (16) I219-V)</DeviceDesc>
 						<DeviceName>\DEVICE\{6239ECA9-B202-4DF6-857E-0F36B9ED5BE1}</DeviceName>
 						<DeviceData>6c240851b939</DeviceData>
 					</Pnp>
@@ -1757,6 +1815,14 @@
 				<Link VarA="PlcTask Outputs^MAIN.P_Axis_2_COMMAND^CONTROL_WORD" VarB="Receive PDO mapping 7^Control word"/>
 				<Link VarA="PlcTask Outputs^MAIN.P_Axis_2_COMMAND^MODE_OF_OPERATION" VarB="Receive PDO mapping 7^Mode of operation"/>
 				<Link VarA="PlcTask Outputs^MAIN.P_Axis_2_COMMAND^TARGET_POSIION" VarB="Receive PDO mapping 7^Target Position"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 3 (EtherCAT)^Drive 3 (ZeroErr Driver)">
+				<Link VarA="PlcTask Inputs^MAIN.T_Axis_1_STATUS^STATUS_WORD" VarB="Transmit PDO mapping 0^Status word"/>
+				<Link VarA="PlcTask Inputs^MAIN.T_Axis_1_STATUS^TORQUE_VALUE" VarB="Transmit PDO mapping 0^Torque Actual Value"/>
+				<Link VarA="PlcTask Outputs^MAIN.T_Axis_1_COMMAND^CONTROL_WORD" VarB="Receive PDO mapping 8^Controlword"/>
+				<Link VarA="PlcTask Outputs^MAIN.T_Axis_1_COMMAND^MAX_MOTOR_SPEED" VarB="Receive PDO mapping 8^Max motor speed"/>
+				<Link VarA="PlcTask Outputs^MAIN.T_Axis_1_COMMAND^MODE_OF_OPERATION" VarB="Receive PDO mapping 8^Modes of operation"/>
+				<Link VarA="PlcTask Outputs^MAIN.T_Axis_1_COMMAND^TARGET_TORQUE" VarB="Receive PDO mapping 8^Target torque"/>
 			</OwnerB>
 		</OwnerA>
 	</Mappings>

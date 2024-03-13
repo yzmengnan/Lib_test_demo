@@ -24,6 +24,12 @@
     <Compile Include="DUTs\P_Axis_Tx.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\T_Axis_Rx.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\T_Axis_Tx.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>

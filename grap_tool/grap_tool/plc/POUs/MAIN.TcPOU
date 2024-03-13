@@ -8,6 +8,9 @@ VAR
 	
 	P_Axis_2_COMMAND AT%QD3:P_Axis_Tx;
 	P_Axis_2_STATUS AT%ID2:P_Axis_Rx;
+	
+	T_Axis_1_COMMAND AT%QD100:T_Axis_Tx;
+	T_Axis_1_STATUS AT%ID100:T_Axis_Rx;
 END_VAR
 ]]></Declaration>
     <Implementation>
