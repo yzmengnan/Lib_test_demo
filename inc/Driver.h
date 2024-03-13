@@ -437,7 +437,7 @@ public:
     //    Grap_Driver(TcAds_Grap_Position_Control &adsHandle) : TcAds_ptr(&adsHandle) {}
     //T1 send T2 get
     template<typename T1, typename T2, typename T3>
-    int Enable(T1 &send, T2 &get, const T3 &TcAds_ptr) {
+    int Enable(T1 &send, T2 &get, const T3 &TcAds_ptr, const int &Nums) {
         for (int enable_try_count{}; enable_try_count < 3; enable_try_count++) {
             uint8_t state{};
             int16_t error_code{};
@@ -448,7 +448,7 @@ public:
             //第一次检查，检验是否已经上过使能了
             for (const auto child: get)
                 state += (child.Status_Word & 0x37) == 0x37;
-            if (state == Grap_Position_Servo_Nums) {
+            if (state == Nums) {
                 cout << "All servos has been Enabled!" << endl;
                 //需要更新当前控制字的引用
                 for (auto &child: send)
@@ -459,10 +459,18 @@ public:
             }
             //简化版本，根据当前零差伺服控制器版本，只校验状态字BIT12是否为0
             //(BIT12为1状态时，可能需要重新上下电
-            for (const auto child: get)
-                state += (child.Status_Word & 0x1000) >> 12;
+            //            for (const auto child: get)
+            //                state += (child.Status_Word & 0x1000) >> 12;
+            //            if (state != 0) {
+            //                cout << "Servo Enable Invalid! Please re-power the servo!" << endl;
+            //                return -1;
+            //            }
+            //检查BIT3是否为1，为1 则伺服报错
+            state = 0;
+            for (const auto &child: get)
+                state += (child.Status_Word & 0b1000) >> 3;
             if (state != 0) {
-                cout << "Servo Enable Invalid! Please re-power the servo!" << endl;
+                cout << "Servo Enable Invalid! BIT3 Error! Please Re-Power the Servo!" << endl;
                 return -1;
             }
             for (auto &child: send)
@@ -487,7 +495,7 @@ public:
                 Sleep(10);
                 for (const auto child: get)
                     state += (child.Status_Word & 0x37) == 0x37;
-                if (state == Grap_Position_Servo_Nums) {
+                if (state == Nums) {
                     cout << "All servos  Enabled Success!" << endl;
                     this->enable_flag = true;
                     return 0;
@@ -501,7 +509,8 @@ public:
     template<typename T1, typename T2, typename T3>
     int Disable(T1 &send, T2 &get, const T3 &TcAds_ptr) {
         for (auto &child: send)
-            child.Control_Word = 0x20;
+            //            child.Control_Word = 0x20;
+            child.Control_Word = 0;
         auto error_code = TcAds_ptr->set(send);
         if (error_code < 0) {
             cout << "SERVO DISABLE: Get Data Error:" << error_code << '\n';
@@ -531,9 +540,11 @@ public:
         return Disable();
     }
     virtual auto Enable() -> int {
-        return Grap_Driver::Enable(this->SendData_P, this->GetData_P, this->driver_p_ads);
+        cout << "Enabling the Position Motor......" << endl;
+        return Grap_Driver::Enable(this->SendData_P, this->GetData_P, this->driver_p_ads, Grap_Position_Servo_Nums);
     }
     virtual auto Disable() -> int {
+        cout << "Disabling the Position Motor......" << endl;
         return Grap_Driver::Disable(this->SendData_P, this->GetData_P, this->driver_p_ads);
     }
     virtual int Motion(initializer_list<int32_t> target_list);
@@ -545,19 +556,29 @@ private:
 };
 class Grap_Driver_Torque : public Grap_Driver {
 public:
-    Grap_Driver_Torque(TcAds_Grap_Torque_Control&adsHandle){
-            this->driver_t_ads = &adsHandle;
+    Grap_Driver_Torque(TcAds_Grap_Torque_Control &adsHandle) {
+        this->driver_t_ads = &adsHandle;
     };
     virtual auto Enable() -> int final {
-        return Grap_Driver::Enable(this->SendData_T, this->GetData_T, this->driver_t_ads);
+        cout << "Enabling the Torque Motor......" << endl;
+        return Grap_Driver::Enable(this->SendData_T, this->GetData_T, this->driver_t_ads, Grap_Torque_Servo_Nums);
     }
-    virtual auto Disable()->int final{
-       return Grap_Driver::Disable(this->SendData_T,this->GetData_T,this->driver_t_ads);
+    virtual auto Disable() -> int final {
+        cout << "Disabling the Torque Motor......" << endl;
+        return Grap_Driver::Disable(this->SendData_T, this->GetData_T, this->driver_t_ads);
     }
-    virtual int Moition(initializer_list<int32_t> target_list) final;
+    void d_Disable() {
+        this->Disable();
+    }
+    void set_Max_Motor_Speed(const uint32_t &MaxSpeed);
+    virtual int Motion(initializer_list<int32_t> target_list) final;
+    ~Grap_Driver_Torque() {
+        if (this->enable_flag)
+            this->d_Disable();
+    }
 
 private:
-    vector<DFG_T> GetData_T{vector<DFG_T>(Grap_Position_Servo_Nums)};
-    vector<DTG_T> SendData_T{vector<DTG_T>(Grap_Position_Servo_Nums)};
+    vector<DFG_T> GetData_T{vector<DFG_T>(Grap_Torque_Servo_Nums)};
+    vector<DTG_T> SendData_T{vector<DTG_T>(Grap_Torque_Servo_Nums)};
     TcAds_Grap_Torque_Control *driver_t_ads = nullptr;
 };

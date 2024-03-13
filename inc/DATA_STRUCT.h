@@ -11,7 +11,7 @@
 #define DFG_SIZE_P 8
 //TODO: Update the struct size of the grap torque motor
 #define DTG_SIZE_T 12
-#define DFG_SIZE_T 8
+#define DFG_SIZE_T 4
 
 #define servoNums 7
 #define servoNums 7
@@ -54,16 +54,20 @@ using DFG_P = struct Data_From_Grap_Position {
     int32_t Actual_Pos;
 };
 using DTG_P = struct Data_To_Grap_Position {
-    uint16_t Control_Word=0;
-    int32_t Target_pos =0;
-    int8_t Mode_of_Operation=1;
+    uint16_t Control_Word = 0;
+    int32_t Target_pos = 0;
+    int8_t Mode_of_Operation = 1;
 };
 //TODO: Update the date struct of the torque Motor
-using DFG_T = struct Data_From_Grap_Torque{
-   uint16_t Status_Word;
+using DFG_T = struct Data_From_Grap_Torque {
+    uint16_t Status_Word;
+    int16_t Actual_Torque;
 };
-using DTG_T = struct Data_To_Grap_Torque{
-   uint16_t Control_Word=0;
+using DTG_T = struct Data_To_Grap_Torque {
+    uint16_t Control_Word = 0;
+    int16_t Target_torque=0;
+    int8_t Mode_of_Operation =4;
+    uint32_t Max_Motor_Speed =200000;
 };
 using _recv = struct Recv_from_Client {
     int Head_check{22};                                                 //int32
