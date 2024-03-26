@@ -114,7 +114,8 @@ void test(void* p)
 
 		cv::Mat showImage;
 		/* 获取帧 */
-		for (int j = 0; j < GRABCOUNT; j++)
+//		for (int j = 0; j < GRABCOUNT; j++)
+        for(;;)
 		{
 			status = dvpGetFrame(h/*相机句柄*/, &frame/*帧信息*/, &pBuffer/*图像数据的内存首地址,切勿手动释放*/, 3000/*超时时间（毫秒）*/);
 			if (status != DVP_STATUS_OK)
@@ -125,10 +126,10 @@ void test(void* p)
 
 			Convert2Mat(&frame, (unsigned char*)pBuffer, showImage);
 
-//			cv::namedWindow("ImageShow", cv::WINDOW_GUI_NORMAL);
-//			cv::resizeWindow("ImageShow", 640, 480);
-//			cv::imshow("ImageShow", showImage);
-//			cv::waitKey(50);	/*每张图片显示20ms*/
+			cv::namedWindow("ImageShow", cv::WINDOW_GUI_NORMAL);
+			cv::resizeWindow("ImageShow", 640, 480);
+			cv::imshow("ImageShow", showImage);
+			cv::waitKey(50);	/*每张图片显示20ms*/
 		}
 
 		/* 停止视频流 */
