@@ -125,11 +125,11 @@ void test(void* p)
 			}
 
 			Convert2Mat(&frame, (unsigned char*)pBuffer, showImage);
-
+//                        cout<<"width: "<<showImage.cols<<" height: "<<showImage.rows<<endl;
 			cv::namedWindow("ImageShow", cv::WINDOW_GUI_NORMAL);
-			cv::resizeWindow("ImageShow", 640, 480);
+			cv::resizeWindow("ImageShow", 2568/2, 1920/2);
 			cv::imshow("ImageShow", showImage);
-			cv::waitKey(50);	/*每张图片显示20ms*/
+			cv::waitKey(20);	/*每张图片显示20ms*/
 		}
 
 		/* 停止视频流 */

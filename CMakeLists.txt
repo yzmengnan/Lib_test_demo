@@ -19,7 +19,7 @@ aux_source_directory(src src_list)
 message(STATUS "BUILD RUNNING LIBRARY")
 add_library(runninglib ${src_list})
 target_link_libraries(runninglib libInterpolate::Interpolate ${ARMADILLO_LIBRARIES} ${RL_LIBRARIES})
-add_executable(trajTest histroy_app/trajTest.cpp)
+add_executable(trajTest history_app/trajTest.cpp)
 add_compile_definitions(USE_EIGEN)
 add_compile_definitions(COST_TIME=80)
 add_compile_definitions(DEFAULT_SYNC_RPM=1000)
@@ -50,7 +50,7 @@ if (DEFINED ENV{isNoSocket})
             ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib
     )
 
-    add_executable(noSocketMain main_Nosocket.cpp)
+    add_executable(noSocketMain history_app/main_Nosocket.cpp)
     target_link_libraries(noSocketMain
             ws2_32
             runninglib
@@ -60,13 +60,13 @@ endif ()
 if (DEFINED ENV{socketTest})
     message(STATUS "This is SocketTest!")
     add_compile_definitions(SOCKET_TEST)
-    add_executable(SocketTest histroy_app/vs_Low.cpp)
+    add_executable(SocketTest history_app/vs_Low.cpp)
     target_link_libraries(SocketTest ws2_32 ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib)
 endif ()
 
-add_executable(jacobTest jacobTest.cpp)
+add_executable(jacobTest history_app/jacobTest.cpp)
 target_link_libraries(jacobTest ${ARMADILLO_LIBRARIES})
-add_executable(TrajTest histroy_app/trajTest.cpp)
+add_executable(TrajTest history_app/trajTest.cpp)
 target_link_libraries(TrajTest runninglib)
 #file(COPY lib/lib_win64/libopenblas.dll DESTINATION ${PROJECT_BINARY_DIR})
 #project(VISUAL)
@@ -80,7 +80,7 @@ if (DEFINED ENV{OPENCV_NEEDED})
         message(STATUS "opencv dirs is ${OpenCV_INCLUDE_DIRS}")
         message(STATUS "opencv version is ${OpenCV_VERSION}")
         add_executable(VISUAL visualTest.cpp)
-        add_executable(DVPTEST Dvp2OpenCV.cpp)
+        add_executable(DVPTEST "history_app/Dvp2OpenCV.cpp")
         add_executable(VS_IBVS_DEMO ibvs.cpp)
         target_link_libraries(VISUAL
                 ws2_32
