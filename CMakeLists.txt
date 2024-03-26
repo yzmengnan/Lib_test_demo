@@ -78,8 +78,10 @@ if (DEFINED ENV{OPENCV_NEEDED})
         add_compile_definitions(visualtest)
         include_directories(${OpenCV_INCLUDE_DIRS})
         message(STATUS "opencv dirs is ${OpenCV_INCLUDE_DIRS}")
+        message(STATUS "opencv version is ${OpenCV_VERSION}")
         add_executable(VISUAL visualTest.cpp)
-        add_executable(DVPTEST histroy_app/Dvp2OpenCV.cpp)
+        add_executable(DVPTEST Dvp2OpenCV.cpp)
+        add_executable(VS_IBVS_DEMO ibvs.cpp)
         target_link_libraries(VISUAL
                 ws2_32
                 runninglib
@@ -94,6 +96,10 @@ if (DEFINED ENV{OPENCV_NEEDED})
                 ${PROJECT_SOURCE_DIR}/lib/DVPCamera64.lib
                 ${OpenCV_LIBRARIES}
         )
+        target_link_libraries(VS_IBVS_DEMO
+        ws2_32
+        ${PROJECT_SOURCE_DIR}/lib/DVPCamera64.lib
+        ${OpenCV_LIBRARIES})
         add_executable(SAFE-CHECK safeCheck.cpp ${src_list})
         target_link_libraries(SAFE-CHECK ws2_32 runninglib ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib)
     else ()
