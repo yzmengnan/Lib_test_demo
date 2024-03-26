@@ -11,11 +11,11 @@ int main() {
 //    Grap_Driver *g=&gp;
     Grap_Driver *g=&gt;
     g->Enable();
-    g->Motion({100});
+    g->Motion({200});
     Sleep(2000);
     g = &gp;
     g->Enable();
-    g->Motion({1000,2000});
+    g->Motion({1000,200000});
     Sleep(5000);
     g->Disable();
     g = &gt;
