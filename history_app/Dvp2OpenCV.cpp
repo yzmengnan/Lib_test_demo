@@ -10,6 +10,7 @@
 #include "windows.h"
 #include <iostream>
 #include <thread>
+
 using namespace std;
 
 // DVP API 依赖
@@ -29,7 +30,8 @@ using namespace std;
 #define GRABCOUNT 50
 
 //RGB to BGR
-bool RGB2BGR(unsigned char* pRgbData, unsigned int nWidth, unsigned int nHeight)
+bool RGB2BGR(unsigned char* pRgbData, unsigned int nWidth,
+		unsigned int nHeight)
 {
 	if (NULL == pRgbData)
 	{
@@ -40,8 +42,10 @@ bool RGB2BGR(unsigned char* pRgbData, unsigned int nWidth, unsigned int nHeight)
 	{
 		for (unsigned int i = 0; i < nWidth; i++)
 		{
-			unsigned char red = pRgbData[j * (nWidth * 3) + i * 3];
-			pRgbData[j * (nWidth * 3) + i * 3] = pRgbData[j * (nWidth * 3) + i * 3 + 2];
+			unsigned char red = pRgbData[j * (nWidth * 3) +
+										 i * 3];
+			pRgbData[j * (nWidth * 3) + i * 3] = pRgbData[
+					j * (nWidth * 3) + i * 3 + 2];
 			pRgbData[j * (nWidth * 3) + i * 3 + 2] = red;
 		}
 	}
@@ -49,16 +53,19 @@ bool RGB2BGR(unsigned char* pRgbData, unsigned int nWidth, unsigned int nHeight)
 }
 
 // 把获取到的buffer转成Mat格式
-bool Convert2Mat(dvpFrame* pFrameInfo, unsigned char* pData,cv::Mat& srcImage)
+bool Convert2Mat(dvpFrame* pFrameInfo, unsigned char* pData,
+		cv::Mat& srcImage)
 {
 	if (pFrameInfo->format == FORMAT_MONO)
 	{
-		srcImage = cv::Mat(pFrameInfo->iHeight, pFrameInfo->iWidth, CV_8UC1, pData);
+		srcImage = cv::Mat(pFrameInfo->iHeight,
+				pFrameInfo->iWidth, CV_8UC1, pData);
 		printf("MONO convert to cv::Mat OK.\n");
 	}
 	else if (pFrameInfo->format == FORMAT_BGR24)
 	{
-		srcImage = cv::Mat(pFrameInfo->iHeight, pFrameInfo->iWidth, CV_8UC3, pData);
+		srcImage = cv::Mat(pFrameInfo->iHeight,
+				pFrameInfo->iWidth, CV_8UC3, pData);
 		printf("BGR24 convert to cv::Mat OK.\n");
 	}
 	else
@@ -74,11 +81,15 @@ bool Convert2Mat(dvpFrame* pFrameInfo, unsigned char* pData,cv::Mat& srcImage)
 	}
 
 	/* 保存图片 */
-	try {
+	try
+	{
 		cv::imwrite("MatImage.bmp", srcImage);
 	}
-	catch (cv::Exception& ex) {
-		fprintf(stderr, "Exception saving image to bmp format: %s\n", ex.what());
+	catch (cv::Exception& ex)
+	{
+		fprintf(stderr,
+				"Exception saving image to bmp format: %s\n",
+				ex.what());
 	}
 
 	return true;
@@ -98,7 +109,8 @@ void test(void* p)
 		status = dvpOpenByName(name, OPEN_NORMAL, &h);
 		if (status != DVP_STATUS_OK)
 		{
-			printf("dvpOpenByName failed with err:%d\r\n", status);
+			printf("dvpOpenByName failed with err:%d\r\n",
+					status);
 			break;
 		}
 
@@ -115,21 +127,28 @@ void test(void* p)
 		cv::Mat showImage;
 		/* 获取帧 */
 //		for (int j = 0; j < GRABCOUNT; j++)
-        for(;;)
+		cv::destroyAllWindows();
+		cv::namedWindow("ImageShow11",
+				cv::WINDOW_GUI_NORMAL);
+		for (;;)
 		{
-			status = dvpGetFrame(h/*相机句柄*/, &frame/*帧信息*/, &pBuffer/*图像数据的内存首地址,切勿手动释放*/, 3000/*超时时间（毫秒）*/);
+			status = dvpGetFrame(h/*相机句柄*/,
+					&frame/*帧信息*/,
+					&pBuffer/*图像数据的内存首地址,切勿手动释放*/,
+					3000/*超时时间（毫秒）*/);
 			if (status != DVP_STATUS_OK)
 			{
 				printf("Fail to get a frame in continuous mode \r\n");
 				break;
 			}
 
-			Convert2Mat(&frame, (unsigned char*)pBuffer, showImage);
-//                        cout<<"width: "<<showImage.cols<<" height: "<<showImage.rows<<endl;
-			cv::namedWindow("ImageShow", cv::WINDOW_GUI_NORMAL);
-			cv::resizeWindow("ImageShow", 2568/2, 1920/2);
-			cv::imshow("ImageShow", showImage);
-			cv::waitKey(20);	/*每张图片显示20ms*/
+			Convert2Mat(&frame, (unsigned char*)pBuffer,
+					showImage);
+			cout << "width: " << showImage.cols
+				 << " height: " << showImage.rows << endl;
+//			cv::resizeWindow("ImageShow", 2568/2, 1920/2);
+			cv::imshow("ImageShow11", showImage);
+			cv::waitKey(10);    /*每张图片显示20ms*/
 		}
 
 		/* 停止视频流 */
@@ -162,7 +181,8 @@ int main()
 	{
 		if (dvpEnum(i, &info[i]) == DVP_STATUS_OK)
 		{
-			printf("[%d]-Camera FriendlyName : %s\r\n", i, info[i].FriendlyName);
+			printf("[%d]-Camera FriendlyName : %s\r\n", i,
+					info[i].FriendlyName);
 		}
 	}
 
@@ -179,8 +199,9 @@ int main()
 		scanf("%d", &num);
 	}
 
-	thread task(test, (void*)info[num].FriendlyName);
-	task.join();
+//	thread task(test, (void*)info[num].FriendlyName);
+//	task.join();
+	test((void*)info[num].FriendlyName);
 
 	system("pause");
 	return 0;
