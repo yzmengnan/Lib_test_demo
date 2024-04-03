@@ -11,10 +11,11 @@
 #define DFG_SIZE_P 8
 //TODO: Update the struct size of the grap torque motor
 #define DTG_SIZE_T 12
-#define DFG_SIZE_T 4
+#define DFG_SIZE_T 8
 
 #define servoNums 7
-#define servoNums 7
+#define Grap_Position_Servo_Nums 1
+#define Grap_Torque_Servo_Nums 4
 #define MONITOR_Hz 20
 #define Socket_Hz 1000 / 100
 #define motorLagRate 1.2
@@ -62,12 +63,13 @@ using DTG_P = struct Data_To_Grap_Position {
 using DFG_T = struct Data_From_Grap_Torque {
     uint16_t Status_Word;
     int16_t Actual_Torque;
+    int32_t Position;
 };
 using DTG_T = struct Data_To_Grap_Torque {
     uint16_t Control_Word = 0;
     int16_t Target_torque=0;
     int8_t Mode_of_Operation =4;
-    uint32_t Max_Motor_Speed =200000;
+    uint32_t Max_Motor_Speed =200000*4;
 };
 using _recv = struct Recv_from_Client {
     int Head_check{22};                                                 //int32
