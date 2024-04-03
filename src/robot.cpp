@@ -104,7 +104,8 @@ rl::math::Matrix Robot::getInverseJacobe(const std::vector<double> &jointData) {
     auto tempK = dynamic_cast<rl::mdl::Kinematic *>(this->robotModel.get());
     tempK->setPosition(temp_q);
     tempK->calculateJacobian(false);
-    tempK->calculateJacobianInverse(0.5F,true);
+    //TODO do not use svd
+    tempK->calculateJacobianInverse(0.5F,false);
     return tempK->getJacobianInverse();
 }
 rl::math::Matrix Robot::getInverseJacob0(const std::vector<double> &jointData) {
