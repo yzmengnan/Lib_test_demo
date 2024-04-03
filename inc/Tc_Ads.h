@@ -36,7 +36,6 @@ using pTc_Ads = Tc_Ads *;
 
 // 创建两个类，Grap为手爪Ethercat 控制部分，需要独立的Ethercat地址与操作业务逻辑
 class TcAds_Grap_Position_Control {
-#define Grap_Position_Servo_Nums 2
 public:
     TcAds_Grap_Position_Control();
     int set(vector<DTG_P> &SendData);
@@ -48,7 +47,6 @@ private:
     long nPort{}, nErr{};
 };
 class TcAds_Grap_Torque_Control {
-#define Grap_Torque_Servo_Nums 1
 public:
     TcAds_Grap_Torque_Control();
     int set(vector<DTG_T> &SendData);

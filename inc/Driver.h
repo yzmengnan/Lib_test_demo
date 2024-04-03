@@ -520,6 +520,10 @@ public:
         this->enable_flag = false;
         return 0;
     }
+
+	virtual void showStatus()=0;
+	virtual vector<int> show()=0;
+
     virtual int Enable() = 0;
     virtual int Disable() = 0;
     virtual int Motion(initializer_list<int32_t> target_list) = 0;
@@ -527,11 +531,12 @@ public:
     virtual ~Grap_Driver() { cout << "Grap Driver QUIT!" << endl; };
 };
 
-class Grap_Driver_Position : public Grap_Driver {
+using gp = class Grap_Driver_Position : public Grap_Driver {
 public:
     Grap_Driver_Position(TcAds_Grap_Position_Control &adsHandle) {
-        this->driver_p_ads = &adsHandle;
+        this->adsHandle = &adsHandle;
     }
+    Grap_Driver_Position()=default;
     ~Grap_Driver_Position() {
         if (this->enable_flag)
             this->d_Disable();
@@ -541,31 +546,33 @@ public:
     }
     virtual auto Enable() -> int {
         cout << "Enabling the Position Motor......" << endl;
-        return Grap_Driver::Enable(this->SendData_P, this->GetData_P, this->driver_p_ads, Grap_Position_Servo_Nums);
+        return Grap_Driver::Enable(this->SendData, this->GetData, this->adsHandle, Grap_Position_Servo_Nums);
     }
     virtual auto Disable() -> int {
         cout << "Disabling the Position Motor......" << endl;
-        return Grap_Driver::Disable(this->SendData_P, this->GetData_P, this->driver_p_ads);
+        return Grap_Driver::Disable(this->SendData, this->GetData, this->adsHandle);
     }
     virtual int Motion(initializer_list<int32_t> target_list);
-
+	virtual void showStatus();
+	virtual vector<int> show();
 private:
-    vector<DFG_P> GetData_P{vector<DFG_P>(Grap_Position_Servo_Nums)};
-    vector<DTG_P> SendData_P{vector<DTG_P>(Grap_Position_Servo_Nums)};
-    TcAds_Grap_Position_Control *driver_p_ads = nullptr;
+    vector<DFG_P> GetData{ vector<DFG_P>(Grap_Position_Servo_Nums)};
+    vector<DTG_P> SendData{ vector<DTG_P>(Grap_Position_Servo_Nums)};
+    TcAds_Grap_Position_Control *adsHandle = nullptr;
 };
-class Grap_Driver_Torque : public Grap_Driver {
+using gt = class Grap_Driver_Torque : public Grap_Driver {
 public:
     Grap_Driver_Torque(TcAds_Grap_Torque_Control &adsHandle) {
-        this->driver_t_ads = &adsHandle;
+        this->adsHandle = &adsHandle;
     };
+    Grap_Driver_Torque()=default;
     virtual auto Enable() -> int final {
         cout << "Enabling the Torque Motor......" << endl;
-        return Grap_Driver::Enable(this->SendData_T, this->GetData_T, this->driver_t_ads, Grap_Torque_Servo_Nums);
+        return Grap_Driver::Enable(this->SendData, this->GetData, this->adsHandle, Grap_Torque_Servo_Nums);
     }
     virtual auto Disable() -> int final {
         cout << "Disabling the Torque Motor......" << endl;
-        return Grap_Driver::Disable(this->SendData_T, this->GetData_T, this->driver_t_ads);
+        return Grap_Driver::Disable(this->SendData, this->GetData, this->adsHandle);
     }
     void d_Disable() {
         this->Disable();
@@ -576,9 +583,24 @@ public:
         if (this->enable_flag)
             this->d_Disable();
     }
-
+	virtual void showStatus() final;
+	virtual vector<int> show() final;
+    void show_position(){
+        for(const auto &d: GetData){
+            cout<<d.Position<<",";
+        }
+        cout<<endl;
+    }
+    vector<int> get_position(){
+        //注意，请在外部更新getdata
+       vector<int> res;
+       for(const auto&d:this->GetData){
+           res.push_back(d.Position);
+       }
+       return res;
+    }
 private:
-    vector<DFG_T> GetData_T{vector<DFG_T>(Grap_Torque_Servo_Nums)};
-    vector<DTG_T> SendData_T{vector<DTG_T>(Grap_Torque_Servo_Nums)};
-    TcAds_Grap_Torque_Control *driver_t_ads = nullptr;
+    vector<DFG_T> GetData{ vector<DFG_T>(Grap_Torque_Servo_Nums)};
+    vector<DTG_T> SendData{ vector<DTG_T>(Grap_Torque_Servo_Nums)};
+    TcAds_Grap_Torque_Control *adsHandle = nullptr;
 };
