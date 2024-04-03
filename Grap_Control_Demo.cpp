@@ -1,24 +1,19 @@
 //
 // Created by 91418 on 2024/3/9.
 //
-#include "Driver.h"
-
+#include "grap_action.h"
 int main() {
-    TcAds_Grap_Position_Control gp_ads{};
-    TcAds_Grap_Torque_Control gt_ads{};
-    Grap_Driver_Position gp(gp_ads);
-    Grap_Driver_Torque gt(gt_ads);
-//    Grap_Driver *g=&gp;
-    Grap_Driver *g=&gt;
-    g->Enable();
-    g->Motion({200});
-    Sleep(2000);
-    g = &gp;
-    g->Enable();
-    g->Motion({1000,200000});
-    Sleep(5000);
-    g->Disable();
-    g = &gt;
-    g->Disable();
-//    gp.Disable();
+    //    grap_action gg;
+    //    gg.Enable();
+    //	gg.fast_tool_move(10);
+
+    //    gg.grap_tool(GRAP_OPEN);
+    //    gg.ftmr(ROTATE_FORWARD);
+    TcAds_Grap_Torque_Control ads1;
+    Grap_Driver_Torque g1(ads1);
+    g1.Enable();
+    g1.Motion({0, 0, 400, 400});
+    system("pause");
+    Sleep(20);
+    return 0;
 }
