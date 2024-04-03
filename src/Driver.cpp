@@ -21,25 +21,32 @@
 #include <algorithm>
 #include <memory>
 #include <thread>
+
 mutex adsLock;
+
 Driver::Driver(Tc_Ads &adsHandle) : p_ads(&adsHandle) {
 }
+
 Driver::~Driver() {
     vector<DTS> sendData(servoNums);
     servoDisable(sendData);
     cout << "Driver controller disable!" << '\n';
 }
-auto Driver::servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int {
+
+auto Driver::servoEnable(std::vector<DTS> &SendData,
+                         std::vector<DFS> &GetData) -> int {
     for (int try_count = 0; try_count < 3; try_count++) {
         uint8_t state = 0;
         error_code = p_ads->get(GetData);
         if (error_code < 0) {
-            cout << "SERVO ENABLE: Get Data Error:" << error_code << '\n';
+            cout << "SERVO ENABLE: Get Data Error:"
+                 << error_code << '\n';
         }
         Sleep(60);
         //first check ,if servo is enabled, quit!
         for (auto child: GetData) {
-            state += static_cast<int>((child.Status_Word &= 0x37) == 0x37);
+            state += static_cast<int>(
+                    (child.Status_Word &= 0x37) == 0x37);
         }
         if (state == servoNums) {
             cout << "All servo has been enabled!" << '\n';
@@ -52,13 +59,16 @@ auto Driver::servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) 
             return 0;
         }
         for (DFS child_servo: GetData) {
-            state += static_cast<int>((child_servo.Status_Word &= 0x40) == 0x40);
+            state += static_cast<int>(
+                    (child_servo.Status_Word &= 0x40) ==
+                    0x40);
         }
         if (state == servoNums) {
             std::cout << "All Servos Ready!" << '\n';
             state = 0;
         } else {
-            std::cout << "Servo Enable trying, time_counts:" << try_count + 1 << '\n';
+            std::cout << "Servo Enable trying, time_counts:"
+                      << try_count + 1 << '\n';
             continue;
         }
         for (DTS &child_servo: SendData) {
@@ -67,21 +77,27 @@ auto Driver::servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) 
         error_code = p_ads->set(SendData);
         Sleep(120);
         if (error_code < 0) {
-            cout << "SERVO ENABLE: Set Data Error:" << error_code << '\n';
+            cout << "SERVO ENABLE: Set Data Error:"
+                 << error_code << '\n';
         }
         error_code = p_ads->get(GetData);
         Sleep(60);
         if (error_code < 0) {
-            cout << "SERVO ENABLE: Get Data Error:" << error_code << '\n';
+            cout << "SERVO ENABLE: Get Data Error:"
+                 << error_code << '\n';
         }
         for (DFS child_servo: GetData) {
-            state += static_cast<int>((child_servo.Status_Word &= 0x21) == 0x21);
+            state += static_cast<int>(
+                    (child_servo.Status_Word &= 0x21) ==
+                    0x21);
         }
         if (state == servoNums) {
-            std::cout << "All Servos Ready to switch on!" << '\n';
+            std::cout << "All Servos Ready to switch on!"
+                      << '\n';
             state = 0;
         } else {
-            std::cout << "Servo Enable trying, time_counts:" << try_count + 1 << '\n';
+            std::cout << "Servo Enable trying, time_counts:"
+                      << try_count + 1 << '\n';
             continue;
         }
         for (DTS &child_servo: SendData) {
@@ -90,21 +106,26 @@ auto Driver::servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) 
         p_ads->set(SendData);
         Sleep(100);
         if (error_code < 0) {
-            cout << "SERVO ENABLE: Set Data Error:" << error_code << '\n';
+            cout << "SERVO ENABLE: Set Data Error:"
+                 << error_code << '\n';
         }
         error_code = p_ads->get(GetData);
         Sleep(60);
         if (error_code < 0) {
-            cout << "SERVO ENABLE: Get Data Error:" << error_code << '\n';
+            cout << "SERVO ENABLE: Get Data Error:"
+                 << error_code << '\n';
         }
         for (DFS child_servo: GetData) {
-            state += static_cast<int>((child_servo.Status_Word &= 0x23) == 0x23);
+            state += static_cast<int>(
+                    (child_servo.Status_Word &= 0x23) ==
+                    0x23);
         }
         if (state == servoNums) {
             std::cout << "All Servos Switched on!" << '\n';
             state = 0;
         } else {
-            std::cout << "Servo Enable trying, time_counts:" << try_count + 1 << '\n';
+            std::cout << "Servo Enable trying, time_counts:"
+                      << try_count + 1 << '\n';
             continue;
         }
         for (DTS &child_servo: SendData) {
@@ -113,25 +134,33 @@ auto Driver::servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) 
         error_code = p_ads->set(SendData);
         Sleep(100);
         if (error_code < 0) {
-            cout << "SERVO ENABLE: Set Data Error:" << error_code << '\n';
+            cout << "SERVO ENABLE: Set Data Error:"
+                 << error_code << '\n';
         }
         error_code = p_ads->get(GetData);
         if (error_code < 0) {
-            cout << "SERVO ENABLE: Get Data Error: " << error_code << '\n';
+            cout << "SERVO ENABLE: Get Data Error: "
+                 << error_code << '\n';
         }
         for (DFS child_servo: GetData) {
-            state += static_cast<int>((child_servo.Status_Word &= 0x37) == 0x37);
+            state += static_cast<int>(
+                    (child_servo.Status_Word &= 0x37) ==
+                    0x37);
         }
         if (state == servoNums) {
-            std::cout << "All Servos Operation enabled!" << '\n';
+            std::cout << "All Servos Operation enabled!"
+                      << '\n';
             servoBreak(true);
-            this_thread::sleep_for(chrono::milliseconds(120));
+            this_thread::sleep_for(
+                    chrono::milliseconds(120));
             state = 0;
             enableFlag = true;
             return 0;
         }
-        std::cout << "Servo Enable trying, time_counts:" << try_count + 1 << '\n';
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cout << "Servo Enable trying, time_counts:"
+                  << try_count + 1 << '\n';
+        std::this_thread::sleep_for(
+                std::chrono::seconds(1));
     }
     servoBreak(false);
     std::cout << "Servo Enable Failure......" << '\n';
@@ -154,11 +183,15 @@ auto Driver::servoDisable(std::vector<DTS> &SendData) -> int {
         }
         error_code = p_ads->set(SendData);
         if (error_code < 0) {
-            cout << "Servo Operation disabled failure !!" << '\n';
-            cout << "Extreme Warning! Please Shut Down the Power Immediately!!!" << '\n';
+            cout << "Servo Operation disabled failure !!"
+                 << '\n';
+            cout
+                    << "Extreme Warning! Please Shut Down the Power Immediately!!!"
+                    << '\n';
             return error_code;
         }
-        std::cout << "All Servos Operation disabled!" << '\n';
+        std::cout << "All Servos Operation disabled!"
+                  << '\n';
         enableFlag = false;
     } else {
         servoBreak(false);
@@ -170,10 +203,12 @@ auto Driver::servoDisable(std::vector<DTS> &SendData) -> int {
     }
     return 0;
 }
+
 /*
  * servoPP0: point to point move!
  */
-auto Driver::servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int {
+auto Driver::servoPP0(std::vector<DTS> &SendData,
+                      std::vector<DFS> &GetData) -> int {
     //若伺服未使能
     if (!enableFlag) {
         cout << "禁止！请上使能！" << '\n';
@@ -198,7 +233,9 @@ auto Driver::servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> 
         //检查伺服是否为PP工作模式
         for (auto child_servo: GetData) {
             if (child_servo.Mode_of_Operation_disp != 1) {
-                std::cout << "Servo Operation Mode Change Failure!" << '\n';
+                std::cout
+                        << "Servo Operation Mode Change Failure!"
+                        << '\n';
                 error_code = -3000;
                 return error_code;
             }
@@ -229,7 +266,8 @@ auto Driver::servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> 
     }
     // 开启线程th1，设置延迟最大20ms即退出
     //标志位指针
-    shared_ptr<bool> servoLag_flag = make_shared<bool>(true);
+    shared_ptr<bool> servoLag_flag = make_shared<bool>(
+            true);
     auto th = [servoLag_flag] {
         this_thread::sleep_for(chrono::milliseconds(120));
         *servoLag_flag = false;
@@ -293,19 +331,22 @@ auto Driver::servoBreak(const bool &state) -> int {
     if (state)
         break_state = 1;
 #endif
-    auto nErr = AdsSyncWriteReq(p_ads->pAddr, OUTPUT_BASE, DIGITAL_IO_OFFSET, 4, &break_state);
+    auto nErr = AdsSyncWriteReq(p_ads->pAddr, OUTPUT_BASE,
+                                DIGITAL_IO_OFFSET, 4, &break_state);
     if (nErr != 0) {
         std::cout << "Ads set error: " << nErr << '\n';
     }
     return 0;
 }
+
 /*!
  * @details 设置伺服器为CST模式，此函数执行后，通过参数SendData的引用实时控制力矩
  * @param SendData
  * @param GetData
  * @return
  */
-auto Driver::servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
+auto Driver::servoCST(vector<DTS> &SendData,
+                      vector<DFS> &GetData) -> int {
     //若伺服未使能
     if (!enableFlag) {
         cout << "禁止！请先上使能！" << '\n';
@@ -327,12 +368,14 @@ auto Driver::servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
         }
         error_code = p_ads->set(SendData);
         if (error_code < 0) {
-            cout << "Error: set CST MODE! " << error_code << '\n';
+            cout << "Error: set CST MODE! " << error_code
+                 << '\n';
         }
         this_thread::sleep_for(chrono::milliseconds(100));
         error_code = p_ads->get(GetData);
         if (error_code < 0) {
-            cout << "Error: get CST MODE! " << error_code << '\n';
+            cout << "Error: get CST MODE! " << error_code
+                 << '\n';
         }
         for (auto child: GetData) {
             if (child.Mode_of_Operation_disp != 10) {
@@ -355,13 +398,15 @@ auto Driver::servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
     t.detach();
     return 0;
 }
+
 /*!
  * @details 设置伺服器为CSP模式，此函数执行后，通过参数SendData的引用实时控制力矩
  * @param SendData
  * @param GetData
  * @return
  */
-auto Driver::servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
+auto Driver::servoCSP(vector<DTS> &SendData,
+                      vector<DFS> &GetData) -> int {
     //如何未使能，则直接退出
     if (!enableFlag) {
         cout << "禁止！请先上使能！" << endl;
@@ -385,12 +430,14 @@ auto Driver::servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
         }
         error_code = p_ads->set(SendData);
         if (error_code < 0) {
-            cout << "Error: set CSP MODE! " << error_code << '\n';
+            cout << "Error: set CSP MODE! " << error_code
+                 << '\n';
         }
         this_thread::sleep_for(chrono::milliseconds(30));
         error_code = p_ads->get(GetData);
         if (error_code != 0) {
-            cout << "Error: get CSP MODE! " << error_code << '\n';
+            cout << "Error: get CSP MODE! " << error_code
+                 << '\n';
         }
         for (auto child: GetData) {
             if (child.Mode_of_Operation_disp != 8) {
@@ -413,6 +460,7 @@ auto Driver::servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int {
     t.detach();
     return error_code;
 }
+
 auto Driver::cutToolOperation(const int8_t &flag) -> int {
     int ioState = (0 | static_cast<int>(this->enableFlag));
 #ifndef DISTRIBUTE_BREAK
@@ -426,9 +474,11 @@ auto Driver::cutToolOperation(const int8_t &flag) -> int {
         ioState |= 0b010;
     } else
         return 0;
-    error_code = AdsSyncWriteReq(p_ads->pAddr, OUTPUT_BASE, DIGITAL_IO_OFFSET, 4, &ioState);
+    error_code = AdsSyncWriteReq(p_ads->pAddr, OUTPUT_BASE,
+                                 DIGITAL_IO_OFFSET, 4, &ioState);
     if (error_code != 0) {
-        cout << "Error! cutToolOperation Error: " << error_code << '\n';
+        cout << "Error! cutToolOperation Error: "
+             << error_code << '\n';
         return -1;
     }
     return 0;
@@ -436,10 +486,12 @@ auto Driver::cutToolOperation(const int8_t &flag) -> int {
     cout << "Warning! Work in distribute break connections!" << endl;
 #endif
 }
+
 /*
  * servoPP0: point to point move continusly!
  */
-auto Driver::servoPP1(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int {
+auto Driver::servoPP1(std::vector<DTS> &SendData,
+                      std::vector<DFS> &GetData) -> int {
     //若伺服未使能
     if (!enableFlag) {
         cout << "禁止！请上使能！" << '\n';
@@ -464,7 +516,9 @@ auto Driver::servoPP1(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> 
         //检查伺服是否为PP工作模式
         for (auto child_servo: GetData) {
             if (child_servo.Mode_of_Operation_disp != 1) {
-                std::cout << "Servo Operation Mode Change Failure!" << '\n';
+                std::cout
+                        << "Servo Operation Mode Change Failure!"
+                        << '\n';
                 error_code = -3000;
                 return error_code;
             }
@@ -496,7 +550,8 @@ auto Driver::servoPP1(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> 
     }
     // 开启线程th1，设置延迟最大20ms即退出
     //标志位指针
-    shared_ptr<bool> servoLag_flag = make_shared<bool>(true);
+    shared_ptr<bool> servoLag_flag = make_shared<bool>(
+            true);
     auto th = [servoLag_flag] {
         this_thread::sleep_for(chrono::milliseconds(80));
         *servoLag_flag = false;
@@ -538,13 +593,17 @@ auto Driver::servoPP1(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> 
     return error_code;
 }
 
-MotionV1::MotionV1(Tc_Ads &ads_handle) : Driver{ads_handle} {
+MotionV1::MotionV1(Tc_Ads &ads_handle) : Driver{
+                                                 ads_handle} {
     cout << "MotionV1 control module built!" << '\n';
     auto dataUpdating_MOTIONV1 = [&]() {
         while (true) {
-            driver_errcode = this->GetDataUpdate(MotGetData);
+            driver_errcode = this->GetDataUpdate(
+                    MotGetData);
             if (driver_errcode < 0) {
-                cout << "Error updating servo data error in MotionV1 err:  " << driver_errcode << '\n';
+                cout
+                        << "Error updating servo data error in MotionV1 err:  "
+                        << driver_errcode << '\n';
                 break;
             }
             this_thread::sleep_for(chrono::milliseconds(1));
@@ -552,8 +611,11 @@ MotionV1::MotionV1(Tc_Ads &ads_handle) : Driver{ads_handle} {
     };
     thread t_Motion_V1(dataUpdating_MOTIONV1);
     t_Motion_V1.detach();
-    cout << "MotionV1 is updating the servo data background!" << '\n';
+    cout
+            << "MotionV1 is updating the servo data background!"
+            << '\n';
 }
+
 int MotionV1::Enable() {
     auto err = servoEnable(MotSendData, MotGetData);
     if (err < 0) {
@@ -561,6 +623,7 @@ int MotionV1::Enable() {
     }
     return err;
 }
+
 int MotionV1::Disable() {
     auto err = servoDisable(MotSendData);
     if (err < 0) {
@@ -568,29 +631,39 @@ int MotionV1::Disable() {
     }
     return err;
 }
-vector<DTS> &MotionV1::gearRatioScalar(initializer_list<double> args) {
+
+vector<DTS> &
+MotionV1::gearRatioScalar(initializer_list<double> args) {
     char i{};
     vector<float> angles;
-    for (auto index = args.begin(); index != args.end(); index++, i++) {
+    for (auto index = args.begin();
+         index != args.end(); index++, i++) {
         if (i >= servoNums) {
             // modify servo send data
             break;
         }
         angles.push_back(*index);
     }
-    MDT::fromAnglesToPulses(*this, angles, this->MotSendData);
+    MDT::fromAnglesToPulses(*this, angles,
+                            this->MotSendData);
     return MotSendData;
 }
+
 MotionV1::~MotionV1() {
     this->Disable();
     cout << "Motion V1 controller disable!" << '\n';
 }
-auto MotionV1::opSpaceMotion(const vector<double> &target_c_position) -> int {
-    auto qd = ikine(target_c_position, MDT::getAngles(*this, this->MotGetData));
+
+auto MotionV1::opSpaceMotion(
+        const vector<double> &target_c_position) -> int {
+    auto qd = ikine(target_c_position,
+                    MDT::getAngles(*this, this->MotGetData));
     vec qd_vec = qd;
     qd_vec.print("qdesired");
-    return this->Write('x', qd[0], qd[1], qd[2], qd[3], qd[4], qd[5]);
+    return this->Write('x', qd[0], qd[1], qd[2], qd[3],
+                       qd[4], qd[5]);
 }
+
 /* Canceld
  *
  *
@@ -626,15 +699,18 @@ auto MotionV1::opSpaceMotion(const vector<double> &target_c_position, int rate) 
 }
  */
 void MotionV1::showOperationalSpaceData() {
-    auto data = fkine(MDT::getAngles(*this, this->MotGetData));
+    auto data = fkine(
+            MDT::getAngles(*this, this->MotGetData));
     for (const auto &d: data) {
         cout << d << ",";
     }
     cout << '\n';
 }
+
 int MotionV1::opSpaceMotionByJacobe(const vector<float> &c_vecs) {
     //modify operational velocities
-    vec c_temp = mat(vector<double>{c_vecs.begin(), c_vecs.end()});
+    vec c_temp = mat(
+            vector<double>{c_vecs.begin(), c_vecs.end()});
     auto c_max = abs(c_temp).max();
     vector<double> c_vecs_Modified{};
     if (c_max == 0) {
@@ -669,11 +745,14 @@ int MotionV1::opSpaceMotionByJacobe(const vector<float> &c_vecs) {
     //    q_dotShow.print("q_dot: ");
     qd.t().print("qd:");
     //    cout<<"manipulability: "<<getManipulability(J)<<'\n';
-    return this->Write('3', qd(0), qd(1), qd(2), qd(3), qd(4), qd(5));
+    return this->Write('3', qd(0), qd(1), qd(2), qd(3),
+                       qd(4), qd(5));
 }
+
 int MotionV1::opSpaceMotionByJacob0(const vector<float> &c_vecs) {
     //modify operational velocities
-    vec c_temp = mat(vector<double>{c_vecs.begin(), c_vecs.end()});
+    vec c_temp = mat(
+            vector<double>{c_vecs.begin(), c_vecs.end()});
     auto c_max = abs(c_temp).max();
     vector<double> c_vecs_Modified{};
     if (c_max == 0) {
@@ -703,12 +782,17 @@ int MotionV1::opSpaceMotionByJacob0(const vector<float> &c_vecs) {
     //    q_dot.print("q_dot: ");
     vec qd = vec(q_6Axis) + q_dot * 0.01;
     //    cout<<"manipulability: "<<getManipulability(J)<<'\n';
-    return this->Write('3', qd(0), qd(1), qd(2), qd(3), qd(4), qd(5));
+    return this->Write('3', qd(0), qd(1), qd(2), qd(3),
+                       qd(4), qd(5));
 }
-int MotionV1::opSpaceMotionByJacobe_RL(const vector<float> &c_vecs, Robot &robot) {
+
+int MotionV1::opSpaceMotionByJacobe_RL(
+        const vector<float> &c_vecs, Robot &robot) {
     //modify operational velocities
     Eigen::VectorXd c_temp(6);
-    c_temp << c_vecs[0], c_vecs[1], c_vecs[2], c_vecs[3], c_vecs[4], c_vecs[5];
+    c_temp
+            << c_vecs[0],
+            c_vecs[1], c_vecs[2], c_vecs[3], c_vecs[4], c_vecs[5];
     Eigen::VectorXd c_temp_abs = c_temp.array().abs();
     double bigone = c_temp_abs.maxCoeff();
     if (bigone <= 0.001) {
@@ -720,7 +804,8 @@ int MotionV1::opSpaceMotionByJacobe_RL(const vector<float> &c_vecs, Robot &robot
     }
     c_temp.normalize();
     auto c_temp_to_row = c_temp.transpose();
-    cout << "order operational vecs:" << c_temp_to_row << endl;
+    cout << "order operational vecs:" << c_temp_to_row
+         << endl;
     //get current q position
     auto q = MDT::getAngles(*this, this->MotGetData);
     //modify q position, only need the formar 6 axis
@@ -731,10 +816,12 @@ int MotionV1::opSpaceMotionByJacobe_RL(const vector<float> &c_vecs, Robot &robot
     rl::math::Vector6 q_now;
     q_now << q_6Axis[0], q_6Axis[1], q_6Axis[2], q_6Axis[3], q_6Axis[4], q_6Axis[5];
     auto qd = q_now + q_dot * 0.01;
-    return this->Write('3', qd[0], qd[1], qd[2], qd[3], qd[4], qd[5]);
+    return this->Write('3', qd[0], qd[1], qd[2], qd[3],
+                       qd[4], qd[5]);
 }
 
 #pragma clang diagnostic pop
+
 /*!
 auto Grap_Driver::Enable() -> int {
     for (int enable_try_count{}; enable_try_count < 3; enable_try_count++) {
@@ -810,53 +897,138 @@ auto Grap_Driver::Disable() -> int {
     return 0;
 }
  */
-int Grap_Driver_Position::Motion(initializer_list<int32_t> target_list) {
+int Grap_Driver_Position::Motion(
+        initializer_list<int32_t> target_list) {
     if (this->enable_flag != true) {
-        cout << "Error: Servos haven`t been enabled !" << endl;
+        cout << "Error: Servos haven`t been enabled !"
+             << endl;
         return -1;
     }
-    //set BIT4=0 before motion
-    for (auto &child: this->SendData_P)
+    //TODO: set BIT4=0 before motion
+    for (auto &child: this->SendData)
         child.Control_Word &= (~0x10);
+    auto error_code = this->adsHandle->set(
+            this->SendData);
     //first check the BIT12 in the Status_Word(SW)
     //which should be Zero
     uint16_t state{};
-    int error_code = this->driver_p_ads->get(this->GetData_P);
-    for (const auto &child: this->GetData_P)
-        state += (child.Status_Word & 0x1000) >> 12;
-    if (state != 0) {
-        cout << "Servos aren`t ready for getting new position! Motion Failure!" << endl;
-        return -2;
-    }
+    //	this_thread::sleep_for(chrono::milliseconds(50));
+    //	error_code = this->adsHandle->get(
+    //			this->GetData);
+    //	for (const auto& child: this->GetData)
+    //		state += (child.Status_Word & 0x1000) >> 12;
+    //	cout << "state" << state << endl;
+    //	if (state != 0)
+    //	{
+    //		cout
+    //				<< "Servos aren`t ready for getting new position! Motion Failure!"
+    //				<< endl;
+    //		return -2;
+    //	}
     auto position_len = target_list.size();
     auto position_it = target_list.begin();
     for (int i{}; i < Grap_Position_Servo_Nums; i++) {
-        this->SendData_P[i].Control_Word |= 0x10;
+        this->SendData[i].Control_Word |= 0x10;
         if (position_len <= i) {
-            this->SendData_P[i].Target_pos = this->GetData_P[i].Actual_Pos;
+            this->SendData[i].Target_pos = this->GetData[i].Actual_Pos;
         } else
-            this->SendData_P[i].Target_pos = *(position_it + i);
+            this->SendData[i].Target_pos = *(position_it +
+                                             i);
     }
-    error_code = this->driver_p_ads->set(this->SendData_P);
+    error_code = this->adsHandle->set(this->SendData);
     if (error_code < 0) {
-        cout << "Driver motion for position error: Send Data error: " << error_code << endl;
+        cout
+                << "Driver motion for position error: Send Data error: "
+                << error_code << endl;
         return -3;
+    }
+    // check BIT12
+    for (const auto &child: this->GetData)
+        state += (child.Status_Word & 0x1000) >> 12;
+    //	cout << "state" << state << endl;
+    if (state != 0) {
+        for (auto &child: this->SendData)
+            child.Control_Word &= (~0x10);
+
+        error_code = this->adsHandle->set(
+                this->SendData);
     }
     return 0;
 }
-int Grap_Driver_Torque::Motion(initializer_list<int32_t> target_list) {
+
+vector<int> Grap_Driver_Position::show() {
+    int index{};
+    this->adsHandle->get(this->GetData);
+    vector<int> res;
+    for (const auto &d: this->GetData) {
+        index++;
+        if (index == Grap_Position_Servo_Nums)
+            cout << d.Actual_Pos << endl;
+        else
+            cout << d.Actual_Pos << ",";
+        res.push_back(d.Actual_Pos);
+    }
+    return res;
+}
+
+void Grap_Driver_Position::showStatus() {
+
+    int index{};
+    this->adsHandle->get(this->GetData);
+    for (const auto &d: this->GetData) {
+        index++;
+        if (index == Grap_Position_Servo_Nums)
+            cout << d.Status_Word << endl;
+        else
+            cout << d.Status_Word << ",";
+    }
+}
+
+int Grap_Driver_Torque::Motion(
+        initializer_list<int32_t> target_list) {
     auto torque_len = target_list.size();
     auto torque_it = target_list.begin();
     for (int i{}; i < Grap_Torque_Servo_Nums; i++) {
         if (torque_len <= i)
-            this->SendData_T[i].Target_torque = 0;
+            this->SendData[i].Target_torque = 0;
         else
-            this->SendData_T[i].Target_torque = *(torque_it + i);
+            this->SendData[i].Target_torque = *(
+                    torque_it + i);
     }
-    auto error_code = this->driver_t_ads->set(this->SendData_T);
+    auto error_code = this->adsHandle->set(
+            this->SendData);
     if (error_code < 0) {
-        cout << "Driver motion for torque error: Send Data error: " << error_code << endl;
+        cout
+                << "Driver motion for torque error: Send Data error: "
+                << error_code << endl;
         return -3;
     }
     return 0;
+}
+
+vector<int> Grap_Driver_Torque::show() {
+    int index{};
+    this->adsHandle->get(this->GetData);
+    vector<int> res;
+    for (const auto &d: this->GetData) {
+        index++;
+        if (index == Grap_Torque_Servo_Nums)
+            cout << d.Actual_Torque << endl;
+        else
+            cout << d.Actual_Torque << ",";
+        res.push_back(d.Actual_Torque);
+    }
+    return res;
+}
+
+void Grap_Driver_Torque::showStatus() {
+    int index{};
+    this->adsHandle->get(this->GetData);
+    for (const auto &d: this->GetData) {
+        index++;
+        if (index == Grap_Torque_Servo_Nums)
+            cout << d.Status_Word << endl;
+        else
+            cout << d.Status_Word << ",";
+    }
 }
