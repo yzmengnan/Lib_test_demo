@@ -12,7 +12,6 @@
 using namespace std;
 using MDT = class motionDataTransform {
 public:
-
     static auto getAngles(const Driver &d, const vector<DFS> &getData) -> vector<double> {
         vector<double> result{};
         int i{};
@@ -66,7 +65,7 @@ public:
             i++;
         }
 #ifdef UP_NEEDED
-        while(result.size()!=9)
+        while (result.size() != 9)
             result.push_back(0.0f);
 #endif
         return result;

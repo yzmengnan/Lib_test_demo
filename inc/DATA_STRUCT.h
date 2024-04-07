@@ -59,6 +59,11 @@ using DTG_P = struct Data_To_Grap_Position {
     int32_t Target_pos = 0;
     int8_t Mode_of_Operation = 1;
 };
+
+template <typename type>
+using v = std::vector<type>;
+template <typename type>
+using ptr_v = std::shared_ptr<v<type>>;
 //TODO: Update the date struct of the torque Motor
 using DFG_T = struct Data_From_Grap_Torque {
     uint16_t Status_Word;

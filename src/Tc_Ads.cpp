@@ -90,3 +90,27 @@ int TcAds_Grap_Torque_Control::get(vector<DFG_T> &GetData) {
     }
     return 0;
 }
+gp_ads::gp_ads(const ptr_v<DTG_P> &tx, const ptr_v<DFG_P> &rx) : plc_port{PLC2_PORT} {
+    this->pAddr->port = PLC2_PORT;
+    this->tx_data = tx;
+    this->rx_data = rx;
+    std::cout << "grap position ads built!" << std::endl;
+}
+void gp_ads::send() {
+    ads_send(OUTPUT_BASE, OUTPUT_OFFSET, DTG_SIZE_P * Grap_Position_Servo_Nums, tx_data->data());
+}
+void gp_ads::receive() {
+    ads_receive(INPUT_BASE, INPUT_OFFSET, DFG_SIZE_P * Grap_Position_Servo_Nums, rx_data->data());
+}
+gt_ads::gt_ads(const ptr_v<DTG_T> &tx, const ptr_v<DFG_T> &rx) : plc_port{PLC2_PORT} {
+    this->pAddr->port = PLC2_PORT;
+    this->tx_data = tx;
+    this->rx_data = rx;
+    std::cout << "grap position ads built!" << std::endl;
+}
+void gt_ads::send() {
+    ads_send(OUTPUT_BASE, OUTPUT_OFFSET_GRAP_TORQUE, DTG_SIZE_T * Grap_Torque_Servo_Nums, tx_data->data());
+}
+void gt_ads::receive() {
+    ads_receive(INPUT_BASE, INPUT_OFFSET_GRAP_TORQUE, DFG_SIZE_T * Grap_Torque_Servo_Nums, rx_data->data());
+}

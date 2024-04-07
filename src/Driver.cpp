@@ -897,8 +897,7 @@ auto Grap_Driver::Disable() -> int {
     return 0;
 }
  */
-int Grap_Driver_Position::Motion(
-        initializer_list<int32_t> target_list) {
+int Grap_Driver_Position::Motion(initializer_list<int32_t> target_list) {
     if (this->enable_flag != true) {
         cout << "Error: Servos haven`t been enabled !"
              << endl;
@@ -1031,4 +1030,129 @@ void Grap_Driver_Torque::showStatus() {
         else
             cout << d.Status_Word << ",";
     }
+}
+
+EndEffector_Position::EndEffector_Position() {
+    ads_handle = std::make_shared<gp_ads>(tx_ptr, rx_ptr);
+}
+int EndEffector_Position::Enable() {
+    cout << "Enabling the Position Motor......" << endl;
+    return EndEffector::Enable(*tx_ptr, *rx_ptr, this->ads_handle, Grap_Position_Servo_Nums);
+}
+int EndEffector_Position::Disable() {
+    cout << "Disabling the Position Motor......" << endl;
+    return EndEffector::Disable(*tx_ptr, *rx_ptr, this->ads_handle);
+}
+std::vector<int> EndEffector_Position::show() {
+    int index{};
+    this->ads_handle->receive();
+    vector<int> res;
+    for (const auto &d: *rx_ptr) {
+        index++;
+        if (index == Grap_Position_Servo_Nums)
+            cout << d.Actual_Pos << endl;
+        else
+            cout << d.Actual_Pos << ",";
+        res.push_back(d.Actual_Pos);
+    }
+    return res;
+}
+void EndEffector_Position::showStatus() {
+
+    int index{};
+    ads_handle->receive();
+    for (const auto &d: *rx_ptr) {
+        index++;
+        if (index == Grap_Position_Servo_Nums)
+            cout << d.Status_Word << endl;
+        else
+            cout << d.Status_Word << ",";
+    }
+}
+
+int EndEffector_Position::Motion(initializer_list<int32_t> target_list) {
+    if (!this->enable_flag) {
+        cout << "Error: Servos haven`t been enabled !" << endl;
+        return -1;
+    }
+    //TODO: set BIT4=0 before motion
+    for (auto &child: *tx_ptr)
+        child.Control_Word &= (~0x10);
+    ads_handle->send();
+    //first check the BIT12 in the Status_Word(SW)
+    //which should be Zero
+    uint16_t state{};
+
+    auto position_len = target_list.size();
+    auto position_it = target_list.begin();
+    for (int i{}; i < Grap_Position_Servo_Nums; i++) {
+        (*tx_ptr)[i].Control_Word |= 0x10;
+        if (position_len <= i) {
+            (*tx_ptr)[i].Target_pos = (*rx_ptr)[i].Actual_Pos;
+        } else
+            (*tx_ptr)[i].Target_pos = *(position_it + i);
+    }
+    ads_handle->send();
+    // check BIT12
+    for (const auto &child: *rx_ptr)
+        state += (child.Status_Word & 0x1000) >> 12;
+    //	cout << "state" << state << endl;
+    if (state != 0) {
+        for (auto &child: *tx_ptr)
+            child.Control_Word &= (~0x10);
+
+        ads_handle->send();
+    }
+    return 0;
+}
+
+EndEffector_Torque::EndEffector_Torque() {
+    ads_handle = std::make_shared<gt_ads>(tx_ptr, rx_ptr);
+}
+auto EndEffector_Torque::Enable() -> int {
+    cout << "Enabling the Torque Motor......" << endl;
+    return EndEffector::Enable(*tx_ptr, *rx_ptr, this->ads_handle, Grap_Torque_Servo_Nums);
+}
+auto EndEffector_Torque::Disable() -> int {
+    cout << "Disabling the Torque Motor......" << endl;
+    return EndEffector::Disable(*tx_ptr, *rx_ptr, this->ads_handle);
+}
+std::vector<int> EndEffector_Torque::show() {
+    int index{};
+    this->ads_handle->receive();
+    vector<int> res;
+    for (const auto &d: *rx_ptr) {
+        index++;
+        if (index == Grap_Position_Servo_Nums)
+            cout << d.Actual_Torque << endl;
+        else
+            cout << d.Actual_Torque << ",";
+        res.push_back(d.Actual_Torque);
+    }
+    return res;
+}
+void EndEffector_Torque ::showStatus() {
+
+    int index{};
+    ads_handle->receive();
+    for (const auto &d: *rx_ptr) {
+        index++;
+        if (index == Grap_Position_Servo_Nums)
+            cout << d.Status_Word << endl;
+        else
+            cout << d.Status_Word << ",";
+    }
+}
+int EndEffector_Torque::Motion(initializer_list<int32_t> target_list) {
+    auto torque_len = target_list.size();
+    auto torque_it = target_list.begin();
+    for (int i{}; i < Grap_Torque_Servo_Nums; i++) {
+        if (torque_len <= i)
+            (*tx_ptr)[i].Target_torque = 0;
+        else
+            (*tx_ptr)[i].Target_torque = *(
+                    torque_it + i);
+    }
+    ads_handle->send();
+    return 0;
 }
