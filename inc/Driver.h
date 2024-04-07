@@ -448,7 +448,7 @@ private:
 
     double sync_rpm{DEFAULT_SYNC_RPM};
 };
-
+#ifdef EndEffector_History_Func
 class Grap_Driver {
 public:
     //    Grap_Driver(TcAds_Grap_Position_Control &adsHandle) : TcAds_ptr(&adsHandle) {}
@@ -616,7 +616,7 @@ public:
         this->Disable();
     }
 
-    void set_Max_Motor_Speed(const uint32_t &MaxSpeed);
+    void set_Max_Motor_Speed(const uint32_t &MaxSpeed){};
 
     virtual int Motion(initializer_list<int32_t> target_list) final;
 
@@ -650,6 +650,7 @@ private:
     vector<DTG_T> SendData{vector<DTG_T>(Grap_Torque_Servo_Nums)};
     TcAds_Grap_Torque_Control *adsHandle = nullptr;
 };
+#endif
 
 class EndEffector {
 public:
@@ -772,7 +773,7 @@ public:
     virtual std::vector<int> show();
     virtual void showStatus();
 
-    virtual int Motion(initializer_list<int32_t> target_list) ;
+    virtual int Motion(initializer_list<int32_t> target_list);
 
 private:
     ptr_v<DTG_P> tx_ptr = std::make_shared<v<DTG_P>>(Grap_Position_Servo_Nums);

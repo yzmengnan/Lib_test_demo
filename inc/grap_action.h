@@ -6,6 +6,7 @@
 #define FINAL_GRAP_ACTION_H
 
 #include "Driver.h"
+#define Grap_Tool_limit_therthold 40000
 enum {
     GRAP_CLOSE = 0,
     GRAP_OPEN,
@@ -14,7 +15,7 @@ enum {
 };
 
 using namespace std;
-
+#ifdef EndEffector_Histroy_Func
 class grap_action {
 public:
     grap_action();
@@ -57,7 +58,8 @@ private:
     int overtime = 30;
 };
 
-class EndEffector_Motion  {
+#endif
+class EndEffector_Motion {
 
 public:
     EndEffector_Motion() {
@@ -81,9 +83,9 @@ public:
     }
 
     void fast_tool_move(const int &dist);
-
     void ftmr(bool f_or_b);
     void grap_tool(bool flag);
+
 private:
     Ep m1;
     Et m2;
