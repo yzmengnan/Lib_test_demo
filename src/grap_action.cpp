@@ -340,7 +340,7 @@ void EndEffector_Motion::grap_tool(bool flag)
 		if (!flag)
 		{
 			//close
-			auto torque_now = m2.show();
+			auto torque_now = m2.getTorque();
 			int vec1 = 0, vec2 = 0;
 			int vec1_last = 0, vec2_last = 0;
 			int pos_last1 = 0, pos_last2 = 0;
@@ -359,8 +359,8 @@ void EndEffector_Motion::grap_tool(bool flag)
 				if (!flag_1 && !flag_2)
 					break;
 				this_thread::sleep_for(chrono::milliseconds(10));
-				torque_now = m2.show();
-				m2.show_position();
+				torque_now = m2.getTorque();
+//				m2.show_position();
 				auto position_now = m2.get_position();
 				if (abs(position_now[0] - uptool_close_position) + abs(position_now[1] - downtool_close_position) <= Grap_Tool_limit_therthold)
 				{
@@ -373,12 +373,12 @@ void EndEffector_Motion::grap_tool(bool flag)
 				pos_last2 = position_now[1];
 				if (vec1_last - 2000 > vec1)
 				{
-					cout << "vec1:" << vec1 << " vec1_last" << vec1_last << endl;
+//					cout << "vec1:" << vec1 << " vec1_last" << vec1_last << endl;
 					torque1_added += 2;
 				}
 				if (vec2_last - 2000 > vec2)
 				{
-					cout << "vec2:" << vec2 << " vec2_last:" << vec2_last << endl;
+//					cout << "vec2:" << vec2 << " vec2_last:" << vec2_last << endl;
 					torque2_added += 2;
 				}
 				vec1_last = vec1;
@@ -389,7 +389,7 @@ void EndEffector_Motion::grap_tool(bool flag)
 		else
 		{
 			//open
-			auto torque_now = m2.show();
+			auto torque_now = m2.getTorque();
 			int vec1 = 0, vec2 = 0;
 			int vec1_last = 0, vec2_last = 0;
 			int pos_last1 = 0, pos_last2 = 0;
@@ -408,8 +408,8 @@ void EndEffector_Motion::grap_tool(bool flag)
 				if (!flag_1 && !flag_2)
 					break;
 				this_thread::sleep_for(chrono::milliseconds(10));
-				torque_now = m2.show();
-				m2.show_position();
+				torque_now = m2.getTorque();
+//				m2.show_position();
 				auto position_now = m2.get_position();
 				if (abs(position_now[0] - uptool_open_position) + abs(position_now[1] - downtool_open_position) <= Grap_Tool_limit_therthold)
 				{
@@ -418,7 +418,7 @@ void EndEffector_Motion::grap_tool(bool flag)
 				}
 				vec1 = abs(pos_last1 - position_now[0]);
 				vec2 = abs(pos_last2 - position_now[1]);
-				cout << "vec1:" << vec1 << " vec2:" << vec2 << " vec1_last" << vec1_last << " vec2_last:" << vec2_last << endl;
+//				cout << "vec1:" << vec1 << " vec2:" << vec2 << " vec1_last" << vec1_last << " vec2_last:" << vec2_last << endl;
 				pos_last1 = position_now[0];
 				pos_last2 = position_now[1];
 				if (vec1_last - 2000 > vec1)
@@ -445,16 +445,14 @@ void EndEffector_Motion::ftmr(bool f_or_b)
 	{
 		m2.Motion({0, 0, 200, 200});
 		fast_tool_move(20);
-		Sleep(200);
+		Sleep(2000);
 		m2.Motion({0, 0, -500, -500});
-		fast_tool_move(0);
-		Sleep(200);
+		fast_tool_move(30);
+		Sleep(2000);
 		m2.Motion({0, 0, 500, 500});
 		fast_tool_move(50);
 		Sleep(200);
 		m2.Motion({0, 0, -500, -500});
-		fast_tool_move(0);
-		m2.Motion({0, 0, 500, 500});
 		fast_tool_move(100);
 		Sleep(200);
 	}
