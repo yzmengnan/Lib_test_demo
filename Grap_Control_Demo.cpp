@@ -2,27 +2,36 @@
 // Created by 91418 on 2024/3/9.
 //
 #include "grap_action.h"
-int main() {
-    //    grap_action gg;
-    //    gg.Enable();
-    //    	gg.fast_tool_move(10);
+int main(int argc,char**argv)
+{
+	EndEffector_Motion em;
+	em.Enable();
+	if (argc>=2){
+		int signal = atoi(argv[1]);
+		switch (signal){
+		case 0:
+			cout<<"Close!"<<endl;
+			em.grap_tool(GRAP_CLOSE);
+			break;
+		case 1:
+			cout<<"Open!"<<endl;
+			em.grap_tool(GRAP_OPEN);
+			break;
+		}
+	}
 
-    //        gg.grap_tool(GRAP_OPEN);
-    //    gg.ftmr(ROTATE_FORWARD);
-    //    TcAds_Grap_Torque_Control ads1;
-    //    Grap_Driver_Torque g1(ads1);
-    //    g1.Enable();
-    //    g1.Motion({0, 0, 400, 400});
+	//    EndEffector_Position ep1;
+	//		EndEffector_Torque et;
+	//		et.Enable();
+	//		et.Motion({0,0,-500,-500});
 
-
-//    EndEffector_Position ep1;
-    EndEffector_Motion em;
-    em.Enable();
-    Sleep(2000);
-    em.ftmr(ROTATE_FORWARD);
-    Sleep(2000);
-    em.ftmr(ROTATE_BACKWARD);
-    system("pause");
-    Sleep(20);
-    return 0;
+	//      Sleep(2000);
+	//   	em.ftmr(ROTATE_FORWARD);
+	//      Sleep(2000);
+//	em.ftmr(ROTATE_BACKWARD);
+	//	em.grap_tool(GRAP_CLOSE);
+	//	em.grap_tool(GRAP_CLOSE);
+	system("pause");
+	Sleep(20);
+	return 0;
 }
