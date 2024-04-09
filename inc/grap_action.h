@@ -96,7 +96,7 @@ private:
     int downtool_open_position{-2550000}, downtool_close_position{940000};
     int grap_torque = 450;
     int grap_torque_threshold = 750;
-    int overtime = 30;
+    int overtime = 40;
 };
 
 #endif//FINAL_GRAP_ACTION_H

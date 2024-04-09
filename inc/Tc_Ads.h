@@ -69,7 +69,7 @@ private:
     AmsAddr Addr{};
 };
 using pTc_Ads = Tc_Ads *;
-
+#ifdef EndEffector_History_Func
 // 创建两个类，Grap为手爪Ethercat 控制部分，需要独立的Ethercat地址与操作业务逻辑
 class TcAds_Grap_Position_Control {
 public:
@@ -92,7 +92,7 @@ private:
     long nPort{}, nErr{};
     AmsAddr Addr{};
 };
-
+#endif
 class gp_ads:public Tc_Ads{
 public:
     gp_ads(const ptr_v<DTG_P> &tx, const ptr_v<DFG_P> &rx);
