@@ -37,7 +37,7 @@ auto Tc_Ads::get(vector<DFS> &GetData) -> int {
     }
     return 0;
 }
-
+#ifdef EndEffector_History_Func
 TcAds_Grap_Position_Control::TcAds_Grap_Position_Control() {
     nPort = AdsPortOpen();
     nErr = AdsGetLocalAddress(pAddr);
@@ -90,6 +90,7 @@ int TcAds_Grap_Torque_Control::get(vector<DFG_T> &GetData) {
     }
     return 0;
 }
+#endif
 gp_ads::gp_ads(const ptr_v<DTG_P> &tx, const ptr_v<DFG_P> &rx) : plc_port{PLC2_PORT} {
     this->pAddr->port = PLC2_PORT;
     this->tx_data = tx;
