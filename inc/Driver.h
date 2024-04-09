@@ -28,8 +28,8 @@ extern mutex adsLock;
 using sd = class Driver
 {
 public:
-	vector<double> _driver_gearRatioScalar{-284.9231 * ANGLES_2_PULSES, -213.7 * ANGLES_2_PULSES, -171.0 * 5 / 3 / 90 * 82 * ANGLES_2_PULSES, -181.22 * ANGLES_2_PULSES,
-										   -144.9 * 5 / 3 * ANGLES_2_PULSES, -33.0 * 5 / 3 * ANGLES_2_PULSES, -25 * 1000 * 1.5 * ANGLES_2_PULSES};
+	vector<double> _driver_gearRatioScalar{-284.9231 * ANGLES_2_PULSES, -213.7 * ANGLES_2_PULSES, -171.0 * 5 / 3 / 90 * 82 * ANGLES_2_PULSES, -181.22 * ANGLES_2_PULSES, -144.9 * 5 / 3 * ANGLES_2_PULSES,
+	                                       -33.0 * 5 / 3 * ANGLES_2_PULSES, -25 * 1000 * 1.5 * ANGLES_2_PULSES};
 	//    vector<double> _driver_gearRatioScalar{
 	//            -284.9231 * ANGLES_2_PULSES,
 	//            -213.7 * ANGLES_2_PULSES,
@@ -39,18 +39,20 @@ public:
 	//            -33.0 * ANGLES_2_PULSES,
 	//            -25 * 1.5 * ANGLES_2_PULSES};
 
-
 public:
-	Driver(Tc_Ads& adsHandle);
+	Driver(Tc_Ads &adsHandle);
 
-	auto servoEnable(std::vector<DTS>& SendData, std::vector<DFS>& GetData) -> int;
+	auto
+	servoEnable(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int;
 
-	auto servoDisable(std::vector<DTS>& SendData) -> int;
+	auto
+	servoDisable(std::vector<DTS> &SendData) -> int;
 
-	void setProfileVelocity(vector<float> degreesPerSeconds, std::vector<DTS>& SendData)
+	void
+	setProfileVelocity(vector<float> degreesPerSeconds, std::vector<DTS> &SendData)
 	{
 		int i{};
-		for (auto& s: SendData)
+		for (auto &s : SendData)
 		{
 			if (i >= degreesPerSeconds.size())
 			{
@@ -66,10 +68,11 @@ public:
 		}
 	}
 
-	void setGearRatioScalar(initializer_list<float> r)
+	void
+	setGearRatioScalar(initializer_list<float> r)
 	{
 		int i{};
-		for (auto scalar: r)
+		for (auto scalar : r)
 		{
 			i++;
 			if (i > servoNums)
@@ -80,7 +83,8 @@ public:
 		}
 	}
 
-	int GetDataUpdate(vector<DFS>& GetData)
+	int
+	GetDataUpdate(vector<DFS> &GetData)
 	{
 		adsLock.lock();
 		auto err = p_ads->get(GetData);
@@ -96,13 +100,17 @@ public:
 	/**
 	 * @description: PP运动驱动程序,动作例1,执行点到点单独运动
 	 */
-	auto servoPP0(std::vector<DTS>& SendData, std::vector<DFS>& GetData) -> int;
+	auto
+	servoPP0(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int;
 
-	auto servoPP1(std::vector<DTS>& SendData, std::vector<DFS>& GetData) -> int;
+	auto
+	servoPP1(std::vector<DTS> &SendData, std::vector<DFS> &GetData) -> int;
 
-	auto servoCST(vector<DTS>& SendData, vector<DFS>& GetData) -> int;
+	auto
+	servoCST(vector<DTS> &SendData, vector<DFS> &GetData) -> int;
 
-	auto servoCSP(vector<DTS>& SendData, vector<DFS>& GetData) -> int;
+	auto
+	servoCSP(vector<DTS> &SendData, vector<DFS> &GetData) -> int;
 
 	/*!
 	 * @details 修改伺服器工作模式，根据手册，伺服器模式的更换需要下使能
@@ -110,7 +118,8 @@ public:
 	 * @param csp
 	 * @param cst
 	 */
-	void servoOperationModeSet(int pp, int csp, int cst)
+	void
+	servoOperationModeSet(int pp, int csp, int cst)
 	{
 		// 修改逻辑
 		//        pp_Flag = pp;
@@ -122,7 +131,7 @@ public:
 			vector<DTS> a(servoNums);
 			vector<DFS> b(servoNums);
 			this->servoDisable(a);
-			for (auto& i: a)
+			for (auto &i : a)
 			{
 				i.Mode_of_Operation = 8;
 			}
@@ -137,7 +146,7 @@ public:
 			vector<DTS> a(servoNums);
 			vector<DFS> b(servoNums);
 			this->servoDisable(a);
-			for (auto& i: a)
+			for (auto &i : a)
 			{
 				i.Mode_of_Operation = 10;
 			}
@@ -152,7 +161,7 @@ public:
 			vector<DTS> a(servoNums);
 			vector<DFS> b(servoNums);
 			this->servoDisable(a);
-			for (auto& i: a)
+			for (auto &i : a)
 			{
 				i.Mode_of_Operation = 1;
 			}
@@ -165,7 +174,8 @@ public:
 	virtual ~Driver();
 
 	//Test part
-	void TestBREAK(const bool& state)
+	void
+	TestBREAK(const bool &state)
 	{
 		servoBreak(state);
 	}
@@ -173,7 +183,8 @@ public:
 	bool enableFlag = false;
 
 private:
-	auto servoBreak(const bool& state) -> int;
+	auto
+	servoBreak(const bool &state) -> int;
 
 public:
 	/*
@@ -183,7 +194,8 @@ public:
 	 *              flag =2 ; release
 	 * @return
 	 */
-	auto cutToolOperation(const int8_t& flag) -> int;
+	auto
+	cutToolOperation(const int8_t &flag) -> int;
 
 protected:
 	bool pp_Flag = false; //=1表示pp就位，=0表示未就位
@@ -194,19 +206,20 @@ private:
 	pTc_Ads p_ads = nullptr;
 	int error_code = 0;
 
-	void f_Cyclic(vector<DTS>& SendData, const vector<DFS>& GetData)
+	void
+	f_Cyclic(vector<DTS> &SendData, const vector<DFS> &GetData)
 	{
 		cout << "Cyclic START!" << endl;
 		TimerCounter tc;
 		tc.Start();
 		vector<int32_t> pulseLast{};
-		for (const auto& f: SendData)
+		for (const auto &f : SendData)
 		{
 			pulseLast.push_back(f.Target_Pos);
 		}
 		auto motor_speed_adjust = [&]() {
 			int i{};
-			for (auto& data: SendData)
+			for (auto &data : SendData)
 			{
 #ifdef electronicGear
 				data.Max_Velocity = abs(pulseLast[i++] - data.Target_Pos) * PULSETO_MOTOR_SPEED_RATE / motorLagRate;
@@ -215,7 +228,7 @@ private:
 #endif
 			}
 			i = 0;
-			for (const auto& lastPulses: GetData)
+			for (const auto &lastPulses : GetData)
 			{
 				pulseLast[i++] = lastPulses.Actual_Pos;
 			}
@@ -240,7 +253,8 @@ private:
 	}
 
 public:
-	void servoFinishCS()
+	void
+	servoFinishCS()
 	{
 		*cyclicFlag = false;
 	}
@@ -249,11 +263,13 @@ public:
 class MotionV1 : public Driver
 {
 public:
-	MotionV1(Tc_Ads& ads_handle);
+	MotionV1(Tc_Ads &ads_handle);
 
-	int Enable();
+	int
+	Enable();
 
-	int Disable();
+	int
+	Disable();
 
 	template<typename T, typename... T2>
 	/*!
@@ -273,7 +289,8 @@ public:
 	 * @param args
 	 * @return
 	 */
-	int Write(T operationMode = '0', T2... args)
+	int
+	Write(T operationMode = '0', T2... args)
 	{
 		//update the actual position to the command first
 		//this part is to ensure the joint with no signals can do nothing
@@ -359,10 +376,11 @@ public:
 	}
 
 	template<typename... T>
-	void setProfileVelocity(T... args)
+	void
+	setProfileVelocity(T... args)
 	{
 		vector<float> dps;
-		for (auto dps_k: {args...})
+		for (auto dps_k : {args...})
 		{
 			dps.push_back(dps_k);
 		}
@@ -378,12 +396,14 @@ public:
 	 *              因此选取单位为rpm，表达最高轴的伺服轴输出转速
 	 * @param rpm
 	 */
-	void setSyncrpm(double rpm)
+	void
+	setSyncrpm(double rpm)
 	{
 		this->sync_rpm = rpm;
 	}
 
-	void showSyncrpm()
+	void
+	showSyncrpm()
 	{
 		cout << "this sync rpm is :" << this->sync_rpm;
 	}
@@ -394,35 +414,50 @@ public:
 	 * @param eor0  1:jacobe 0:jacob0
 	 * @return
 	 */
-	int opSpaceMotion(const vector<double>& target_c_position);
+	int
+	opSpaceMotion(const vector<double> &target_c_position);
 
 	//    int opSpaceMotion(const vector<double> &target_c_position, int rate);
-	int opSpaceMotionByJacobe(const vector<float>& c_vecs);
+	int
+	opSpaceMotionByJacobe(const vector<float> &c_vecs);
 
-	int opSpaceMotionByJacobe_RL(const vector<float>& c_vecs, Robot& robot);
-	int opSpaceMotionByJacobe_RL(const vector<double>& c_vecs, Robot& robot);
-	int opSpaceMotionByJacob0(const vector<float>& c_vecs);
-
-	int opSpaceMotionByJacob0_RL(const vector<float>& c_vecs);
-
+	int
+	opSpaceMotionByJacobe_RL(const vector<float> &c_vecs, Robot &robot);
+	int
+	opSpaceMotionByJacobe_RL(const vector<double> &c_vecs, Robot &robot);
+	int
+	opSpaceMotionByJacob0(const vector<float> &c_vecs);
+	int
+	opSpaceMotionByJacob0_RL(const vector<double> &c_vecs, Robot &robot);
+	/**
+	*	\brief 使用基于世界坐标系的笛卡尔空间运动,目前仅支持位置运动
+	* @param c_target_delta_position 基于末端坐标系的位置偏差量
+ 	* @param robot
+ 	* @return
+ 	*/
+	int
+	opSpaceTargetMotion(const vector<double> &position_base, const vector<double> &c_target_delta_position, Robot &robot);
 	/*！
 	 *
 	 *
 	 */
-	void showOperationalSpaceData();
+	void
+	showOperationalSpaceData();
 
 	/*!
 	 * @details 返回MotionV1内部的发送数据
 	 * @return
 	 */
-	vector<DTS> getSendData()
+	vector<DTS>
+	getSendData()
 	{
 		return this->MotSendData;
 	}
 
 	vector<DFS> MotGetData{vector<DFS>(servoNums)};
 
-	void setSpeedOnHighestAxis()
+	void
+	setSpeedOnHighestAxis()
 	{
 #ifdef USE_EIGEN
 		Eigen::RowVectorXd Delta(7);
@@ -450,7 +485,8 @@ public:
 #endif
 	}
 
-	void setSpeedOntheLowestAxis()
+	void
+	setSpeedOntheLowestAxis()
 	{
 #ifdef USE_EIGEN
 		Eigen::RowVectorXd Delta(7);
@@ -458,7 +494,7 @@ public:
 		Delta.normalize();
 		//find the smallest element
 		double smallone{1.0f};
-		for (const auto& item: Delta)
+		for (const auto &item : Delta)
 		{
 			if (abs(item) >= 0.001)
 				smallone = item <= smallone ? item : smallone;
@@ -497,9 +533,10 @@ public:
 #endif
 	}
 
-	void setNormalSpeed()
+	void
+	setNormalSpeed()
 	{
-		for (auto& d: this->MotSendData)
+		for (auto &d : this->MotSendData)
 		{
 			d.Profile_Velocity = sync_rpm * 8388608 / 60;
 			d.Max_Velocity = 3000;
@@ -511,7 +548,8 @@ public:
 private:
 	vector<DTS> MotSendData{vector<DTS>(servoNums)};
 
-	vector<DTS>& gearRatioScalar(initializer_list<double> args);
+	vector<DTS> &
+	gearRatioScalar(initializer_list<double> args);
 
 	double sync_rpm{DEFAULT_SYNC_RPM};
 };
@@ -522,7 +560,8 @@ public:
 	//    Grap_Driver(TcAds_Grap_Position_Control &adsHandle) : TcAds_ptr(&adsHandle) {}
 	//T1 send T2 get
 	template<typename T1, typename T2, typename T3>
-	int Enable(T1& send, T2& get, const T3& TcAds_ptr, const int& Nums)
+	int
+	Enable(T1 &send, T2 &get, const T3 &TcAds_ptr, const int &Nums)
 	{
 		for (int enable_try_count{}; enable_try_count < 3; enable_try_count++)
 		{
@@ -533,13 +572,13 @@ public:
 				cout << "GRAP SERVO ENABLE: GET DATA ERROR: " << error_code << endl;
 			Sleep(10);
 			//第一次检查，检验是否已经上过使能了
-			for (const auto child: get)
+			for (const auto child : get)
 				state += (child.Status_Word & 0x37) == 0x37;
 			if (state == Nums)
 			{
 				cout << "All servos has been Enabled!" << endl;
 				//需要更新当前控制字的引用
-				for (auto& child: send)
+				for (auto &child : send)
 					child.Control_Word |= 0xf;
 				state = 0;
 				this->enable_flag = true;
@@ -555,23 +594,23 @@ public:
 			//            }
 			//检查BIT3是否为1，为1 则伺服报错
 			state = 0;
-			for (const auto& child: get)
+			for (const auto &child : get)
 				state += (child.Status_Word & 0b1000) >> 3;
 			if (state != 0)
 			{
 				cout << "Servo Enable Invalid! BIT3 Error! Please Re-Power the Servo!" << endl;
 				return -1;
 			}
-			for (auto& child: send)
+			for (auto &child : send)
 				child.Control_Word = 0x26;
 			error_code = TcAds_ptr->set(send);
 			Sleep(40);
-			for (auto& child: send)
+			for (auto &child : send)
 				child.Control_Word = 0x27;
 			error_code = TcAds_ptr->set(send);
 			Sleep(40);
 			//Servo Enable!
-			for (auto& child: send)
+			for (auto &child : send)
 				child.Control_Word = 0x2f;
 			error_code = TcAds_ptr->set(send);
 			if (error_code < 0)
@@ -583,7 +622,7 @@ public:
 				if (error_code < 0)
 					cout << "GRAP SERVO ENABLE: GET DATA ERROR: " << error_code << endl;
 				Sleep(10);
-				for (const auto child: get)
+				for (const auto child : get)
 					state += (child.Status_Word & 0x37) == 0x37;
 				if (state == Nums)
 				{
@@ -599,9 +638,10 @@ public:
 	}
 
 	template<typename T1, typename T2, typename T3>
-	int Disable(T1& send, T2& get, const T3& TcAds_ptr)
+	int
+	Disable(T1 &send, T2 &get, const T3 &TcAds_ptr)
 	{
-		for (auto& child: send)
+		for (auto &child : send)
 			//            child.Control_Word = 0x20;
 			child.Control_Word = 0;
 		auto error_code = TcAds_ptr->set(send);
@@ -616,15 +656,20 @@ public:
 		return 0;
 	}
 
-	virtual void showStatus() = 0;
+	virtual void
+	showStatus() = 0;
 
-	virtual vector<int> show() = 0;
+	virtual vector<int>
+	show() = 0;
 
-	virtual int Enable() = 0;
+	virtual int
+	Enable() = 0;
 
-	virtual int Disable() = 0;
+	virtual int
+	Disable() = 0;
 
-	virtual int Motion(initializer_list<int32_t> target_list) = 0;
+	virtual int
+	Motion(initializer_list<int32_t> target_list) = 0;
 
 	bool enable_flag = false;
 
@@ -637,7 +682,7 @@ public:
 using gp = class Grap_Driver_Position : public Grap_Driver
 {
 public:
-	Grap_Driver_Position(TcAds_Grap_Position_Control& adsHandle)
+	Grap_Driver_Position(TcAds_Grap_Position_Control &adsHandle)
 	{
 		this->adsHandle = &adsHandle;
 	}
@@ -650,64 +695,75 @@ public:
 			this->d_Disable();
 	}
 
-	auto d_Disable() -> int
+	auto
+	d_Disable() -> int
 	{
 		return Disable();
 	}
 
-	virtual auto Enable() -> int
+	virtual auto
+	Enable() -> int
 	{
 		cout << "Enabling the Position Motor......" << endl;
 		return Grap_Driver::Enable(this->SendData, this->GetData, this->adsHandle, Grap_Position_Servo_Nums);
 	}
 
-	virtual auto Disable() -> int
+	virtual auto
+	Disable() -> int
 	{
 		cout << "Disabling the Position Motor......" << endl;
 		return Grap_Driver::Disable(this->SendData, this->GetData, this->adsHandle);
 	}
 
-	virtual int Motion(initializer_list<int32_t> target_list);
+	virtual int
+	Motion(initializer_list<int32_t> target_list);
 
-	virtual void showStatus();
+	virtual void
+	showStatus();
 
-	virtual vector<int> show();
+	virtual vector<int>
+	show();
 
 private:
 	vector<DFG_P> GetData{vector<DFG_P>(Grap_Position_Servo_Nums)};
 	vector<DTG_P> SendData{vector<DTG_P>(Grap_Position_Servo_Nums)};
-	TcAds_Grap_Position_Control* adsHandle = nullptr;
+	TcAds_Grap_Position_Control *adsHandle = nullptr;
 };
 using gt = class Grap_Driver_Torque : public Grap_Driver
 {
 public:
-	Grap_Driver_Torque(TcAds_Grap_Torque_Control& adsHandle)
+	Grap_Driver_Torque(TcAds_Grap_Torque_Control &adsHandle)
 	{
 		this->adsHandle = &adsHandle;
 	};
 
 	Grap_Driver_Torque() = default;
 
-	virtual auto Enable() -> int final
+	virtual auto
+	Enable() -> int final
 	{
 		cout << "Enabling the Torque Motor......" << endl;
 		return Grap_Driver::Enable(this->SendData, this->GetData, this->adsHandle, Grap_Torque_Servo_Nums);
 	}
 
-	virtual auto Disable() -> int final
+	virtual auto
+	Disable() -> int final
 	{
 		cout << "Disabling the Torque Motor......" << endl;
 		return Grap_Driver::Disable(this->SendData, this->GetData, this->adsHandle);
 	}
 
-	void d_Disable()
+	void
+	d_Disable()
 	{
 		this->Disable();
 	}
 
-	void set_Max_Motor_Speed(const uint32_t& MaxSpeed){};
+	void
+	set_Max_Motor_Speed(const uint32_t &MaxSpeed){};
 
-	virtual int Motion(initializer_list<int32_t> target_list) final;
+	virtual int
+	Motion(initializer_list<int32_t> target_list) final;
 
 	~Grap_Driver_Torque()
 	{
@@ -715,24 +771,28 @@ public:
 			this->d_Disable();
 	}
 
-	virtual void showStatus() final;
+	virtual void
+	showStatus() final;
 
-	virtual vector<int> show() final;
+	virtual vector<int>
+	show() final;
 
-	void show_position()
+	void
+	show_position()
 	{
-		for (const auto& d: GetData)
+		for (const auto &d : GetData)
 		{
 			cout << d.Position << ",";
 		}
 		cout << endl;
 	}
 
-	vector<int> get_position()
+	vector<int>
+	get_position()
 	{
 		//注意，请在外部更新getdata
 		vector<int> res;
-		for (const auto& d: this->GetData)
+		for (const auto &d : this->GetData)
 		{
 			res.push_back(d.Position);
 		}
@@ -742,7 +802,7 @@ public:
 private:
 	vector<DFG_T> GetData{vector<DFG_T>(Grap_Torque_Servo_Nums)};
 	vector<DTG_T> SendData{vector<DTG_T>(Grap_Torque_Servo_Nums)};
-	TcAds_Grap_Torque_Control* adsHandle = nullptr;
+	TcAds_Grap_Torque_Control *adsHandle = nullptr;
 };
 #endif
 
@@ -750,7 +810,8 @@ class EndEffector
 {
 public:
 	template<typename T1, typename T2, typename T3>
-	int Enable(T1& tx_data, T2& rx_data, const T3& ads, const int& Nums)
+	int
+	Enable(T1 &tx_data, T2 &rx_data, const T3 &ads, const int &Nums)
 	{
 		for (int enable_try_count{}; enable_try_count < 3; enable_try_count++)
 		{
@@ -761,13 +822,13 @@ public:
 				cout << "GRAP SERVO ENABLE: GET DATA ERROR: " << error_code << endl;
 			Sleep(10);
 			//第一次检查，检验是否已经上过使能了
-			for (const auto child: rx_data)
+			for (const auto child : rx_data)
 				state += (child.Status_Word & 0x37) == 0x37;
 			if (state == Nums)
 			{
 				cout << "All servos has been Enabled!" << endl;
 				//需要更新当前控制字的引用
-				for (auto& child: tx_data)
+				for (auto &child : tx_data)
 					child.Control_Word |= 0xf;
 				state = 0;
 				this->enable_flag = true;
@@ -783,23 +844,23 @@ public:
 			//            }
 			//检查BIT3是否为1，为1 则伺服报错
 			state = 0;
-			for (const auto& child: rx_data)
+			for (const auto &child : rx_data)
 				state += (child.Status_Word & 0b1000) >> 3;
 			if (state != 0)
 			{
 				cout << "Servo Enable Invalid! BIT3 Error! Please Re-Power the Servo!" << endl;
 				return -1;
 			}
-			for (auto& child: tx_data)
+			for (auto &child : tx_data)
 				child.Control_Word = 0x26;
 			ads->send();
 			Sleep(40);
-			for (auto& child: tx_data)
+			for (auto &child : tx_data)
 				child.Control_Word = 0x27;
 			ads->send();
 			Sleep(40);
 			//Servo Enable!
-			for (auto& child: tx_data)
+			for (auto &child : tx_data)
 				child.Control_Word = 0x2f;
 			ads->send();
 			if (error_code < 0)
@@ -811,7 +872,7 @@ public:
 				if (error_code < 0)
 					cout << "GRAP SERVO ENABLE: GET DATA ERROR: " << error_code << endl;
 				Sleep(10);
-				for (const auto child: rx_data)
+				for (const auto child : rx_data)
 					state += (child.Status_Word & 0x37) == 0x37;
 				if (state == Nums)
 				{
@@ -827,9 +888,10 @@ public:
 	}
 
 	template<typename T1, typename T2, typename T3>
-	int Disable(T1& send, T2& get, const T3& ads)
+	int
+	Disable(T1 &send, T2 &get, const T3 &ads)
 	{
-		for (auto& child: send)
+		for (auto &child : send)
 			//            child.Control_Word = 0x20;
 			child.Control_Word = 0;
 		ads->send();
@@ -838,17 +900,20 @@ public:
 		return 0;
 	}
 
-	virtual int Enable() = 0;
+	virtual int
+	Enable() = 0;
 
-	virtual int Disable() = 0;
+	virtual int
+	Disable() = 0;
 
-	virtual void showStatus() = 0;
+	virtual void
+	showStatus() = 0;
 
-	virtual vector<int> show() = 0;
+	virtual vector<int>
+	show() = 0;
 
-
-	virtual int Motion(initializer_list<int32_t> target_list) = 0;
-
+	virtual int
+	Motion(initializer_list<int32_t> target_list) = 0;
 
 	virtual ~EndEffector()
 	{
@@ -868,18 +933,24 @@ public:
 		if (enable_flag)
 			d_Disable();
 	}
-	virtual int Enable();
+	virtual int
+	Enable();
 
-	void d_Disable()
+	void
+	d_Disable()
 	{
 		Disable();
 	}
-	virtual int Disable();
+	virtual int
+	Disable();
 
-	virtual std::vector<int> show();
-	virtual void showStatus();
+	virtual std::vector<int>
+	show();
+	virtual void
+	showStatus();
 
-	virtual int Motion(initializer_list<int32_t> target_list);
+	virtual int
+	Motion(initializer_list<int32_t> target_list);
 
 private:
 	ptr_v<DTG_P> tx_ptr = std::make_shared<v<DTG_P>>(Grap_Position_Servo_Nums);
@@ -891,18 +962,22 @@ using Et = class EndEffector_Torque : public EndEffector
 {
 public:
 	EndEffector_Torque();
-	virtual auto Enable() -> int final;
+	virtual auto
+	Enable() -> int final;
 
+	virtual auto
+	Disable() -> int final;
 
-	virtual auto Disable() -> int final;
-
-	void d_Disable()
+	void
+	d_Disable()
 	{
 		this->Disable();
 	}
-	void set_Max_Motor_Speed(const uint32_t& MaxSpeed){};
+	void
+	set_Max_Motor_Speed(const uint32_t &MaxSpeed){};
 
-	virtual int Motion(initializer_list<int32_t> target_list) final;
+	virtual int
+	Motion(initializer_list<int32_t> target_list) final;
 
 	~EndEffector_Torque()
 	{
@@ -910,25 +985,30 @@ public:
 			this->d_Disable();
 	}
 
-	virtual void showStatus() final;
+	virtual void
+	showStatus() final;
 
-	virtual vector<int> show() final;
-	vector<int> getTorque();
-	void show_position()
+	virtual vector<int>
+	show() final;
+	vector<int>
+	getTorque();
+	void
+	show_position()
 	{
 		ads_handle->receive();
-		for (const auto& d: *rx_ptr)
+		for (const auto &d : *rx_ptr)
 		{
 			cout << d.Position << ",";
 		}
 		cout << endl;
 	}
 
-	vector<int> get_position()
+	vector<int>
+	get_position()
 	{
 		vector<int> res;
 		ads_handle->receive();
-		for (const auto& d: *rx_ptr)
+		for (const auto &d : *rx_ptr)
 		{
 			res.push_back(d.Position);
 		}
