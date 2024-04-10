@@ -881,7 +881,7 @@ int MotionV1::opSpaceMotionByJacobe_RL(const vector<float>& c_vecs, Robot& robot
 	rl::math::Vector6 q_dot = Jinv * c_temp;
 	rl::math::Vector6 q_now;
 	q_now << q_6Axis[0], q_6Axis[1], q_6Axis[2], q_6Axis[3], q_6Axis[4], q_6Axis[5];
-	auto qd = q_now + q_dot * 0.01;
+	auto qd = q_now + q_dot * 0.05;
 	return this->Write('3', qd[0], qd[1], qd[2], qd[3], qd[4], qd[5]);
 }
 int MotionV1::opSpaceMotionByJacobe_RL(const vector<double>& c_vecs, Robot& robot)
@@ -908,7 +908,7 @@ int MotionV1::opSpaceMotionByJacobe_RL(const vector<double>& c_vecs, Robot& robo
 	rl::math::Vector6 q_dot = Jinv * c_temp;
 	rl::math::Vector6 q_now;
 	q_now << q_6Axis[0], q_6Axis[1], q_6Axis[2], q_6Axis[3], q_6Axis[4], q_6Axis[5];
-	auto qd = q_now + q_dot * 0.04;
+	auto qd = q_now + q_dot * 0.05;
 	return this->Write('3', qd[0], qd[1], qd[2], qd[3], qd[4], qd[5]);
 }
 int MotionV1::opSpaceMotionByJacob0_RL(const vector<double>& c_vecs, Robot& robot)
