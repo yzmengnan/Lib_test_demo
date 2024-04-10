@@ -11,27 +11,30 @@
 #include <thread>
 #include <vector>
 using namespace std;
-class comSocket {
+class comSocket
+{
 public:
-    comSocket(const int &port, const shared_ptr<_send> &sendData);
-    comSocket(const int &port);
-    shared_ptr<_recv> socketRecv{make_shared<_recv>()};
-    shared_ptr<_send> socketSend{make_shared<_send>()};
-    int comSocket_build();
-    void comSocket_send();
-    //        void comSocket_send(shared_ptr<_send>& send_data,int);
-    void comSocket_receive();
-    int socketResult{0};
+	comSocket(const int& port, const shared_ptr<_send>& sendData);
+	comSocket(const int& port);
+	shared_ptr<_recv> socketRecv {make_shared<_recv>()};
+	shared_ptr<_send> socketSend {make_shared<_send>()};
+	int comSocket_build();
+	void comSocket_send();
+	//        void comSocket_send(shared_ptr<_send>& send_data,int);
+	void comSocket_receive();
+	int socketResult {0};
+
 protected:
 #ifdef SOCKET_PORT
-    int port{SOCKET_PORT};
+	int port {SOCKET_PORT};
 #else
-    int port{1115};
+	int port {1115};
 #endif
 public:
-    mutex servoStatusLock{};
+	mutex servoStatusLock {};
+
 private:
-    SOCKET com_socket{};
-    int recv_res{0};
-    int send_res{0};
+	SOCKET com_socket {};
+	int recv_res {0};
+	int send_res {0};
 };

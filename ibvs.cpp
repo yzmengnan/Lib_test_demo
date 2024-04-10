@@ -20,8 +20,8 @@ using namespace std;
 bool Continuous_Running = TRUE;
 
 bool NeedToStoreDesiredPose = FALSE;
-bool AlreadyStore = FALSE;
-bool AlreadyShow = FALSE;
+bool AlreadyStore           = FALSE;
+bool AlreadyShow            = FALSE;
 
 char keyboardInput;
 bool startGrasping = FALSE;
@@ -39,26 +39,23 @@ double desiredFeatures_Pose[6];
 cv::Mat desiredC_rvec_O = cv::Mat::zeros(3, 1, CV_64FC1);
 cv::Mat desiredC_tvec_O = cv::Mat::zeros(3, 1, CV_64FC1);
 
-cv::Mat currentE_HomogenousT_currentC = cv::Mat::eye(4, 4, CV_64FC1);//(cv::Mat_<double>(4, 4) << 1544.970675627578, 0, 1312.414149621184, 0, 1544.76986234472, 965.0566324183379, 0, 0, 1);
+cv::Mat currentE_HomogenousT_currentC = cv::Mat::eye(
+    4, 4, CV_64FC1);//(cv::Mat_<double>(4, 4) << 1544.970675627578, 0, 1312.414149621184, 0,
+                    // 1544.76986234472, 965.0566324183379, 0, 0, 1);
 cv::Mat initialC_HomogenousT_O = cv::Mat::zeros(4, 4, CV_64FC1);
 
 bool bFirstStage_Pose = TRUE;
 
-
-bool successfulDetect = FALSE;
+bool successfulDetect   = FALSE;
 bool successfulTracking = FALSE;
-
 
 vector<cv::Point> featurePoints_Sending;
 
-typedef struct
-{
+typedef struct {
 	cv::Point featurePoints_Snd[7];
 } Package_Feature_Send;
 
-
-typedef struct
-{
+typedef struct {
 	double translVel[3];
 	double rotVel[3];
 } Robot_Command, Package_Command_Send;
@@ -68,8 +65,7 @@ Robot_Command commands_Sending;
 bool bsendingFeature = FALSE;
 
 double max_translVel = 5;
-double max_rotVel = (double)20 / (double)180 * 3.1415926;
-
+double max_rotVel    = (double)20 / (double)180 * 3.1415926;
 
 bool canSend = FALSE;
 
@@ -79,28 +75,25 @@ bool bTCP = TRUE;
 
 bool successConnect = FALSE;
 
-typedef struct
-{
+typedef struct {
 	int upIndex;
 	int bottom_LeftIndex;
 	int bottom_CenterIndex;
 	int bottom_RightIndex;
 } GroupIndexAlloc;
 
-typedef struct
-{
+typedef struct {
 	cv::Vec4f VertiLinePara;
 	cv::Vec4f HorizLinePara;
 } GroupLinesParameters;
 
 bool need2StoreDesiredInfo = FALSE;
 
-
 vector<vector<cv::Point>> featurePoints_Filtered_Queue;
 vector<cv::Point> featurePoints_Filtered_Sum;
 int featureQueueSize = 4;
 
-//RGB to BGR
+// RGB to BGR
 bool RGB2BGR(unsigned char* pRgbData, unsigned int nWidth, unsigned int nHeight)
 {
 	if (NULL == pRgbData)
@@ -112,8 +105,8 @@ bool RGB2BGR(unsigned char* pRgbData, unsigned int nWidth, unsigned int nHeight)
 	{
 		for (unsigned int i = 0; i < nWidth; i++)
 		{
-			unsigned char red = pRgbData[j * (nWidth * 3) + i * 3];
-			pRgbData[j * (nWidth * 3) + i * 3] = pRgbData[j * (nWidth * 3) + i * 3 + 2];
+			unsigned char red                      = pRgbData[j * (nWidth * 3) + i * 3];
+			pRgbData[j * (nWidth * 3) + i * 3]     = pRgbData[j * (nWidth * 3) + i * 3 + 2];
 			pRgbData[j * (nWidth * 3) + i * 3 + 2] = red;
 		}
 	}
@@ -126,12 +119,12 @@ bool Convert2Mat(dvpFrame* pFrameInfo, unsigned char* pData, cv::Mat& srcImage)
 	if (pFrameInfo->format == FORMAT_MONO)
 	{
 		srcImage = cv::Mat(pFrameInfo->iHeight, pFrameInfo->iWidth, CV_8UC1, pData);
-		//printf("MONO convert to cv::Mat OK.\n");
+		// printf("MONO convert to cv::Mat OK.\n");
 	}
 	else if (pFrameInfo->format == FORMAT_BGR24)
 	{
 		srcImage = cv::Mat(pFrameInfo->iHeight, pFrameInfo->iWidth, CV_8UC3, pData);
-		//printf("BGR24 convert to cv::Mat OK.\n");
+		// printf("BGR24 convert to cv::Mat OK.\n");
 	}
 	else
 	{
@@ -170,8 +163,8 @@ float GetPoint2PointDist(cv::Point point1, cv::Point point2)
 float GetPoint2LineDist(cv::Point point, cv::Vec4f LinePara)
 {
 	float dist = 0;
-	float k = 0;
-	float b = 0;
+	float k    = 0;
+	float b    = 0;
 
 	k = LinePara[1] / LinePara[0];
 	b = LinePara[3] - k * LinePara[2];
@@ -201,7 +194,8 @@ cv::Point GetIntersectionPoint(cv::Vec4f lineParaA, cv::Vec4f lineParaB)
 	return (cv::Point)intersectionPoint;
 }
 
-void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::Point> contourPoints, float epsilonAccuracy)
+void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::Point> contourPoints,
+                                  float epsilonAccuracy)
 {
 	cv::Vec4f one_linePara_coarse;
 	cv::Vec4f one_linePara_fine;
@@ -209,7 +203,6 @@ void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::P
 
 	vector<cv::Point> one_linePoints;
 	vector<vector<cv::Point>> all_linePoints;
-
 
 	vector<cv::Point> featurePoints_MoreAccurate;
 
@@ -231,7 +224,7 @@ void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::P
 	vector<cv::Point> contourPoints_temp;
 	contourPoints_temp = contourPoints;
 
-	//vector<cv::Point>::iterator itr;
+	// vector<cv::Point>::iterator itr;
 
 	vector<bool> alreadyConsidered;
 	for (int i = 0; i < contourPoints.size(); i++)
@@ -248,36 +241,36 @@ void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::P
 
 		cv::fitLine(segmentPoints, one_linePara_coarse, cv::DIST_L2, 0, 0.01, 0.01);
 
-		//itr = contourPoints_temp.begin();
+		// itr = contourPoints_temp.begin();
 		for (int j = 0; j < contourPoints_temp.size(); j++)
 		{
-			checkPoint = contourPoints_temp.at(j);
+			checkPoint          = contourPoints_temp.at(j);
 			distCheckPoint2Line = GetPoint2LineDist(checkPoint, one_linePara_coarse);
 
-			if (distCheckPoint2Line < epsilonAccuracy)//该轮廓点属于当前的线段
+			if (distCheckPoint2Line < epsilonAccuracy)// 该轮廓点属于当前的线段
 			{
 				one_linePoints.push_back(checkPoint);
-				//itr = contourPoints_temp.erase(itr);  //移除已经划分的轮廓点
-				alreadyConsidered.at(j) = TRUE;//标记已考虑该轮廓点
+				// itr = contourPoints_temp.erase(itr);  //移除已经划分的轮廓点
+				alreadyConsidered.at(j) = TRUE;// 标记已考虑该轮廓点
 			}
 		}
 
 		segmentPoints.clear();
 
-		//保存属于当前线段的轮廓点
+		// 保存属于当前线段的轮廓点
 		all_linePoints.push_back(one_linePoints);
 		one_linePoints.clear();
 	}
 
-	//求取所有线段更精确的直线参数
+	// 求取所有线段更精确的直线参数
 	for (int p = 0; p < segmentNum; p++)
 	{
-		one_linePoints = all_linePoints.at(p);//检索属于当前线段的所有轮廓点
+		one_linePoints = all_linePoints.at(p);// 检索属于当前线段的所有轮廓点
 		cv::fitLine(one_linePoints, one_linePara_fine, cv::DIST_L2, 0, 0.01, 0.01);
 		all_lineParas_fine.push_back(one_linePara_fine);
 	}
 
-	//重新划分未考虑轮廓点的直线归属
+	// 重新划分未考虑轮廓点的直线归属
 	float minDistP2L;
 	float distP2L;
 	int nearestLineIndex;
@@ -291,10 +284,10 @@ void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::P
 			for (int j = 0; j < segmentNum; j++)
 			{
 				one_linePara_fine = all_lineParas_fine.at(j);
-				distP2L = GetPoint2LineDist(checkPoint, one_linePara_fine);
+				distP2L           = GetPoint2LineDist(checkPoint, one_linePara_fine);
 				if (distP2L < minDistP2L)
 				{
-					minDistP2L = distP2L;
+					minDistP2L       = distP2L;
 					nearestLineIndex = j;
 				}
 			}
@@ -303,16 +296,15 @@ void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::P
 	}
 
 	all_lineParas_fine.clear();
-	//求取考虑所有轮廓点后更精确的直线参数
+	// 求取考虑所有轮廓点后更精确的直线参数
 	for (int p = 0; p < segmentNum; p++)
 	{
-		one_linePoints = all_linePoints.at(p);//检索属于当前线段的所有轮廓点
+		one_linePoints = all_linePoints.at(p);// 检索属于当前线段的所有轮廓点
 		cv::fitLine(one_linePoints, one_linePara_fine, cv::DIST_L2, 0, 0.01, 0.01);
 		all_lineParas_fine.push_back(one_linePara_fine);
 	}
 
-
-	//求取更精确直线的交点
+	// 求取更精确直线的交点
 	for (int p = 0; p < segmentNum; p++)
 	{
 		lineParaA_fine = all_lineParas_fine.at(p);
@@ -322,7 +314,7 @@ void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::P
 		all_intersectionPoints_fine.push_back(one_intersectionPoint_fine);
 	}
 
-	//寻找匹配的交点
+	// 寻找匹配的交点
 	int NearestIndex;
 	float minDist;
 	float distA2B;
@@ -332,7 +324,7 @@ void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::P
 	for (int i = 0; i < segmentNum; i++)
 	{
 		consideredPointA = featurePoints.at(i);
-		minDist = 1000;
+		minDist          = 1000;
 
 		for (int j = 0; j < segmentNum; j++)
 		{
@@ -341,7 +333,7 @@ void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::P
 			distA2B = GetPoint2PointDist(consideredPointA, consideredPointB);
 			if (distA2B < minDist)
 			{
-				minDist = distA2B;
+				minDist      = distA2B;
 				NearestIndex = j;
 			}
 		}
@@ -352,20 +344,28 @@ void GetMoreAccurateFeaturePoints(vector<cv::Point>& featurePoints, vector<cv::P
 	featurePoints = featurePoints_MoreAccurate;
 }
 
-bool Square_Triangle_Matching(cv::Point2f center_of_square, float average_side_square, float area_square, cv::Point2f center_of_triangle, float average_side_triangle, float area_triangle)
+bool Square_Triangle_Matching(cv::Point2f center_of_square, float average_side_square,
+                              float area_square, cv::Point2f center_of_triangle,
+                              float average_side_triangle, float area_triangle)
 {
-	float distance_square_2_triangle = sqrtf(powf(center_of_square.x - center_of_triangle.x, 2) + powf(center_of_square.y - center_of_triangle.y, 2));
+	float distance_square_2_triangle   = sqrtf(powf(center_of_square.x - center_of_triangle.x, 2)
+	                                           + powf(center_of_square.y - center_of_triangle.y, 2));
 	float side_ratio_square_2_triangle = average_side_square / average_side_triangle;
 	float area_ratio_square_2_triangle = area_square / area_triangle;
-	float average_side = (average_side_square + average_side_triangle) / 2;
+	float average_side                 = (average_side_square + average_side_triangle) / 2;
 
-	if (distance_square_2_triangle > 1 / 3 * average_side && distance_square_2_triangle < 3 * average_side && side_ratio_square_2_triangle > 1 / 2 && side_ratio_square_2_triangle < 2 && area_ratio_square_2_triangle > 1 / 3 && area_ratio_square_2_triangle < 3)
+	if (distance_square_2_triangle > 1 / 3 * average_side
+	    && distance_square_2_triangle < 3 * average_side && side_ratio_square_2_triangle > 1 / 2
+	    && side_ratio_square_2_triangle < 2 && area_ratio_square_2_triangle > 1 / 3
+	    && area_ratio_square_2_triangle < 3)
 		return TRUE;
 	else
 		return FALSE;
 }
 
-void FeaturePoint_Extraction(int matched_num, vector<vector<cv::Point>> matched_squares, vector<vector<cv::Point>> matched_triangles, vector<vector<cv::Point>>& FeaturePoints_AllMatching)
+void FeaturePoint_Extraction(int matched_num, vector<vector<cv::Point>> matched_squares,
+                             vector<vector<cv::Point>> matched_triangles,
+                             vector<vector<cv::Point>>& FeaturePoints_AllMatching)
 {
 	vector<cv::Point> FeaturePoints_OneMatching;
 	int Nearest_SquareIndex;
@@ -375,20 +375,24 @@ void FeaturePoint_Extraction(int matched_num, vector<vector<cv::Point>> matched_
 
 	for (int i = 0; i < matched_num; i++)
 	{
-		distance_2Points = sqrtf(powf(matched_squares.at(i).at(0).x - matched_triangles.at(i).at(0).x, 2) + powf(matched_squares.at(i).at(0).y - matched_triangles.at(i).at(0).y, 2));
-		Minimum_Distance = distance_2Points;
-		Nearest_SquareIndex = 0;
+		distance_2Points =
+		    sqrtf(powf(matched_squares.at(i).at(0).x - matched_triangles.at(i).at(0).x, 2)
+		          + powf(matched_squares.at(i).at(0).y - matched_triangles.at(i).at(0).y, 2));
+		Minimum_Distance      = distance_2Points;
+		Nearest_SquareIndex   = 0;
 		Nearest_TriangleIndex = 0;
 
 		for (int j = 0; j < 4; j++)
 		{
 			for (int k = 0; k < 3; k++)
 			{
-				distance_2Points = sqrtf(powf(matched_squares.at(i).at(j).x - matched_triangles.at(i).at(k).x, 2) + powf(matched_squares.at(i).at(j).y - matched_triangles.at(i).at(k).y, 2));
+				distance_2Points = sqrtf(
+				    powf(matched_squares.at(i).at(j).x - matched_triangles.at(i).at(k).x, 2)
+				    + powf(matched_squares.at(i).at(j).y - matched_triangles.at(i).at(k).y, 2));
 				if (distance_2Points < Minimum_Distance)
 				{
-					Minimum_Distance = distance_2Points;
-					Nearest_SquareIndex = j;
+					Minimum_Distance      = distance_2Points;
+					Nearest_SquareIndex   = j;
 					Nearest_TriangleIndex = k;
 				}
 			}
@@ -396,12 +400,14 @@ void FeaturePoint_Extraction(int matched_num, vector<vector<cv::Point>> matched_
 
 		for (int j = 0; j < 4; j++)
 		{
-			FeaturePoints_OneMatching.push_back(matched_squares.at(i).at((j + Nearest_SquareIndex) % 4));
+			FeaturePoints_OneMatching.push_back(
+			    matched_squares.at(i).at((j + Nearest_SquareIndex) % 4));
 		}
 
 		for (int j = 0; j < 3; j++)
 		{
-			FeaturePoints_OneMatching.push_back(matched_triangles.at(i).at((j + Nearest_TriangleIndex) % 3));
+			FeaturePoints_OneMatching.push_back(
+			    matched_triangles.at(i).at((j + Nearest_TriangleIndex) % 3));
 		}
 
 		FeaturePoints_AllMatching.push_back(FeaturePoints_OneMatching);
@@ -414,7 +420,7 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 	cv::Mat imgThresholded;
 	cv::Mat imgThresholded_green;
 	cv::Mat imgThresholded_indigo;
-	//if (0)
+	// if (0)
 	//{
 	//	vector<cv::Mat> hsvSplit;
 	//	cv::cvtColor(imgsrc,imgHSV,cv::COLOR_BGR2HSV);
@@ -422,67 +428,90 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 	//	cv::equalizeHist(hsvSplit[2],hsvSplit[2]);
 	//	cv::merge(hsvSplit,imgHSV);
 	//	cv::cvtColor(imgHSV,imgBGR,cv::COLOR_HSV2BGR);
-	//}
-	//imgBGR = imgsrc.clone();
+	// }
+	// imgBGR = imgsrc.clone();
 	cv::cvtColor(imgsrc, imgHSV, cv::COLOR_BGR2HSV);
-	//else
+	// else
 	//{
 	//	imgBGR = imgsrc.clone();
-	//}
+	// }
 
 	switch (ctrl)
 	{
-	case 0: {
-		//cv::inRange(imgHSV,cv::Scalar(128,0,0),cv::Scalar(255,127,127),imgThresholded); //蓝色BGR
-		cv::inRange(imgHSV, cv::Scalar(100, 43, 46), cv::Scalar(124, 255, 255), imgThresholded);//蓝色HSV
-		break;
-	}
-	case 1: {
-		//cv::inRange(imgHSV,cv::Scalar(128,128,128),cv::Scalar(255,255,255),imgThresholded);//白色BGR
-		cv::inRange(imgHSV, cv::Scalar(0, 0, 221), cv::Scalar(180, 30, 255), imgThresholded);//白色HSV
-		break;
-	}
-	case 2: {
-		//cv::inRange(imgHSV,cv::Scalar(128,128,0),cv::Scalar(255,255,127),imgThresholded);//靛色BGR
-		//cv::inRange(imgHSV, cv::Scalar(72, 40, 30), cv::Scalar(102, 255, 255), imgThresholded_indigo);//靛色HSV
-		//cv::inRange(imgHSV, cv::Scalar(90, 40, 40), cv::Scalar(150, 255, 255), imgThresholded_green);//绿色
-		//cv::inRange(imgHSV, cv::Scalar(48, 48, 5), cv::Scalar(88, 240, 255), imgThresholded_green);//绿色
-		//cv::add(imgThresholded_indigo,imgThresholded_green,imgThresholded);
+		case 0:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(128,0,0),cv::Scalar(255,127,127),imgThresholded);
+			// //蓝色BGR
+			cv::inRange(imgHSV, cv::Scalar(100, 43, 46), cv::Scalar(124, 255, 255),
+			            imgThresholded);// 蓝色HSV
+			break;
+		}
+		case 1:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(128,128,128),cv::Scalar(255,255,255),imgThresholded);//白色BGR
+			cv::inRange(imgHSV, cv::Scalar(0, 0, 221), cv::Scalar(180, 30, 255),
+			            imgThresholded);// 白色HSV
+			break;
+		}
+		case 2:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(128,128,0),cv::Scalar(255,255,127),imgThresholded);//靛色BGR
+			// cv::inRange(imgHSV, cv::Scalar(72, 40, 30), cv::Scalar(102, 255, 255),
+			// imgThresholded_indigo);//靛色HSV cv::inRange(imgHSV, cv::Scalar(90, 40, 40),
+			// cv::Scalar(150, 255, 255), imgThresholded_green);//绿色 cv::inRange(imgHSV,
+			// cv::Scalar(48, 48, 5), cv::Scalar(88, 240, 255), imgThresholded_green);//绿色
+			// cv::add(imgThresholded_indigo,imgThresholded_green,imgThresholded);
 
-		//cv::inRange(imgHSV, cv::Scalar(48, 48, 5), cv::Scalar(88, 240, 240), imgThresholded);//绿色HSV
-		cv::inRange(imgHSV, cv::Scalar(63, 40, 40), cv::Scalar(140, 255, 255), imgThresholded);//绿色HSV
-		break;
-	}
-	case 3: {
-		//cv::inRange(imgHSV,cv::Scalar(128,0,128),cv::Scalar(255,127,255),imgThresholded);//紫色BGR
-		cv::inRange(imgHSV, cv::Scalar(125, 43, 46), cv::Scalar(155, 255, 255), imgThresholded);//紫色HSV
-		break;
-	}
-	case 4: {
-		//cv::inRange(imgHSV,cv::Scalar(0,128,128),cv::Scalar(127,255,255),imgThresholded);//黄色BGR
-		//cv::inRange(imgHSV, cv::Scalar(26, 43, 46), cv::Scalar(34, 255, 255), imgThresholded);//黄色HSV
-		cv::inRange(imgHSV, cv::Scalar(27, 45, 30), cv::Scalar(39, 255, 255), imgThresholded);//黄色HSV
-		break;
-	}
-	case 5: {
-		//cv::inRange(imgHSV,cv::Scalar(0,128,0),cv::Scalar(127,255,127),imgThresholded);//绿色BGR
-		//cv::inRange(imgHSV, cv::Scalar(35, 43, 46), cv::Scalar(77, 255, 255), imgThresholded);//绿色HSV
-		cv::inRange(imgHSV, cv::Scalar(45, 48, 48), cv::Scalar(88, 240, 240), imgThresholded_green);  //绿色HSV
-		cv::inRange(imgHSV, cv::Scalar(72, 40, 30), cv::Scalar(102, 255, 255), imgThresholded_indigo);//靛色HSV
-		cv::add(imgThresholded_indigo, imgThresholded_green, imgThresholded);
-		break;
-	}
-	case 6: {
-		//cv::inRange(imgHSV,cv::Scalar(0,0,128),cv::Scalar(127,127,255),imgThresholded);//红色BGR
-		//cv::inRange(imgHSV, cv::Scalar(0, 43, 46), cv::Scalar(10, 255, 255), imgThresholded);//红色HSV
-		cv::inRange(imgHSV, cv::Scalar(0, 43, 30), cv::Scalar(15, 255, 255), imgThresholded);//红色HSV
-		break;
-	}
-	case 7: {
-		//cv::inRange(imgHSV,cv::Scalar(0,0,0),cv::Scalar(127,127,127),imgThresholded);//黑色BGR
-		cv::inRange(imgHSV, cv::Scalar(0, 0, 0), cv::Scalar(180, 255, 46), imgThresholded);//黑色HSV
-		break;
-	}
+			// cv::inRange(imgHSV, cv::Scalar(48, 48, 5), cv::Scalar(88, 240, 240),
+			// imgThresholded);//绿色HSV
+			cv::inRange(imgHSV, cv::Scalar(63, 40, 40), cv::Scalar(140, 255, 255),
+			            imgThresholded);// 绿色HSV
+			break;
+		}
+		case 3:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(128,0,128),cv::Scalar(255,127,255),imgThresholded);//紫色BGR
+			cv::inRange(imgHSV, cv::Scalar(125, 43, 46), cv::Scalar(155, 255, 255),
+			            imgThresholded);// 紫色HSV
+			break;
+		}
+		case 4:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(0,128,128),cv::Scalar(127,255,255),imgThresholded);//黄色BGR
+			// cv::inRange(imgHSV, cv::Scalar(26, 43, 46), cv::Scalar(34, 255, 255),
+			// imgThresholded);//黄色HSV
+			cv::inRange(imgHSV, cv::Scalar(27, 45, 30), cv::Scalar(39, 255, 255),
+			            imgThresholded);// 黄色HSV
+			break;
+		}
+		case 5:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(0,128,0),cv::Scalar(127,255,127),imgThresholded);//绿色BGR
+			// cv::inRange(imgHSV, cv::Scalar(35, 43, 46), cv::Scalar(77, 255, 255),
+			// imgThresholded);//绿色HSV
+			cv::inRange(imgHSV, cv::Scalar(45, 48, 48), cv::Scalar(88, 240, 240),
+			            imgThresholded_green);// 绿色HSV
+			cv::inRange(imgHSV, cv::Scalar(72, 40, 30), cv::Scalar(102, 255, 255),
+			            imgThresholded_indigo);// 靛色HSV
+			cv::add(imgThresholded_indigo, imgThresholded_green, imgThresholded);
+			break;
+		}
+		case 6:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(0,0,128),cv::Scalar(127,127,255),imgThresholded);//红色BGR
+			// cv::inRange(imgHSV, cv::Scalar(0, 43, 46), cv::Scalar(10, 255, 255),
+			// imgThresholded);//红色HSV
+			cv::inRange(imgHSV, cv::Scalar(0, 43, 30), cv::Scalar(15, 255, 255),
+			            imgThresholded);// 红色HSV
+			break;
+		}
+		case 7:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(0,0,0),cv::Scalar(127,127,127),imgThresholded);//黑色BGR
+			cv::inRange(imgHSV, cv::Scalar(0, 0, 0), cv::Scalar(180, 255, 46),
+			            imgThresholded);// 黑色HSV
+			break;
+		}
 	}
 
 	cv::namedWindow("ThresholdedImage", 0);
@@ -494,11 +523,9 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 	cv::morphologyEx(imgThresholded, imgThresholded, cv::MORPH_CLOSE, element);
 	cv::morphologyEx(imgThresholded, imgThresholded, cv::MORPH_OPEN, element);
 
-
 	cv::namedWindow("ThresholdedImageAfterMorph", 0);
 	cv::resizeWindow("ThresholdedImageAfterMorph", 640, 480);
 	cv::imshow("ThresholdedImageAfterMorph", imgThresholded);
-
 
 	vector<vector<cv::Point>> contours;
 	vector<cv::Vec4i> hierarchy;
@@ -540,60 +567,66 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 	cv::Point2f center_of_square;
 	cv::Point2f center_of_triangle;
 
-	int squares_num = 0;
+	int squares_num   = 0;
 	int triangles_num = 0;
 
-	float square_side_length[4] = {0, 0, 0, 0};
+	float square_side_length[4]   = {0, 0, 0, 0};
 	float triangle_side_length[3] = {0, 0, 0};
 
 	float side_length_min = 0;
 	float side_length_max = 0;
 
-	float side_ratio = 0;
+	float side_ratio              = 0;
 	float opposite_side_ratios[2] = {0, 0};
 
-	int contourSize_Square = 150;//原来设置600
-	int contourSize_Triang = 100;//原来设置400
+	int contourSize_Square = 150;// 原来设置600
+	int contourSize_Triang = 100;// 原来设置400
 
 	for (size_t i = 0; i < contours.size(); i++)
 	{
-		cv::approxPolyDP(contours.at(i), approx, cv::arcLength(cv::Mat(contours.at(i)), TRUE) * 0.02, TRUE);
+		cv::approxPolyDP(contours.at(i), approx,
+		                 cv::arcLength(cv::Mat(contours.at(i)), TRUE) * 0.02, TRUE);
 
-		if (approx.size() == 4 && fabs(cv::contourArea(cv::Mat(approx))) > contourSize_Square && cv::isContourConvex(cv::Mat(approx)))
+		if (approx.size() == 4 && fabs(cv::contourArea(cv::Mat(approx))) > contourSize_Square
+		    && cv::isContourConvex(cv::Mat(approx)))
 		{
 			for (int j = 0; j < 4; j++)
 			{
 				square.push_back(cv::Point(approx.at(j).x, approx.at(j).y));
-				//ctrl+K、ctrl+C//ctrl+K、ctrl+U
+				// ctrl+K、ctrl+C//ctrl+K、ctrl+U
 			}
 			cv::drawContours(imgsrc, contours, i, cv::Scalar(255, 0, 0), 3);
 
-			square_side_length[0] = sqrtf(powf(approx.at(0).x - approx.at(1).x, 2) + powf(approx.at(0).y - approx.at(1).y, 2));
-			side_length_min = square_side_length[0];
-			side_length_max = square_side_length[0];
+			square_side_length[0] = sqrtf(powf(approx.at(0).x - approx.at(1).x, 2)
+			                              + powf(approx.at(0).y - approx.at(1).y, 2));
+			side_length_min       = square_side_length[0];
+			side_length_max       = square_side_length[0];
 
-			square_side_length[1] = sqrtf(powf(approx.at(1).x - approx.at(2).x, 2) + powf(approx.at(1).y - approx.at(2).y, 2));
+			square_side_length[1] = sqrtf(powf(approx.at(1).x - approx.at(2).x, 2)
+			                              + powf(approx.at(1).y - approx.at(2).y, 2));
 
 			if (square_side_length[1] < side_length_min)
 				side_length_min = square_side_length[1];
 			else if (square_side_length[1] > side_length_max)
 				side_length_max = square_side_length[1];
 
-			square_side_length[2] = sqrtf(powf(approx.at(2).x - approx.at(3).x, 2) + powf(approx.at(2).y - approx.at(3).y, 2));
+			square_side_length[2] = sqrtf(powf(approx.at(2).x - approx.at(3).x, 2)
+			                              + powf(approx.at(2).y - approx.at(3).y, 2));
 
 			if (square_side_length[2] < side_length_min)
 				side_length_min = square_side_length[2];
 			else if (square_side_length[2] > side_length_max)
 				side_length_max = square_side_length[2];
 
-			square_side_length[3] = sqrtf(powf(approx.at(3).x - approx.at(0).x, 2) + powf(approx.at(3).y - approx.at(0).y, 2));
+			square_side_length[3] = sqrtf(powf(approx.at(3).x - approx.at(0).x, 2)
+			                              + powf(approx.at(3).y - approx.at(0).y, 2));
 
 			if (square_side_length[3] < side_length_min)
 				side_length_min = square_side_length[3];
 			else if (square_side_length[3] > side_length_max)
 				side_length_max = square_side_length[3];
 
-			side_ratio = side_length_min / side_length_max;
+			side_ratio              = side_length_min / side_length_max;
 			opposite_side_ratios[0] = square_side_length[0] / square_side_length[2];
 
 			if (opposite_side_ratios[0] > 1)
@@ -604,72 +637,87 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 			if (opposite_side_ratios[1] > 1)
 				opposite_side_ratios[1] = square_side_length[3] / square_side_length[1];
 
-			float lengRatio_square = cv::arcLength(cv::Mat(contours.at(i)), TRUE) / (square_side_length[0] + square_side_length[1] + square_side_length[2] + square_side_length[3]);
+			float lengRatio_square = cv::arcLength(cv::Mat(contours.at(i)), TRUE)
+			                       / (square_side_length[0] + square_side_length[1]
+			                          + square_side_length[2] + square_side_length[3]);
 
-			if (side_ratio > 0.3 && opposite_side_ratios[0] > 0.8 && opposite_side_ratios[1] > 0.8 && lengRatio_square < 1.5 && lengRatio_square > 2 / 3)
+			if (side_ratio > 0.3 && opposite_side_ratios[0] > 0.8 && opposite_side_ratios[1] > 0.8
+			    && lengRatio_square < 1.5 && lengRatio_square > 2 / 3)
 			{
-				//rotatedrect = cv::minAreaRect(contours.at(i));
+				// rotatedrect = cv::minAreaRect(contours.at(i));
 
-				//rotatedrect.points(rectPoints);
-				//center_of_square = rotatedrect.center;
+				// rotatedrect.points(rectPoints);
+				// center_of_square = rotatedrect.center;
 
-				center_of_square.x = (square[0].x + square[2].x) / 2;
-				center_of_square.y = (square[0].y + square[2].y) / 2;
-				area_square = square_side_length[0] * square_side_length[1];
+				center_of_square.x  = (square[0].x + square[2].x) / 2;
+				center_of_square.y  = (square[0].y + square[2].y) / 2;
+				area_square         = square_side_length[0] * square_side_length[1];
 				average_side_square = (square_side_length[0] + square_side_length[1]) / 2;
 
-				//square.push_back((cv::Point)rectPoints[0]);
-				//square.push_back((cv::Point)rectPoints[1]);
-				//square.push_back((cv::Point)rectPoints[2]);
-				//square.push_back((cv::Point)rectPoints[3]);
+				// square.push_back((cv::Point)rectPoints[0]);
+				// square.push_back((cv::Point)rectPoints[1]);
+				// square.push_back((cv::Point)rectPoints[2]);
+				// square.push_back((cv::Point)rectPoints[3]);
 
 				squares_num++;
 
-				//提取更精确的特征点
+				// 提取更精确的特征点
 				vector<cv::Point> featurePoints_moreAccurate;
 				featurePoints_moreAccurate.push_back(square[0]);
 				featurePoints_moreAccurate.push_back(square[1]);
 				featurePoints_moreAccurate.push_back(square[2]);
 				featurePoints_moreAccurate.push_back(square[3]);
 
-				GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours.at(i), side_length_min / 12);
+				GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours.at(i),
+				                             side_length_min / 12);
 				for (int j = 0; j < 4; j++)
 				{
 					square[j] = featurePoints_moreAccurate.at(j);
 				}
 				featurePoints_moreAccurate.clear();
-				//提取更精确的特征点结束
-
+				// 提取更精确的特征点结束
 
 				Squares.push_back(square);
 				Center_Of_Squares.push_back(center_of_square);
 				AreaOfSquares.push_back(area_square);
 				AverageSide_Squares.push_back(average_side_square);
 
-				//cv::line(imgsrc, cv::Point(square.at(0).x, square.at(0).y), cv::Point(square.at(1).x, square.at(1).y), cv::Scalar(0, 0, 255), 3, 8, 0);  //BGR
-				//cv::line(imgsrc, cv::Point(square.at(1).x, square.at(1).y), cv::Point(square.at(2).x, square.at(2).y), cv::Scalar(0, 255, 0), 3, 8, 0);
-				//cv::line(imgsrc, cv::Point(square.at(2).x, square.at(2).y), cv::Point(square.at(3).x, square.at(3).y), cv::Scalar(255, 0, 0), 3, 8, 0);
-				//cv::line(imgsrc, cv::Point(square.at(3).x, square.at(3).y), cv::Point(square.at(0).x, square.at(0).y), cv::Scalar(0, 0, 0), 3, 8, 0);
-				//cv::circle(imgsrc,(cv::Point)center_of_square,15,cv::Scalar(0,0,255),2,8,0);
+				// cv::line(imgsrc, cv::Point(square.at(0).x, square.at(0).y),
+				// cv::Point(square.at(1).x, square.at(1).y), cv::Scalar(0, 0, 255), 3, 8, 0); //BGR
+				// cv::line(imgsrc, cv::Point(square.at(1).x, square.at(1).y),
+				// cv::Point(square.at(2).x, square.at(2).y), cv::Scalar(0, 255, 0), 3, 8, 0);
+				// cv::line(imgsrc, cv::Point(square.at(2).x, square.at(2).y),
+				// cv::Point(square.at(3).x, square.at(3).y), cv::Scalar(255, 0, 0), 3, 8, 0);
+				// cv::line(imgsrc, cv::Point(square.at(3).x, square.at(3).y),
+				// cv::Point(square.at(0).x, square.at(0).y), cv::Scalar(0, 0, 0), 3, 8, 0);
+				// cv::circle(imgsrc,(cv::Point)center_of_square,15,cv::Scalar(0,0,255),2,8,0);
 			}
 			else if (side_ratio < 0.2)
 			{
-				area_triangle = cv::minEnclosingTriangle(contours.at(i), square_To_triangle);//有可能会是返回零个顶点！！！！！！！！导致越界访问！！！！！！！
+				area_triangle = cv::minEnclosingTriangle(
+				    contours.at(i),
+				    square_To_triangle);// 有可能会是返回零个顶点！！！！！！！！导致越界访问！！！！！！！
 
 				if (square_To_triangle.size() == 3)
 				{
-					triangle_side_length[0] = sqrtf(powf(square_To_triangle.at(0).x - square_To_triangle.at(1).x, 2) + powf(square_To_triangle.at(0).y - square_To_triangle.at(1).y, 2));
+					triangle_side_length[0] =
+					    sqrtf(powf(square_To_triangle.at(0).x - square_To_triangle.at(1).x, 2)
+					          + powf(square_To_triangle.at(0).y - square_To_triangle.at(1).y, 2));
 					side_length_min = triangle_side_length[0];
 					side_length_max = triangle_side_length[0];
 
-					triangle_side_length[1] = sqrtf(powf(square_To_triangle.at(1).x - square_To_triangle.at(2).x, 2) + powf(square_To_triangle.at(1).y - square_To_triangle.at(2).y, 2));
+					triangle_side_length[1] =
+					    sqrtf(powf(square_To_triangle.at(1).x - square_To_triangle.at(2).x, 2)
+					          + powf(square_To_triangle.at(1).y - square_To_triangle.at(2).y, 2));
 
 					if (triangle_side_length[1] < side_length_min)
 						side_length_min = triangle_side_length[1];
 					else if (triangle_side_length[1] > side_length_max)
 						side_length_max = triangle_side_length[1];
 
-					triangle_side_length[2] = sqrtf(powf(square_To_triangle.at(2).x - square_To_triangle.at(0).x, 2) + powf(square_To_triangle.at(2).y - square_To_triangle.at(0).y, 2));
+					triangle_side_length[2] =
+					    sqrtf(powf(square_To_triangle.at(2).x - square_To_triangle.at(0).x, 2)
+					          + powf(square_To_triangle.at(2).y - square_To_triangle.at(0).y, 2));
 
 					if (triangle_side_length[2] < side_length_min)
 						side_length_min = triangle_side_length[2];
@@ -678,40 +726,56 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 
 					side_ratio = side_length_min / side_length_max;
 
-					float lengRatio_triangle = cv::arcLength(cv::Mat(contours.at(i)), TRUE) / (triangle_side_length[0] + triangle_side_length[1] + triangle_side_length[2]);
+					float lengRatio_triangle = cv::arcLength(cv::Mat(contours.at(i)), TRUE)
+					                         / (triangle_side_length[0] + triangle_side_length[1]
+					                            + triangle_side_length[2]);
 
 					if (side_ratio > 0.5 && lengRatio_triangle < 1.5 && lengRatio_triangle > 2 / 3)
 					{
 						triangles_num++;
 
-						average_side_triangle = (triangle_side_length[0] + triangle_side_length[1] + triangle_side_length[2]) / 3;
-						center_of_triangle.x = (square_To_triangle.at(0).x + square_To_triangle.at(1).x + square_To_triangle.at(2).x) / 3;
-						center_of_triangle.y = (square_To_triangle.at(0).y + square_To_triangle.at(1).y + square_To_triangle.at(2).y) / 3;
+						average_side_triangle = (triangle_side_length[0] + triangle_side_length[1]
+						                         + triangle_side_length[2])
+						                      / 3;
+						center_of_triangle.x =
+						    (square_To_triangle.at(0).x + square_To_triangle.at(1).x
+						     + square_To_triangle.at(2).x)
+						    / 3;
+						center_of_triangle.y =
+						    (square_To_triangle.at(0).y + square_To_triangle.at(1).y
+						     + square_To_triangle.at(2).y)
+						    / 3;
 
-						//提取更精确的特征点
+						// 提取更精确的特征点
 						vector<cv::Point> featurePoints_moreAccurate;
 						featurePoints_moreAccurate.push_back(square_To_triangle[0]);
 						featurePoints_moreAccurate.push_back(square_To_triangle[1]);
 						featurePoints_moreAccurate.push_back(square_To_triangle[2]);
 
-						GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours.at(i), side_length_min / 12);
+						GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours.at(i),
+						                             side_length_min / 12);
 						for (int j = 0; j < 3; j++)
 						{
 							square_To_triangle[j] = featurePoints_moreAccurate.at(j);
 						}
 						featurePoints_moreAccurate.clear();
-						//提取更精确的特征点结束
-
+						// 提取更精确的特征点结束
 
 						Triangles.push_back(square_To_triangle);
 						Center_Of_Triangles.push_back(center_of_triangle);
 						AreaOfTriangles.push_back(area_triangle);
 						AverageSide_Triangles.push_back(average_side_triangle);
 
-						//cv::line(imgsrc, cv::Point(square_To_triangle.at(0).x, square_To_triangle.at(0).y), cv::Point(square_To_triangle.at(1).x, square_To_triangle.at(1).y), cv::Scalar(0, 255, 0), 3, 8, 0);
-						//cv::line(imgsrc, cv::Point(square_To_triangle.at(1).x, square_To_triangle.at(1).y), cv::Point(square_To_triangle.at(2).x, square_To_triangle.at(2).y), cv::Scalar(0, 255, 0), 3, 8, 0);
-						//cv::line(imgsrc, cv::Point(square_To_triangle.at(2).x, square_To_triangle.at(2).y), cv::Point(square_To_triangle.at(0).x, square_To_triangle.at(0).y), cv::Scalar(0, 255, 0), 3, 8, 0);
-						//cv::circle(imgsrc,(cv::Point)center_of_triangle,15,cv::Scalar(0,0,255),2,8,0);
+						// cv::line(imgsrc, cv::Point(square_To_triangle.at(0).x,
+						// square_To_triangle.at(0).y), cv::Point(square_To_triangle.at(1).x,
+						// square_To_triangle.at(1).y), cv::Scalar(0, 255, 0), 3, 8, 0);
+						// cv::line(imgsrc, cv::Point(square_To_triangle.at(1).x,
+						// square_To_triangle.at(1).y), cv::Point(square_To_triangle.at(2).x,
+						// square_To_triangle.at(2).y), cv::Scalar(0, 255, 0), 3, 8, 0);
+						// cv::line(imgsrc, cv::Point(square_To_triangle.at(2).x,
+						// square_To_triangle.at(2).y), cv::Point(square_To_triangle.at(0).x,
+						// square_To_triangle.at(0).y), cv::Scalar(0, 255, 0), 3, 8, 0);
+						// cv::circle(imgsrc,(cv::Point)center_of_triangle,15,cv::Scalar(0,0,255),2,8,0);
 
 						printf("由“四边形”纠正为“三角形”\r\n");
 					}
@@ -720,9 +784,9 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 			}
 			square.clear();
 		}
-		else if (approx.size() == 3 && fabs(cv::contourArea(cv::Mat(approx))) > contourSize_Triang && cv::isContourConvex(cv::Mat(approx)))
+		else if (approx.size() == 3 && fabs(cv::contourArea(cv::Mat(approx))) > contourSize_Triang
+		         && cv::isContourConvex(cv::Mat(approx)))
 		{
-
 			cv::drawContours(imgsrc, contours, i, cv::Scalar(255, 0, 0), 3);
 			for (int j = 0; j < 3; j++)
 			{
@@ -731,22 +795,25 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 
 			area_triangle = fabs(cv::contourArea(cv::Mat(approx)));
 
-			//cv::minEnclosingTriangle(contours.at(i),triangle);  //获得更精细的轮廓线
+			// cv::minEnclosingTriangle(contours.at(i),triangle);  //获得更精细的轮廓线
 
 			if (triangle.size() == 3)
 			{
-				triangle_side_length[0] = sqrtf(powf(triangle.at(0).x - triangle.at(1).x, 2) + powf(triangle.at(0).y - triangle.at(1).y, 2));
-				side_length_min = triangle_side_length[0];
-				side_length_max = triangle_side_length[0];
+				triangle_side_length[0] = sqrtf(powf(triangle.at(0).x - triangle.at(1).x, 2)
+				                                + powf(triangle.at(0).y - triangle.at(1).y, 2));
+				side_length_min         = triangle_side_length[0];
+				side_length_max         = triangle_side_length[0];
 
-				triangle_side_length[1] = sqrtf(powf(triangle.at(1).x - triangle.at(2).x, 2) + powf(triangle.at(1).y - triangle.at(2).y, 2));
+				triangle_side_length[1] = sqrtf(powf(triangle.at(1).x - triangle.at(2).x, 2)
+				                                + powf(triangle.at(1).y - triangle.at(2).y, 2));
 
 				if (triangle_side_length[1] < side_length_min)
 					side_length_min = triangle_side_length[1];
 				else if (triangle_side_length[1] > side_length_max)
 					side_length_max = triangle_side_length[1];
 
-				triangle_side_length[2] = sqrtf(powf(triangle.at(2).x - triangle.at(0).x, 2) + powf(triangle.at(2).y - triangle.at(0).y, 2));
+				triangle_side_length[2] = sqrtf(powf(triangle.at(2).x - triangle.at(0).x, 2)
+				                                + powf(triangle.at(2).y - triangle.at(0).y, 2));
 
 				if (triangle_side_length[2] < side_length_min)
 					side_length_min = triangle_side_length[2];
@@ -755,39 +822,49 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 
 				side_ratio = side_length_min / side_length_max;
 
-				float lengRatio_triangle = cv::arcLength(cv::Mat(contours.at(i)), TRUE) / (triangle_side_length[0] + triangle_side_length[1] + triangle_side_length[2]);
+				float lengRatio_triangle =
+				    cv::arcLength(cv::Mat(contours.at(i)), TRUE)
+				    / (triangle_side_length[0] + triangle_side_length[1] + triangle_side_length[2]);
 
 				if (side_ratio > 0.5 && lengRatio_triangle < 1.5 && lengRatio_triangle > 2 / 3)
 				{
 					triangles_num++;
-					average_side_triangle = (triangle_side_length[0] + triangle_side_length[1] + triangle_side_length[2]) / 3;
-					center_of_triangle.x = (triangle.at(0).x + triangle.at(1).x + triangle.at(2).x) / 3;
-					center_of_triangle.y = (triangle.at(0).y + triangle.at(1).y + triangle.at(2).y) / 3;
+					average_side_triangle = (triangle_side_length[0] + triangle_side_length[1]
+					                         + triangle_side_length[2])
+					                      / 3;
+					center_of_triangle.x =
+					    (triangle.at(0).x + triangle.at(1).x + triangle.at(2).x) / 3;
+					center_of_triangle.y =
+					    (triangle.at(0).y + triangle.at(1).y + triangle.at(2).y) / 3;
 
-
-					//提取更精确的特征点
+					// 提取更精确的特征点
 					vector<cv::Point> featurePoints_moreAccurate;
 					featurePoints_moreAccurate.push_back(triangle[0]);
 					featurePoints_moreAccurate.push_back(triangle[1]);
 					featurePoints_moreAccurate.push_back(triangle[2]);
 
-					GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours.at(i), side_length_min / 12);
+					GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours.at(i),
+					                             side_length_min / 12);
 					for (int j = 0; j < 3; j++)
 					{
 						triangle[j] = featurePoints_moreAccurate.at(j);
 					}
 					featurePoints_moreAccurate.clear();
-					//提取更精确的特征点结束
+					// 提取更精确的特征点结束
 
 					Triangles.push_back(triangle);
 					Center_Of_Triangles.push_back(center_of_triangle);
 					AreaOfTriangles.push_back(area_triangle);
 					AverageSide_Triangles.push_back(average_side_triangle);
 
-					//cv::line(imgsrc, cv::Point(triangle.at(0).x, triangle.at(0).y), cv::Point(triangle.at(1).x, triangle.at(1).y), cv::Scalar(0, 0, 255), 3, 8, 0); //BGR
-					//cv::line(imgsrc, cv::Point(triangle.at(1).x, triangle.at(1).y), cv::Point(triangle.at(2).x, triangle.at(2).y), cv::Scalar(0, 255, 0), 3, 8, 0);
-					//cv::line(imgsrc, cv::Point(triangle.at(2).x, triangle.at(2).y), cv::Point(triangle.at(0).x, triangle.at(0).y), cv::Scalar(255, 0, 0), 3, 8, 0);
-					//cv::circle(imgsrc, (cv::Point)center_of_triangle, 15, cv::Scalar(0, 0, 255), 2, 8, 0);
+					// cv::line(imgsrc, cv::Point(triangle.at(0).x, triangle.at(0).y),
+					// cv::Point(triangle.at(1).x, triangle.at(1).y), cv::Scalar(0, 0, 255), 3, 8,
+					// 0); //BGR cv::line(imgsrc, cv::Point(triangle.at(1).x, triangle.at(1).y),
+					// cv::Point(triangle.at(2).x, triangle.at(2).y), cv::Scalar(0, 255, 0), 3, 8,
+					// 0); cv::line(imgsrc, cv::Point(triangle.at(2).x, triangle.at(2).y),
+					// cv::Point(triangle.at(0).x, triangle.at(0).y), cv::Scalar(255, 0, 0), 3, 8,
+					// 0); cv::circle(imgsrc, (cv::Point)center_of_triangle, 15, cv::Scalar(0, 0,
+					// 255), 2, 8, 0);
 				}
 			}
 			triangle.clear();
@@ -795,11 +872,12 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 		approx.clear();
 	}
 
-
 	for (int i = 0; i < squares_num; i++)
 		for (int j = 0; j < triangles_num; j++)
 		{
-			if (Square_Triangle_Matching(Center_Of_Squares.at(i), AverageSide_Squares.at(i), AreaOfSquares.at(i), Center_Of_Triangles.at(j), AverageSide_Triangles.at(j), AreaOfTriangles.at(j)))
+			if (Square_Triangle_Matching(Center_Of_Squares.at(i), AverageSide_Squares.at(i),
+			                             AreaOfSquares.at(i), Center_Of_Triangles.at(j),
+			                             AverageSide_Triangles.at(j), AreaOfTriangles.at(j)))
 			{
 				MatchedSquares.push_back(Squares.at(i));
 				MatchedTriangles.push_back(Triangles.at(j));
@@ -809,28 +887,29 @@ void Feature_Detection(int ctrl, cv::Mat& imgsrc, vector<vector<cv::Point>>& fea
 
 	if (MatchedNum == 0)
 	{
-		successfulDetect = FALSE;
+		successfulDetect   = FALSE;
 		successfulTracking = FALSE;
 		printf("没检测到.....所需图像特征！！！\r\n\n");
 	}
 	else
 	{
-		successfulDetect = TRUE;
+		successfulDetect   = TRUE;
 		successfulTracking = TRUE;
 		printf("已检测到.....所需图像特征-------------%d 对\r\n\n", MatchedNum);
 		FeaturePoint_Extraction(MatchedNum, MatchedSquares, MatchedTriangles, featurePoints);
 	}
 
-
-	printf("检测-------The numbers of squares and triangles are respectively: (四边形)%d{%d}个、(三角形)%d{%d}个\r\n\n", squares_num, (int)Squares.size(), triangles_num, (int)Triangles.size());
-	//cv::namedWindow("ContoursImage", 0);
-	//cv::resizeWindow("ContoursImage", 640, 480);
-	//cv::imshow("ContoursImage", imgsrc);
-	//cv::waitKey(1);
+	printf("检测-------The numbers of squares and triangles are respectively: "
+	       "(四边形)%d{%d}个、(三角形)%d{%d}个\r\n\n",
+	       squares_num, (int)Squares.size(), triangles_num, (int)Triangles.size());
+	// cv::namedWindow("ContoursImage", 0);
+	// cv::resizeWindow("ContoursImage", 640, 480);
+	// cv::imshow("ContoursImage", imgsrc);
+	// cv::waitKey(1);
 }
 
-
-void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featurePoints_Previous, vector<cv::Point>& featurePoints_Current, float WindowRatio)
+void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featurePoints_Previous,
+                      vector<cv::Point>& featurePoints_Current, float WindowRatio)
 {
 	cv::Mat imgHSV_ROI;
 	cv::Mat imgThresholded_ROI;
@@ -877,10 +956,10 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 	ROI_center.y = (int)ROI_center.y / featurePoints_Previous.size();
 
 	height = max_y - min_y;
-	width = max_x - min_x;
+	width  = max_x - min_x;
 
 	height_ROI = (int)height * WindowRatio;
-	width_ROI = (int)width * WindowRatio;
+	width_ROI  = (int)width * WindowRatio;
 
 	left_top_x = (int)(ROI_center.x - width_ROI / 2);
 	left_top_y = (int)(ROI_center.y - height_ROI / 2);
@@ -910,80 +989,100 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 
 	cv::Mat imgBGR_ROI(imgsrc, cv::Rect(ROI_LeftTop, ROI_RightBottom));
 
-
 	cv::Mat imgHSV_ROI_Blur;
 	cv::Mat imgBGR_ROI_Blur(imgsrc, cv::Rect(ROI_LeftTop, ROI_RightBottom));
 	cv::GaussianBlur(imgBGR_ROI, imgBGR_ROI_Blur, cv::Size(7, 7), 7, 7);
 	cv::cvtColor(imgBGR_ROI_Blur, imgHSV_ROI_Blur, cv::COLOR_BGR2HSV);
 	cv::GaussianBlur(imgHSV_ROI_Blur, imgHSV_ROI, cv::Size(7, 7), 7, 7);
 
-
-	//cv::cvtColor(imgBGR_ROI, imgHSV_ROI, cv::COLOR_BGR2HSV);
+	// cv::cvtColor(imgBGR_ROI, imgHSV_ROI, cv::COLOR_BGR2HSV);
 
 	cv::namedWindow("TrackingWindow", 0);
 	cv::resizeWindow("TrackingWindow", 640, 480);
 
-	//cv::imshow("TrackingWindow",imgBGR_ROI);
+	// cv::imshow("TrackingWindow",imgBGR_ROI);
 
 	cv::imshow("TrackingWindow", imgBGR_ROI_Blur);
 
-
 	switch (ctrl_ROI)
 	{
-	case 0: {
-		//cv::inRange(imgHSV,cv::Scalar(128,0,0),cv::Scalar(255,127,127),imgThresholded); //蓝色BGR
-		cv::inRange(imgHSV_ROI, cv::Scalar(100, 43, 46), cv::Scalar(124, 255, 255), imgThresholded_ROI);//蓝色HSV
-		break;
-	}
-	case 1: {
-		//cv::inRange(imgHSV,cv::Scalar(128,128,128),cv::Scalar(255,255,255),imgThresholded);//白色BGR
-		cv::inRange(imgHSV_ROI, cv::Scalar(0, 0, 221), cv::Scalar(180, 30, 255), imgThresholded_ROI);//白色HSV
-		break;
-	}
-	case 2: {
-		//cv::inRange(imgHSV,cv::Scalar(128,128,0),cv::Scalar(255,255,127),imgThresholded);//靛色BGR
-		//cv::inRange(imgHSV_ROI, cv::Scalar(72, 40, 30), cv::Scalar(102, 255, 255), imgThresholded_indigo_ROI);//靛色HSV
-		//cv::inRange(imgHSV_ROI, cv::Scalar(90, 40, 40), cv::Scalar(150, 255, 255), imgThresholded_green_ROI);//绿色
-		//cv::inRange(imgHSV_ROI, cv::Scalar(48, 48, 5), cv::Scalar(88, 240, 255), imgThresholded_green_ROI);//绿色HSV
-		//cv::add(imgThresholded_indigo_ROI, imgThresholded_green_ROI, imgThresholded_ROI);
-		//cv::inRange(imgHSV_ROI, cv::Scalar(48, 48, 5), cv::Scalar(88, 240, 240), imgThresholded_ROI);//绿色HSV
-		cv::inRange(imgHSV_ROI, cv::Scalar(63, 40, 40), cv::Scalar(140, 255, 255), imgThresholded_ROI);//绿色HSV
-		break;
-	}
-	case 3: {
-		//cv::inRange(imgHSV,cv::Scalar(128,0,128),cv::Scalar(255,127,255),imgThresholded);//紫色BGR
-		cv::inRange(imgHSV_ROI, cv::Scalar(125, 43, 46), cv::Scalar(155, 255, 255), imgThresholded_ROI);//紫色HSV
-		break;
-	}
-	case 4: {
-		//cv::inRange(imgHSV,cv::Scalar(0,128,128),cv::Scalar(127,255,255),imgThresholded);//黄色BGR
-		//cv::inRange(imgHSV, cv::Scalar(26, 43, 46), cv::Scalar(34, 255, 255), imgThresholded);//黄色HSV
-		cv::inRange(imgHSV_ROI, cv::Scalar(27, 45, 30), cv::Scalar(39, 255, 255), imgThresholded_ROI);//黄色HSV
-		break;
-	}
-	case 5: {
-		//cv::inRange(imgHSV,cv::Scalar(0,128,0),cv::Scalar(127,255,127),imgThresholded);//绿色BGR
-		//cv::inRange(imgHSV, cv::Scalar(35, 43, 46), cv::Scalar(77, 255, 255), imgThresholded);//绿色HSV
-		cv::inRange(imgHSV_ROI, cv::Scalar(45, 48, 48), cv::Scalar(88, 240, 240), imgThresholded_green_ROI);  //绿色HSV
-		cv::inRange(imgHSV_ROI, cv::Scalar(72, 40, 30), cv::Scalar(102, 255, 255), imgThresholded_indigo_ROI);//靛色HSV
-		cv::add(imgThresholded_indigo_ROI, imgThresholded_green_ROI, imgThresholded_ROI);
-		break;
-	}
-	case 6: {
-		//cv::inRange(imgHSV,cv::Scalar(0,0,128),cv::Scalar(127,127,255),imgThresholded);//红色BGR
-		//cv::inRange(imgHSV, cv::Scalar(0, 43, 46), cv::Scalar(10, 255, 255), imgThresholded);//红色HSV
-		cv::inRange(imgHSV_ROI, cv::Scalar(0, 43, 30), cv::Scalar(15, 255, 255), imgThresholded_ROI);//红色HSV
-		break;
-	}
-	case 7: {
-		//cv::inRange(imgHSV,cv::Scalar(0,0,0),cv::Scalar(127,127,127),imgThresholded);//黑色BGR
-		cv::inRange(imgHSV_ROI, cv::Scalar(0, 0, 0), cv::Scalar(180, 255, 46), imgThresholded_ROI);//黑色HSV
-		break;
-	}
+		case 0:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(128,0,0),cv::Scalar(255,127,127),imgThresholded);
+			// //蓝色BGR
+			cv::inRange(imgHSV_ROI, cv::Scalar(100, 43, 46), cv::Scalar(124, 255, 255),
+			            imgThresholded_ROI);// 蓝色HSV
+			break;
+		}
+		case 1:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(128,128,128),cv::Scalar(255,255,255),imgThresholded);//白色BGR
+			cv::inRange(imgHSV_ROI, cv::Scalar(0, 0, 221), cv::Scalar(180, 30, 255),
+			            imgThresholded_ROI);// 白色HSV
+			break;
+		}
+		case 2:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(128,128,0),cv::Scalar(255,255,127),imgThresholded);//靛色BGR
+			// cv::inRange(imgHSV_ROI, cv::Scalar(72, 40, 30), cv::Scalar(102, 255, 255),
+			// imgThresholded_indigo_ROI);//靛色HSV cv::inRange(imgHSV_ROI, cv::Scalar(90, 40, 40),
+			// cv::Scalar(150, 255, 255), imgThresholded_green_ROI);//绿色 cv::inRange(imgHSV_ROI,
+			// cv::Scalar(48, 48, 5), cv::Scalar(88, 240, 255), imgThresholded_green_ROI);//绿色HSV
+			// cv::add(imgThresholded_indigo_ROI, imgThresholded_green_ROI, imgThresholded_ROI);
+			// cv::inRange(imgHSV_ROI, cv::Scalar(48, 48, 5), cv::Scalar(88, 240, 240),
+			// imgThresholded_ROI);//绿色HSV
+			cv::inRange(imgHSV_ROI, cv::Scalar(63, 40, 40), cv::Scalar(140, 255, 255),
+			            imgThresholded_ROI);// 绿色HSV
+			break;
+		}
+		case 3:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(128,0,128),cv::Scalar(255,127,255),imgThresholded);//紫色BGR
+			cv::inRange(imgHSV_ROI, cv::Scalar(125, 43, 46), cv::Scalar(155, 255, 255),
+			            imgThresholded_ROI);// 紫色HSV
+			break;
+		}
+		case 4:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(0,128,128),cv::Scalar(127,255,255),imgThresholded);//黄色BGR
+			// cv::inRange(imgHSV, cv::Scalar(26, 43, 46), cv::Scalar(34, 255, 255),
+			// imgThresholded);//黄色HSV
+			cv::inRange(imgHSV_ROI, cv::Scalar(27, 45, 30), cv::Scalar(39, 255, 255),
+			            imgThresholded_ROI);// 黄色HSV
+			break;
+		}
+		case 5:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(0,128,0),cv::Scalar(127,255,127),imgThresholded);//绿色BGR
+			// cv::inRange(imgHSV, cv::Scalar(35, 43, 46), cv::Scalar(77, 255, 255),
+			// imgThresholded);//绿色HSV
+			cv::inRange(imgHSV_ROI, cv::Scalar(45, 48, 48), cv::Scalar(88, 240, 240),
+			            imgThresholded_green_ROI);// 绿色HSV
+			cv::inRange(imgHSV_ROI, cv::Scalar(72, 40, 30), cv::Scalar(102, 255, 255),
+			            imgThresholded_indigo_ROI);// 靛色HSV
+			cv::add(imgThresholded_indigo_ROI, imgThresholded_green_ROI, imgThresholded_ROI);
+			break;
+		}
+		case 6:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(0,0,128),cv::Scalar(127,127,255),imgThresholded);//红色BGR
+			// cv::inRange(imgHSV, cv::Scalar(0, 43, 46), cv::Scalar(10, 255, 255),
+			// imgThresholded);//红色HSV
+			cv::inRange(imgHSV_ROI, cv::Scalar(0, 43, 30), cv::Scalar(15, 255, 255),
+			            imgThresholded_ROI);// 红色HSV
+			break;
+		}
+		case 7:
+		{
+			// cv::inRange(imgHSV,cv::Scalar(0,0,0),cv::Scalar(127,127,127),imgThresholded);//黑色BGR
+			cv::inRange(imgHSV_ROI, cv::Scalar(0, 0, 0), cv::Scalar(180, 255, 46),
+			            imgThresholded_ROI);// 黑色HSV
+			break;
+		}
 	}
 
 	cv::namedWindow("ThresholdedImage_ROI", 0);
-	//cv::resizeWindow("ThresholdedImage", 640, 480);
+	// cv::resizeWindow("ThresholdedImage", 640, 480);
 	cv::imshow("ThresholdedImage_ROI", imgThresholded_ROI);
 
 	cv::Mat element_ROI = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
@@ -991,16 +1090,15 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 	cv::morphologyEx(imgThresholded_ROI, imgThresholded_ROI, cv::MORPH_CLOSE, element_ROI);
 	cv::morphologyEx(imgThresholded_ROI, imgThresholded_ROI, cv::MORPH_OPEN, element_ROI);
 
-
 	cv::namedWindow("ThresholdedImageAfterMorph_ROI", 0);
-	//cv::resizeWindow("ThresholdedImageAfterMorph", 640, 480);
+	// cv::resizeWindow("ThresholdedImageAfterMorph", 640, 480);
 	cv::imshow("ThresholdedImageAfterMorph_ROI", imgThresholded_ROI);
-
 
 	vector<vector<cv::Point>> contours_ROI;
 	vector<cv::Vec4i> hierarchy_ROI;
 
-	cv::findContours(imgThresholded_ROI, contours_ROI, hierarchy_ROI, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+	cv::findContours(imgThresholded_ROI, contours_ROI, hierarchy_ROI, cv::RETR_LIST,
+	                 cv::CHAIN_APPROX_NONE);
 
 	vector<vector<cv::Point>> featurePoints_ROI;
 	vector<cv::Point> featurePoints_Current_ROI;
@@ -1040,60 +1138,67 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 	cv::Point2f center_of_square_ROI;
 	cv::Point2f center_of_triangle_ROI;
 
-	int squares_num_ROI = 0;
+	int squares_num_ROI   = 0;
 	int triangles_num_ROI = 0;
 
-	float square_side_length_ROI[4] = {0, 0, 0, 0};
+	float square_side_length_ROI[4]   = {0, 0, 0, 0};
 	float triangle_side_length_ROI[3] = {0, 0, 0};
 
 	float side_length_min_ROI = 0;
 	float side_length_max_ROI = 0;
 
-	float side_ratio_ROI = 0;
+	float side_ratio_ROI              = 0;
 	float opposite_side_ratios_ROI[2] = {0, 0};
 
-	int contourSize_Square = 150;//原来设置600
-	int contourSize_Triang = 100;//原来设置400
+	int contourSize_Square = 150;// 原来设置600
+	int contourSize_Triang = 100;// 原来设置400
 
 	for (size_t i = 0; i < contours_ROI.size(); i++)
 	{
-		cv::approxPolyDP(contours_ROI.at(i), approx_ROI, cv::arcLength(cv::Mat(contours_ROI.at(i)), TRUE) * 0.02, TRUE);
+		cv::approxPolyDP(contours_ROI.at(i), approx_ROI,
+		                 cv::arcLength(cv::Mat(contours_ROI.at(i)), TRUE) * 0.02, TRUE);
 
-		if (approx_ROI.size() == 4 && fabs(cv::contourArea(cv::Mat(approx_ROI))) > contourSize_Square && cv::isContourConvex(cv::Mat(approx_ROI)))
+		if (approx_ROI.size() == 4
+		    && fabs(cv::contourArea(cv::Mat(approx_ROI))) > contourSize_Square
+		    && cv::isContourConvex(cv::Mat(approx_ROI)))
 		{
 			for (int j = 0; j < 4; j++)
 			{
 				square_ROI.push_back(cv::Point(approx_ROI.at(j).x, approx_ROI.at(j).y));
-				//ctrl+K、ctrl+C//ctrl+K、ctrl+U
+				// ctrl+K、ctrl+C//ctrl+K、ctrl+U
 			}
 			cv::drawContours(imgBGR_ROI, contours_ROI, i, cv::Scalar(255, 0, 0), 3);
 
-			square_side_length_ROI[0] = sqrtf(powf(approx_ROI.at(0).x - approx_ROI.at(1).x, 2) + powf(approx_ROI.at(0).y - approx_ROI.at(1).y, 2));
-			side_length_min_ROI = square_side_length_ROI[0];
-			side_length_max_ROI = square_side_length_ROI[0];
+			square_side_length_ROI[0] = sqrtf(powf(approx_ROI.at(0).x - approx_ROI.at(1).x, 2)
+			                                  + powf(approx_ROI.at(0).y - approx_ROI.at(1).y, 2));
+			side_length_min_ROI       = square_side_length_ROI[0];
+			side_length_max_ROI       = square_side_length_ROI[0];
 
-			square_side_length_ROI[1] = sqrtf(powf(approx_ROI.at(1).x - approx_ROI.at(2).x, 2) + powf(approx_ROI.at(1).y - approx_ROI.at(2).y, 2));
+			square_side_length_ROI[1] = sqrtf(powf(approx_ROI.at(1).x - approx_ROI.at(2).x, 2)
+			                                  + powf(approx_ROI.at(1).y - approx_ROI.at(2).y, 2));
 
 			if (square_side_length_ROI[1] < side_length_min_ROI)
 				side_length_min_ROI = square_side_length_ROI[1];
 			else if (square_side_length_ROI[1] > side_length_max_ROI)
 				side_length_max_ROI = square_side_length_ROI[1];
 
-			square_side_length_ROI[2] = sqrtf(powf(approx_ROI.at(2).x - approx_ROI.at(3).x, 2) + powf(approx_ROI.at(2).y - approx_ROI.at(3).y, 2));
+			square_side_length_ROI[2] = sqrtf(powf(approx_ROI.at(2).x - approx_ROI.at(3).x, 2)
+			                                  + powf(approx_ROI.at(2).y - approx_ROI.at(3).y, 2));
 
 			if (square_side_length_ROI[2] < side_length_min_ROI)
 				side_length_min_ROI = square_side_length_ROI[2];
 			else if (square_side_length_ROI[2] > side_length_max_ROI)
 				side_length_max_ROI = square_side_length_ROI[2];
 
-			square_side_length_ROI[3] = sqrtf(powf(approx_ROI.at(3).x - approx_ROI.at(0).x, 2) + powf(approx_ROI.at(3).y - approx_ROI.at(0).y, 2));
+			square_side_length_ROI[3] = sqrtf(powf(approx_ROI.at(3).x - approx_ROI.at(0).x, 2)
+			                                  + powf(approx_ROI.at(3).y - approx_ROI.at(0).y, 2));
 
 			if (square_side_length_ROI[3] < side_length_min_ROI)
 				side_length_min_ROI = square_side_length_ROI[3];
 			else if (square_side_length_ROI[3] > side_length_max_ROI)
 				side_length_max_ROI = square_side_length_ROI[3];
 
-			side_ratio_ROI = side_length_min_ROI / side_length_max_ROI;
+			side_ratio_ROI              = side_length_min_ROI / side_length_max_ROI;
 			opposite_side_ratios_ROI[0] = square_side_length_ROI[0] / square_side_length_ROI[2];
 
 			if (opposite_side_ratios_ROI[0] > 1)
@@ -1104,70 +1209,84 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 			if (opposite_side_ratios_ROI[1] > 1)
 				opposite_side_ratios_ROI[1] = square_side_length_ROI[3] / square_side_length_ROI[1];
 
-			if (side_ratio_ROI > 0.3 && opposite_side_ratios_ROI[0] > 0.8 && opposite_side_ratios_ROI[1] > 0.8)
+			if (side_ratio_ROI > 0.3 && opposite_side_ratios_ROI[0] > 0.8
+			    && opposite_side_ratios_ROI[1] > 0.8)
 			{
-				//rotatedrect_ROI = cv::minAreaRect(contours_ROI.at(i));
+				// rotatedrect_ROI = cv::minAreaRect(contours_ROI.at(i));
 
-				//rotatedrect_ROI.points(rectPoints_ROI);
-				//center_of_square_ROI = rotatedrect_ROI.center;
+				// rotatedrect_ROI.points(rectPoints_ROI);
+				// center_of_square_ROI = rotatedrect_ROI.center;
 
 				center_of_square_ROI.x = (square_ROI[0].x + square_ROI[2].x) / 2;
 				center_of_square_ROI.y = (square_ROI[0].y + square_ROI[2].y) / 2;
-				area_square_ROI = square_side_length_ROI[0] * square_side_length_ROI[1];
-				average_side_square_ROI = (square_side_length_ROI[0] + square_side_length_ROI[1]) / 2;
+				area_square_ROI        = square_side_length_ROI[0] * square_side_length_ROI[1];
+				average_side_square_ROI =
+				    (square_side_length_ROI[0] + square_side_length_ROI[1]) / 2;
 
-				//square_ROI.push_back((cv::Point)rectPoints_ROI[0]);
-				//square_ROI.push_back((cv::Point)rectPoints_ROI[1]);
-				//square_ROI.push_back((cv::Point)rectPoints_ROI[2]);
-				//square_ROI.push_back((cv::Point)rectPoints_ROI[3]);
+				// square_ROI.push_back((cv::Point)rectPoints_ROI[0]);
+				// square_ROI.push_back((cv::Point)rectPoints_ROI[1]);
+				// square_ROI.push_back((cv::Point)rectPoints_ROI[2]);
+				// square_ROI.push_back((cv::Point)rectPoints_ROI[3]);
 
 				squares_num_ROI++;
 
-				//提取更精确的特征点
+				// 提取更精确的特征点
 				vector<cv::Point> featurePoints_moreAccurate;
 				featurePoints_moreAccurate.push_back(square_ROI[0]);
 				featurePoints_moreAccurate.push_back(square_ROI[1]);
 				featurePoints_moreAccurate.push_back(square_ROI[2]);
 				featurePoints_moreAccurate.push_back(square_ROI[3]);
 
-				GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours_ROI.at(i), side_length_min_ROI / 12);
+				GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours_ROI.at(i),
+				                             side_length_min_ROI / 12);
 				for (int j = 0; j < 4; j++)
 				{
 					square_ROI[j] = featurePoints_moreAccurate.at(j);
 				}
 				featurePoints_moreAccurate.clear();
-				//提取更精确的特征点结束
-
+				// 提取更精确的特征点结束
 
 				Squares_ROI.push_back(square_ROI);
 				Center_Of_Squares_ROI.push_back(center_of_square_ROI);
 				AreaOfSquares_ROI.push_back(area_square_ROI);
 				AverageSide_Squares_ROI.push_back(average_side_square_ROI);
 
-				//cv::line(imgsrc, cv::Point(square_ROI.at(0).x, square_ROI.at(0).y), cv::Point(square_ROI.at(1).x, square_ROI.at(1).y), cv::Scalar(0, 0, 255), 3, 8, 0);  //BGR
-				//cv::line(imgsrc, cv::Point(square_ROI.at(1).x, square_ROI.at(1).y), cv::Point(square_ROI.at(2).x, square_ROI.at(2).y), cv::Scalar(0, 255, 0), 3, 8, 0);
-				//cv::line(imgsrc, cv::Point(square_ROI.at(2).x, square_ROI.at(2).y), cv::Point(square_ROI.at(3).x, square_ROI.at(3).y), cv::Scalar(255, 0, 0), 3, 8, 0);
-				//cv::line(imgsrc, cv::Point(square_ROI.at(3).x, square_ROI.at(3).y), cv::Point(square_ROI.at(0).x, square_ROI.at(0).y), cv::Scalar(0, 0, 0), 3, 8, 0);
-				//cv::circle(imgsrc,(cv::Point)center_of_square_ROI,15,cv::Scalar(0,0,255),2,8,0);
+				// cv::line(imgsrc, cv::Point(square_ROI.at(0).x, square_ROI.at(0).y),
+				// cv::Point(square_ROI.at(1).x, square_ROI.at(1).y), cv::Scalar(0, 0, 255), 3, 8,
+				// 0);  //BGR cv::line(imgsrc, cv::Point(square_ROI.at(1).x, square_ROI.at(1).y),
+				// cv::Point(square_ROI.at(2).x, square_ROI.at(2).y), cv::Scalar(0, 255, 0), 3, 8,
+				// 0); cv::line(imgsrc, cv::Point(square_ROI.at(2).x, square_ROI.at(2).y),
+				// cv::Point(square_ROI.at(3).x, square_ROI.at(3).y), cv::Scalar(255, 0, 0), 3, 8,
+				// 0); cv::line(imgsrc, cv::Point(square_ROI.at(3).x, square_ROI.at(3).y),
+				// cv::Point(square_ROI.at(0).x, square_ROI.at(0).y), cv::Scalar(0, 0, 0), 3, 8, 0);
+				// cv::circle(imgsrc,(cv::Point)center_of_square_ROI,15,cv::Scalar(0,0,255),2,8,0);
 			}
 			else if (side_ratio_ROI < 0.2)
 			{
-				area_triangle_ROI = cv::minEnclosingTriangle(contours_ROI.at(i), square_To_triangle_ROI);//有可能会是返回零个顶点！！！！！！！！导致越界访问！！！！！！！
+				area_triangle_ROI = cv::minEnclosingTriangle(
+				    contours_ROI.at(i),
+				    square_To_triangle_ROI);// 有可能会是返回零个顶点！！！！！！！！导致越界访问！！！！！！！
 
 				if (square_To_triangle_ROI.size() == 3)
 				{
-					triangle_side_length_ROI[0] = sqrtf(powf(square_To_triangle_ROI.at(0).x - square_To_triangle_ROI.at(1).x, 2) + powf(square_To_triangle_ROI.at(0).y - square_To_triangle_ROI.at(1).y, 2));
+					triangle_side_length_ROI[0] = sqrtf(
+					    powf(square_To_triangle_ROI.at(0).x - square_To_triangle_ROI.at(1).x, 2)
+					    + powf(square_To_triangle_ROI.at(0).y - square_To_triangle_ROI.at(1).y, 2));
 					side_length_min_ROI = triangle_side_length_ROI[0];
 					side_length_max_ROI = triangle_side_length_ROI[0];
 
-					triangle_side_length_ROI[1] = sqrtf(powf(square_To_triangle_ROI.at(1).x - square_To_triangle_ROI.at(2).x, 2) + powf(square_To_triangle_ROI.at(1).y - square_To_triangle_ROI.at(2).y, 2));
+					triangle_side_length_ROI[1] = sqrtf(
+					    powf(square_To_triangle_ROI.at(1).x - square_To_triangle_ROI.at(2).x, 2)
+					    + powf(square_To_triangle_ROI.at(1).y - square_To_triangle_ROI.at(2).y, 2));
 
 					if (triangle_side_length_ROI[1] < side_length_min_ROI)
 						side_length_min_ROI = triangle_side_length_ROI[1];
 					else if (triangle_side_length_ROI[1] > side_length_max_ROI)
 						side_length_max_ROI = triangle_side_length_ROI[1];
 
-					triangle_side_length_ROI[2] = sqrtf(powf(square_To_triangle_ROI.at(2).x - square_To_triangle_ROI.at(0).x, 2) + powf(square_To_triangle_ROI.at(2).y - square_To_triangle_ROI.at(0).y, 2));
+					triangle_side_length_ROI[2] = sqrtf(
+					    powf(square_To_triangle_ROI.at(2).x - square_To_triangle_ROI.at(0).x, 2)
+					    + powf(square_To_triangle_ROI.at(2).y - square_To_triangle_ROI.at(0).y, 2));
 
 					if (triangle_side_length_ROI[2] < side_length_min_ROI)
 						side_length_min_ROI = triangle_side_length_ROI[2];
@@ -1180,35 +1299,52 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 					{
 						triangles_num_ROI++;
 
-						average_side_triangle_ROI = (triangle_side_length_ROI[0] + triangle_side_length_ROI[1] + triangle_side_length_ROI[2]) / 3;
-						center_of_triangle_ROI.x = (square_To_triangle_ROI.at(0).x + square_To_triangle_ROI.at(1).x + square_To_triangle_ROI.at(2).x) / 3;
-						center_of_triangle_ROI.y = (square_To_triangle_ROI.at(0).y + square_To_triangle_ROI.at(1).y + square_To_triangle_ROI.at(2).y) / 3;
+						average_side_triangle_ROI =
+						    (triangle_side_length_ROI[0] + triangle_side_length_ROI[1]
+						     + triangle_side_length_ROI[2])
+						    / 3;
+						center_of_triangle_ROI.x =
+						    (square_To_triangle_ROI.at(0).x + square_To_triangle_ROI.at(1).x
+						     + square_To_triangle_ROI.at(2).x)
+						    / 3;
+						center_of_triangle_ROI.y =
+						    (square_To_triangle_ROI.at(0).y + square_To_triangle_ROI.at(1).y
+						     + square_To_triangle_ROI.at(2).y)
+						    / 3;
 
-
-						//提取更精确的特征点
+						// 提取更精确的特征点
 						vector<cv::Point> featurePoints_moreAccurate;
 						featurePoints_moreAccurate.push_back(square_To_triangle_ROI[0]);
 						featurePoints_moreAccurate.push_back(square_To_triangle_ROI[1]);
 						featurePoints_moreAccurate.push_back(square_To_triangle_ROI[2]);
 
-						GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours_ROI.at(i), side_length_min_ROI / 12);
+						GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours_ROI.at(i),
+						                             side_length_min_ROI / 12);
 						for (int j = 0; j < 3; j++)
 						{
 							square_To_triangle_ROI[j] = featurePoints_moreAccurate.at(j);
 						}
 						featurePoints_moreAccurate.clear();
-						//提取更精确的特征点结束
-
+						// 提取更精确的特征点结束
 
 						Triangles_ROI.push_back(square_To_triangle_ROI);
 						Center_Of_Triangles_ROI.push_back(center_of_triangle_ROI);
 						AreaOfTriangles_ROI.push_back(area_triangle_ROI);
 						AverageSide_Triangles_ROI.push_back(average_side_triangle_ROI);
 
-						//cv::line(imgsrc, cv::Point(square_To_triangle_ROI.at(0).x, square_To_triangle_ROI.at(0).y), cv::Point(square_To_triangle_ROI.at(1).x, square_To_triangle_ROI.at(1).y), cv::Scalar(0, 255, 0), 3, 8, 0);
-						//cv::line(imgsrc, cv::Point(square_To_triangle_ROI.at(1).x, square_To_triangle_ROI.at(1).y), cv::Point(square_To_triangle_ROI.at(2).x, square_To_triangle_ROI.at(2).y), cv::Scalar(0, 255, 0), 3, 8, 0);
-						//cv::line(imgsrc, cv::Point(square_To_triangle_ROI.at(2).x, square_To_triangle_ROI.at(2).y), cv::Point(square_To_triangle_ROI.at(0).x, square_To_triangle_ROI.at(0).y), cv::Scalar(0, 255, 0), 3, 8, 0);
-						//cv::circle(imgsrc,(cv::Point)center_of_triangle_ROI,15,cv::Scalar(0,0,255),2,8,0);
+						// cv::line(imgsrc, cv::Point(square_To_triangle_ROI.at(0).x,
+						// square_To_triangle_ROI.at(0).y),
+						// cv::Point(square_To_triangle_ROI.at(1).x,
+						// square_To_triangle_ROI.at(1).y), cv::Scalar(0, 255, 0), 3, 8, 0);
+						// cv::line(imgsrc, cv::Point(square_To_triangle_ROI.at(1).x,
+						// square_To_triangle_ROI.at(1).y),
+						// cv::Point(square_To_triangle_ROI.at(2).x,
+						// square_To_triangle_ROI.at(2).y), cv::Scalar(0, 255, 0), 3, 8, 0);
+						// cv::line(imgsrc, cv::Point(square_To_triangle_ROI.at(2).x,
+						// square_To_triangle_ROI.at(2).y),
+						// cv::Point(square_To_triangle_ROI.at(0).x,
+						// square_To_triangle_ROI.at(0).y), cv::Scalar(0, 255, 0), 3, 8, 0);
+						// cv::circle(imgsrc,(cv::Point)center_of_triangle_ROI,15,cv::Scalar(0,0,255),2,8,0);
 
 						printf("由“四边形”纠正为“三角形”\r\n");
 					}
@@ -1217,9 +1353,10 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 			}
 			square_ROI.clear();
 		}
-		else if (approx_ROI.size() == 3 && fabs(cv::contourArea(cv::Mat(approx_ROI))) > contourSize_Triang && cv::isContourConvex(cv::Mat(approx_ROI)))
+		else if (approx_ROI.size() == 3
+		         && fabs(cv::contourArea(cv::Mat(approx_ROI))) > contourSize_Triang
+		         && cv::isContourConvex(cv::Mat(approx_ROI)))
 		{
-
 			cv::drawContours(imgBGR_ROI, contours_ROI, i, cv::Scalar(255, 0, 0), 3);
 			for (int j = 0; j < 3; j++)
 			{
@@ -1228,22 +1365,28 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 
 			area_triangle_ROI = fabs(cv::contourArea(cv::Mat(approx_ROI)));
 
-			//cv::minEnclosingTriangle(contours_ROI.at(i),triangle_ROI);  //获得更精细的轮廓线
+			// cv::minEnclosingTriangle(contours_ROI.at(i),triangle_ROI);  //获得更精细的轮廓线
 
 			if (triangle_ROI.size() == 3)
 			{
-				triangle_side_length_ROI[0] = sqrtf(powf(triangle_ROI.at(0).x - triangle_ROI.at(1).x, 2) + powf(triangle_ROI.at(0).y - triangle_ROI.at(1).y, 2));
+				triangle_side_length_ROI[0] =
+				    sqrtf(powf(triangle_ROI.at(0).x - triangle_ROI.at(1).x, 2)
+				          + powf(triangle_ROI.at(0).y - triangle_ROI.at(1).y, 2));
 				side_length_min_ROI = triangle_side_length_ROI[0];
 				side_length_max_ROI = triangle_side_length_ROI[0];
 
-				triangle_side_length_ROI[1] = sqrtf(powf(triangle_ROI.at(1).x - triangle_ROI.at(2).x, 2) + powf(triangle_ROI.at(1).y - triangle_ROI.at(2).y, 2));
+				triangle_side_length_ROI[1] =
+				    sqrtf(powf(triangle_ROI.at(1).x - triangle_ROI.at(2).x, 2)
+				          + powf(triangle_ROI.at(1).y - triangle_ROI.at(2).y, 2));
 
 				if (triangle_side_length_ROI[1] < side_length_min_ROI)
 					side_length_min_ROI = triangle_side_length_ROI[1];
 				else if (triangle_side_length_ROI[1] > side_length_max_ROI)
 					side_length_max_ROI = triangle_side_length_ROI[1];
 
-				triangle_side_length_ROI[2] = sqrtf(powf(triangle_ROI.at(2).x - triangle_ROI.at(0).x, 2) + powf(triangle_ROI.at(2).y - triangle_ROI.at(0).y, 2));
+				triangle_side_length_ROI[2] =
+				    sqrtf(powf(triangle_ROI.at(2).x - triangle_ROI.at(0).x, 2)
+				          + powf(triangle_ROI.at(2).y - triangle_ROI.at(0).y, 2));
 
 				if (triangle_side_length_ROI[2] < side_length_min_ROI)
 					side_length_min_ROI = triangle_side_length_ROI[2];
@@ -1255,34 +1398,44 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 				if (side_ratio_ROI > 0.5)
 				{
 					triangles_num_ROI++;
-					average_side_triangle_ROI = (triangle_side_length_ROI[0] + triangle_side_length_ROI[1] + triangle_side_length_ROI[2]) / 3;
-					center_of_triangle_ROI.x = (triangle_ROI.at(0).x + triangle_ROI.at(1).x + triangle_ROI.at(2).x) / 3;
-					center_of_triangle_ROI.y = (triangle_ROI.at(0).y + triangle_ROI.at(1).y + triangle_ROI.at(2).y) / 3;
+					average_side_triangle_ROI =
+					    (triangle_side_length_ROI[0] + triangle_side_length_ROI[1]
+					     + triangle_side_length_ROI[2])
+					    / 3;
+					center_of_triangle_ROI.x =
+					    (triangle_ROI.at(0).x + triangle_ROI.at(1).x + triangle_ROI.at(2).x) / 3;
+					center_of_triangle_ROI.y =
+					    (triangle_ROI.at(0).y + triangle_ROI.at(1).y + triangle_ROI.at(2).y) / 3;
 
-					//提取更精确的特征点
+					// 提取更精确的特征点
 					vector<cv::Point> featurePoints_moreAccurate;
 					featurePoints_moreAccurate.push_back(triangle_ROI[0]);
 					featurePoints_moreAccurate.push_back(triangle_ROI[1]);
 					featurePoints_moreAccurate.push_back(triangle_ROI[2]);
 
-					GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours_ROI.at(i), side_length_min_ROI / 12);
+					GetMoreAccurateFeaturePoints(featurePoints_moreAccurate, contours_ROI.at(i),
+					                             side_length_min_ROI / 12);
 					for (int j = 0; j < 3; j++)
 					{
 						triangle_ROI[j] = featurePoints_moreAccurate.at(j);
 					}
 					featurePoints_moreAccurate.clear();
-					//提取更精确的特征点结束
-
+					// 提取更精确的特征点结束
 
 					Triangles_ROI.push_back(triangle_ROI);
 					Center_Of_Triangles_ROI.push_back(center_of_triangle_ROI);
 					AreaOfTriangles_ROI.push_back(area_triangle_ROI);
 					AverageSide_Triangles_ROI.push_back(average_side_triangle_ROI);
 
-					//cv::line(imgsrc, cv::Point(triangle_ROI.at(0).x, triangle_ROI.at(0).y), cv::Point(triangle_ROI.at(1).x, triangle_ROI.at(1).y), cv::Scalar(0, 0, 255), 3, 8, 0); //BGR
-					//cv::line(imgsrc, cv::Point(triangle_ROI.at(1).x, triangle_ROI.at(1).y), cv::Point(triangle_ROI.at(2).x, triangle_ROI.at(2).y), cv::Scalar(0, 255, 0), 3, 8, 0);
-					//cv::line(imgsrc, cv::Point(triangle_ROI.at(2).x, triangle_ROI.at(2).y), cv::Point(triangle_ROI.at(0).x, triangle_ROI.at(0).y), cv::Scalar(255, 0, 0), 3, 8, 0);
-					//cv::circle(imgsrc, (cv::Point)center_of_triangle_ROI, 15, cv::Scalar(0, 0, 255), 2, 8, 0);
+					// cv::line(imgsrc, cv::Point(triangle_ROI.at(0).x, triangle_ROI.at(0).y),
+					// cv::Point(triangle_ROI.at(1).x, triangle_ROI.at(1).y), cv::Scalar(0, 0, 255),
+					// 3, 8, 0); //BGR cv::line(imgsrc, cv::Point(triangle_ROI.at(1).x,
+					// triangle_ROI.at(1).y), cv::Point(triangle_ROI.at(2).x, triangle_ROI.at(2).y),
+					// cv::Scalar(0, 255, 0), 3, 8, 0); cv::line(imgsrc,
+					// cv::Point(triangle_ROI.at(2).x, triangle_ROI.at(2).y),
+					// cv::Point(triangle_ROI.at(0).x, triangle_ROI.at(0).y), cv::Scalar(255, 0, 0),
+					// 3, 8, 0); cv::circle(imgsrc, (cv::Point)center_of_triangle_ROI, 15,
+					// cv::Scalar(0, 0, 255), 2, 8, 0);
 				}
 			}
 			triangle_ROI.clear();
@@ -1290,11 +1443,13 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 		approx_ROI.clear();
 	}
 
-
 	for (int i = 0; i < squares_num_ROI; i++)
 		for (int j = 0; j < triangles_num_ROI; j++)
 		{
-			if (Square_Triangle_Matching(Center_Of_Squares_ROI.at(i), AverageSide_Squares_ROI.at(i), AreaOfSquares_ROI.at(i), Center_Of_Triangles_ROI.at(j), AverageSide_Triangles_ROI.at(j), AreaOfTriangles_ROI.at(j)))
+			if (Square_Triangle_Matching(Center_Of_Squares_ROI.at(i), AverageSide_Squares_ROI.at(i),
+			                             AreaOfSquares_ROI.at(i), Center_Of_Triangles_ROI.at(j),
+			                             AverageSide_Triangles_ROI.at(j),
+			                             AreaOfTriangles_ROI.at(j)))
 			{
 				MatchedSquares_ROI.push_back(Squares_ROI.at(i));
 				MatchedTriangles_ROI.push_back(Triangles_ROI.at(j));
@@ -1312,7 +1467,8 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 	{
 		successfulTracking = TRUE;
 		printf("已经跟踪到.....所需图像特征-------------%d 对\r\n\n", MatchedNum_ROI);
-		FeaturePoint_Extraction(MatchedNum_ROI, MatchedSquares_ROI, MatchedTriangles_ROI, featurePoints_ROI);
+		FeaturePoint_Extraction(MatchedNum_ROI, MatchedSquares_ROI, MatchedTriangles_ROI,
+		                        featurePoints_ROI);
 	}
 
 	vector<cv::Point> featurePoints_Filtered;
@@ -1325,15 +1481,19 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 		featurePoints_Current_ROI = featurePoints_ROI.at(0);
 		for (int i = 0; i < featurePoints_Current_ROI.size(); i++)
 		{
-			featurePoints_Current.push_back(cv::Point(featurePoints_Current_ROI.at(i).x + ROI_LeftTop.x, featurePoints_Current_ROI.at(i).y + ROI_LeftTop.y));
+			featurePoints_Current.push_back(
+			    cv::Point(featurePoints_Current_ROI.at(i).x + ROI_LeftTop.x,
+			              featurePoints_Current_ROI.at(i).y + ROI_LeftTop.y));
 		}
 
-		//filtering
+		// filtering
 		featurePoints_Filtered = featurePoints_Current;
 		for (int i = 0; i < featurePoints_Current_ROI.size(); i++)
 		{
-			featurePoints_Filtered.at(i).x = alpha * featurePoints_Current.at(i).x + (1 - alpha) * featurePoints_Previous.at(i).x;
-			featurePoints_Filtered.at(i).y = alpha * featurePoints_Current.at(i).y + (1 - alpha) * featurePoints_Previous.at(i).y;
+			featurePoints_Filtered.at(i).x = alpha * featurePoints_Current.at(i).x
+			                               + (1 - alpha) * featurePoints_Previous.at(i).x;
+			featurePoints_Filtered.at(i).y = alpha * featurePoints_Current.at(i).y
+			                               + (1 - alpha) * featurePoints_Previous.at(i).y;
 		}
 		featurePoints_Current = featurePoints_Filtered;
 
@@ -1350,7 +1510,8 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 			{
 				for (int j = 0; j < featureQueueSize; j++)
 				{
-					featurePoints_Filtered_Sum.at(i) = featurePoints_Filtered_Sum.at(i) + featurePoints_Filtered_Queue.at(j).at(i);
+					featurePoints_Filtered_Sum.at(i) =
+					    featurePoints_Filtered_Sum.at(i) + featurePoints_Filtered_Queue.at(j).at(i);
 				}
 				featurePoints_Current.at(i) = featurePoints_Filtered_Sum.at(i) / featureQueueSize;
 			}
@@ -1369,7 +1530,8 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 			{
 				for (int j = 0; j < queueSize; j++)
 				{
-					featurePoints_Filtered_Sum.at(i) = featurePoints_Filtered_Sum.at(i) + featurePoints_Filtered_Queue.at(j).at(i);
+					featurePoints_Filtered_Sum.at(i) =
+					    featurePoints_Filtered_Sum.at(i) + featurePoints_Filtered_Queue.at(j).at(i);
 				}
 				featurePoints_Current.at(i) = featurePoints_Filtered_Sum.at(i) / queueSize;
 			}
@@ -1382,22 +1544,38 @@ void Feature_Tracking(int ctrl_ROI, cv::Mat& imgsrc, vector<cv::Point>& featureP
 
 	if (featurePoints_Current.size() == 7)
 	{
-		cv::line(imgsrc, cv::Point(featurePoints_Current.at(0).x, featurePoints_Current.at(0).y), cv::Point(featurePoints_Current.at(1).x, featurePoints_Current.at(1).y), cv::Scalar(0, 0, 255), 3, cv::LINE_AA, 0);//BGR
-		cv::line(imgsrc, cv::Point(featurePoints_Current.at(1).x, featurePoints_Current.at(1).y), cv::Point(featurePoints_Current.at(2).x, featurePoints_Current.at(2).y), cv::Scalar(0, 255, 0), 3, cv::LINE_AA, 0);
-		cv::line(imgsrc, cv::Point(featurePoints_Current.at(2).x, featurePoints_Current.at(2).y), cv::Point(featurePoints_Current.at(3).x, featurePoints_Current.at(3).y), cv::Scalar(255, 0, 0), 3, cv::LINE_AA, 0);
-		cv::line(imgsrc, cv::Point(featurePoints_Current.at(3).x, featurePoints_Current.at(3).y), cv::Point(featurePoints_Current.at(0).x, featurePoints_Current.at(0).y), cv::Scalar(0, 0, 0), 3, cv::LINE_AA, 0);
+		cv::line(imgsrc, cv::Point(featurePoints_Current.at(0).x, featurePoints_Current.at(0).y),
+		         cv::Point(featurePoints_Current.at(1).x, featurePoints_Current.at(1).y),
+		         cv::Scalar(0, 0, 255), 3, cv::LINE_AA, 0);// BGR
+		cv::line(imgsrc, cv::Point(featurePoints_Current.at(1).x, featurePoints_Current.at(1).y),
+		         cv::Point(featurePoints_Current.at(2).x, featurePoints_Current.at(2).y),
+		         cv::Scalar(0, 255, 0), 3, cv::LINE_AA, 0);
+		cv::line(imgsrc, cv::Point(featurePoints_Current.at(2).x, featurePoints_Current.at(2).y),
+		         cv::Point(featurePoints_Current.at(3).x, featurePoints_Current.at(3).y),
+		         cv::Scalar(255, 0, 0), 3, cv::LINE_AA, 0);
+		cv::line(imgsrc, cv::Point(featurePoints_Current.at(3).x, featurePoints_Current.at(3).y),
+		         cv::Point(featurePoints_Current.at(0).x, featurePoints_Current.at(0).y),
+		         cv::Scalar(0, 0, 0), 3, cv::LINE_AA, 0);
 
-		//画三角形边线
-		cv::line(imgsrc, cv::Point(featurePoints_Current.at(4).x, featurePoints_Current.at(4).y), cv::Point(featurePoints_Current.at(5).x, featurePoints_Current.at(5).y), cv::Scalar(0, 0, 255), 3, cv::LINE_AA, 0);//BGR
-		cv::line(imgsrc, cv::Point(featurePoints_Current.at(5).x, featurePoints_Current.at(5).y), cv::Point(featurePoints_Current.at(6).x, featurePoints_Current.at(6).y), cv::Scalar(0, 255, 0), 3, cv::LINE_AA, 0);
-		cv::line(imgsrc, cv::Point(featurePoints_Current.at(6).x, featurePoints_Current.at(6).y), cv::Point(featurePoints_Current.at(4).x, featurePoints_Current.at(4).y), cv::Scalar(255, 0, 0), 3, cv::LINE_AA, 0);
+		// 画三角形边线
+		cv::line(imgsrc, cv::Point(featurePoints_Current.at(4).x, featurePoints_Current.at(4).y),
+		         cv::Point(featurePoints_Current.at(5).x, featurePoints_Current.at(5).y),
+		         cv::Scalar(0, 0, 255), 3, cv::LINE_AA, 0);// BGR
+		cv::line(imgsrc, cv::Point(featurePoints_Current.at(5).x, featurePoints_Current.at(5).y),
+		         cv::Point(featurePoints_Current.at(6).x, featurePoints_Current.at(6).y),
+		         cv::Scalar(0, 255, 0), 3, cv::LINE_AA, 0);
+		cv::line(imgsrc, cv::Point(featurePoints_Current.at(6).x, featurePoints_Current.at(6).y),
+		         cv::Point(featurePoints_Current.at(4).x, featurePoints_Current.at(4).y),
+		         cv::Scalar(255, 0, 0), 3, cv::LINE_AA, 0);
 	}
 
-	printf("跟踪-------The tracking numbers of squares and triangles are respectively: (四边形)%d{%d}个、(三角形)%d{%d}个\r\n", squares_num_ROI, (int)Squares_ROI.size(), triangles_num_ROI, (int)Triangles_ROI.size());
-	//cv::namedWindow("ContoursImage_Tracking", 0);
-	//cv::resizeWindow("ContoursImage_Tracking", 640, 480);
-	//cv::imshow("ContoursImage_Tracking", imgsrc);
-	//cv::waitKey(1);
+	printf("跟踪-------The tracking numbers of squares and triangles are respectively: "
+	       "(四边形)%d{%d}个、(三角形)%d{%d}个\r\n",
+	       squares_num_ROI, (int)Squares_ROI.size(), triangles_num_ROI, (int)Triangles_ROI.size());
+	// cv::namedWindow("ContoursImage_Tracking", 0);
+	// cv::resizeWindow("ContoursImage_Tracking", 640, 480);
+	// cv::imshow("ContoursImage_Tracking", imgsrc);
+	// cv::waitKey(1);
 }
 
 void Open_Socket_UDP()
@@ -1408,36 +1586,37 @@ void Open_Socket_UDP()
 	int nRet = SOCKET_ERROR;
 	SOCKET hServer_servoing;
 
-
 	while (nRet == SOCKET_ERROR)
 	{
 		if (WSAStartup(sockVersion, &wsadata_servoing))
 		{
 			printf("WSAStartup failed\r\n");
-			//return 0;
+			// return 0;
 		}
 
 		hServer_servoing = socket(AF_INET, SOCK_DGRAM, 0);
 
 		bool bReuseaddr = TRUE;
-		setsockopt(hServer_servoing, SOL_SOCKET, SO_REUSEADDR, (const char*)&bReuseaddr, sizeof(BOOL));
+		setsockopt(hServer_servoing, SOL_SOCKET, SO_REUSEADDR, (const char*)&bReuseaddr,
+		           sizeof(BOOL));
 
 		const char* addr_ip = "127.0.0.1";
 
 		if (hServer_servoing == INVALID_SOCKET)
 		{
 			printf("socket failed \r\n");
-			//return 0;
+			// return 0;
 		}
 
 		sockaddr_in addrServer_servoing;
 		addrServer_servoing.sin_family = AF_INET;
-		addrServer_servoing.sin_port = htons(8899);
-		//addrServer_servoing.sin_addr.S_un.S_addr = INADDR_ANY;
+		addrServer_servoing.sin_port   = htons(8899);
+		// addrServer_servoing.sin_addr.S_un.S_addr = INADDR_ANY;
 
 		inet_pton(AF_INET, addr_ip, &addrServer_servoing.sin_addr);
 
-		nRet = ::bind(hServer_servoing, (sockaddr*)&addrServer_servoing, sizeof(addrServer_servoing));
+		nRet =
+		    ::bind(hServer_servoing, (sockaddr*)&addrServer_servoing, sizeof(addrServer_servoing));
 
 		if (nRet == SOCKET_ERROR)
 		{
@@ -1445,14 +1624,14 @@ void Open_Socket_UDP()
 
 			closesocket(hServer_servoing);
 			WSACleanup();
-			//return 0;
+			// return 0;
 		}
 	}
 	sockaddr_in addrClient_servoing;
 	int nlen = sizeof(addrClient_servoing);
 
 	bool alreadyConnect = TRUE;
-	//std::string str;
+	// std::string str;
 
 	char buffer_servoing[1024];
 
@@ -1461,14 +1640,14 @@ void Open_Socket_UDP()
 	int irecv;
 	int isend;
 
-	//ostringstream oos_sending;
+	// ostringstream oos_sending;
 
 	while (TRUE)
 	{
 		while (!alreadyConnect)
 		{
-
-			irecv = recvfrom(hServer_servoing, buffer_servoing, sizeof(buffer_servoing), 0, (SOCKADDR*)&addrClient_servoing, &nlen);
+			irecv = recvfrom(hServer_servoing, buffer_servoing, sizeof(buffer_servoing), 0,
+			                 (SOCKADDR*)&addrClient_servoing, &nlen);
 			if (irecv > 0)
 			{
 				if (!(strcmp(buffer_servoing, "byebye")))
@@ -1479,7 +1658,7 @@ void Open_Socket_UDP()
 					WSACleanup();
 					std::cout << "5s后关闭控制台" << std::endl;
 					Sleep(5000);
-					//return 0;
+					// return 0;
 				}
 				else
 				{
@@ -1487,17 +1666,17 @@ void Open_Socket_UDP()
 				}
 
 				::MessageBox(NULL, TEXT("已经收到消息！！！"), TEXT("通信框"), MB_OKCANCEL);
-				//alreadyConnect = TRUE;
+				// alreadyConnect = TRUE;
 			}
 			else
 			{
 				::MessageBox(NULL, TEXT("没有收到任何信息！！！"), TEXT("通信框"), MB_OKCANCEL);
-				//std::cout << "没有收到任何信息！！！" << std::endl;
-				//closesocket(hServer_servoing);
-				//WSACleanup();
-				//std::cout << "5s后关闭控制台" << std::endl;
-				//Sleep(5000);
-				//return 0;
+				// std::cout << "没有收到任何信息！！！" << std::endl;
+				// closesocket(hServer_servoing);
+				// WSACleanup();
+				// std::cout << "5s后关闭控制台" << std::endl;
+				// Sleep(5000);
+				// return 0;
 			}
 		}
 		memset(buffer_servoing, 0, sizeof(buffer_servoing));
@@ -1506,18 +1685,20 @@ void Open_Socket_UDP()
 		{
 			if (firstConnect)
 			{
-				while (irecv = recvfrom(hServer_servoing, buffer_servoing, sizeof(buffer_servoing), 0, (SOCKADDR*)&addrClient_servoing, &nlen) < 0)
+				while (irecv = recvfrom(hServer_servoing, buffer_servoing, sizeof(buffer_servoing),
+				                        0, (SOCKADDR*)&addrClient_servoing, &nlen)
+				             < 0)
 					;
 				std::cout << "ClientA:" << buffer_servoing << std::endl;
 				firstConnect = FALSE;
 			}
-			//std::cout << "Server:" << std::endl;
-			//std::cin >> buffer_servoing;
-			//buffer_servoing = ;
-			//getline(cin,str);
-			//const int len = sizeof(str);
-			//char senddata[len];
-			//strcpy_s(senddata,str.c_str());
+			// std::cout << "Server:" << std::endl;
+			// std::cin >> buffer_servoing;
+			// buffer_servoing = ;
+			// getline(cin,str);
+			// const int len = sizeof(str);
+			// char senddata[len];
+			// strcpy_s(senddata,str.c_str());
 			if (canSend)
 			{
 				if (bsendingFeature)
@@ -1527,8 +1708,11 @@ void Open_Socket_UDP()
 					if (featurePoints_Sending.size() == 7)
 					{
 						for (int i = 0; i < 7; i++)
-							Package_featurePoints.featurePoints_Snd[i] = featurePoints_Sending.at(i);
-						isend = sendto(hServer_servoing, (char*)&Package_featurePoints, sizeof(Package_featurePoints), 0, (SOCKADDR*)&addrClient_servoing, nlen);
+							Package_featurePoints.featurePoints_Snd[i] =
+							    featurePoints_Sending.at(i);
+						isend = sendto(hServer_servoing, (char*)&Package_featurePoints,
+						               sizeof(Package_featurePoints), 0,
+						               (SOCKADDR*)&addrClient_servoing, nlen);
 						if (isend == SOCKET_ERROR)
 						{
 							std::cout << "sendto failed" << std::endl;
@@ -1536,7 +1720,7 @@ void Open_Socket_UDP()
 							WSACleanup();
 							std::cout << "5s后关闭控制台" << std::endl;
 							Sleep(5000);
-							//return 0;
+							// return 0;
 						}
 						canSend = FALSE;
 					}
@@ -1550,7 +1734,9 @@ void Open_Socket_UDP()
 					for (int i = 0; i < 3; i++)
 						Package_commands.rotVel[i] = commands_Sending.rotVel[i];
 
-					isend = sendto(hServer_servoing, (char*)&Package_commands, sizeof(Package_commands), 0, (SOCKADDR*)&addrClient_servoing, nlen);
+					isend =
+					    sendto(hServer_servoing, (char*)&Package_commands, sizeof(Package_commands),
+					           0, (SOCKADDR*)&addrClient_servoing, nlen);
 					if (isend == SOCKET_ERROR)
 					{
 						std::cout << "sendto failed" << std::endl;
@@ -1558,19 +1744,19 @@ void Open_Socket_UDP()
 						WSACleanup();
 						std::cout << "5s后关闭控制台" << std::endl;
 						Sleep(5000);
-						//return 0;
+						// return 0;
 					}
 					canSend = FALSE;
 				}
 			}
 		}
-		//str = "";
+		// str = "";
 		memset(buffer_servoing, 0, sizeof(buffer_servoing));
 	}
 
 	closesocket(hServer_servoing);
 	WSACleanup();
-	//return 0;
+	// return 0;
 }
 
 void Open_Socket_TCP()
@@ -1585,7 +1771,7 @@ void Open_Socket_TCP()
 	WORD wVersionRequested;
 
 	wVersionRequested = MAKEWORD(2, 2);
-	err = WSAStartup(wVersionRequested, &wsaData);
+	err               = WSAStartup(wVersionRequested, &wsaData);
 
 	if (err != 0)
 	{
@@ -1601,8 +1787,8 @@ void Open_Socket_TCP()
 	sockServer = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	addrServer.sin_family = AF_INET;
-	addrServer.sin_port = htons(8899);
-	//addrServer.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+	addrServer.sin_port   = htons(8899);
+	// addrServer.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
 
 	const char* addr_ip = "127.0.0.1";
 
@@ -1621,16 +1807,16 @@ void Open_Socket_TCP()
 
 	cout << "通信已建立" << endl;
 	featurePoints_Sending.clear();
-	//send(sockConnect,"我们已经可以通信",20,0);
+	// send(sockConnect,"我们已经可以通信",20,0);
 
 	while (TRUE)
 	{
-		//char sendBuf[256];
-		//char recvBuf[256];
+		// char sendBuf[256];
+		// char recvBuf[256];
 
-		//recv(sockConnect,recvBuf,strlen(recvBuf),0);
-		//Sleep(1000);
-		//if (strlen(recvBuf) > 0)
+		// recv(sockConnect,recvBuf,strlen(recvBuf),0);
+		// Sleep(1000);
+		// if (strlen(recvBuf) > 0)
 		//{
 		//	cout << recvBuf << endl;
 		//	cout << "请输入要发送的信息：";
@@ -1648,7 +1834,8 @@ void Open_Socket_TCP()
 				{
 					for (int i = 0; i < 7; i++)
 						Package_featurePoints.featurePoints_Snd[i] = featurePoints_Sending.at(i);
-					send(sockConnect, (char*)&Package_featurePoints, sizeof(Package_featurePoints), 0);
+					send(sockConnect, (char*)&Package_featurePoints, sizeof(Package_featurePoints),
+					     0);
 					canSend = FALSE;
 				}
 			}
@@ -1673,14 +1860,12 @@ void Open_Socket_TCP()
 cv::Mat R_t2HomogeneousT(const cv::Mat tvec, const cv::Mat R)
 {
 	cv::Mat HomogenousT;
-	cv::Mat_<double> R1 = (cv::Mat_<double>(4, 3) << R.at<double>(0, 0), R.at<double>(0, 1), R.at<double>(0, 2),
-						   R.at<double>(1, 0), R.at<double>(1, 1), R.at<double>(1, 2),
-						   R.at<double>(2, 0), R.at<double>(2, 1), R.at<double>(2, 2),
-						   0, 0, 0);
-	cv::Mat_<double> t1 = (cv::Mat_<double>(4, 1) << tvec.at<double>(0, 0),
-						   tvec.at<double>(1, 0),
-						   tvec.at<double>(2, 0),
-						   1);
+	cv::Mat_<double> R1 =
+	    (cv::Mat_<double>(4, 3) << R.at<double>(0, 0), R.at<double>(0, 1), R.at<double>(0, 2),
+	     R.at<double>(1, 0), R.at<double>(1, 1), R.at<double>(1, 2), R.at<double>(2, 0),
+	     R.at<double>(2, 1), R.at<double>(2, 2), 0, 0, 0);
+	cv::Mat_<double> t1 = (cv::Mat_<double>(4, 1) << tvec.at<double>(0, 0), tvec.at<double>(1, 0),
+	                       tvec.at<double>(2, 0), 1);
 	cv::hconcat(R1, t1, HomogenousT);
 	return HomogenousT;
 }
@@ -1689,20 +1874,23 @@ void HomogeneousT2Rt(cv::Mat HomogenousT, cv::Mat& R, cv::Mat& tvec)
 {
 	cv::Rect R_rect(0, 0, 3, 3);
 	cv::Rect t_rect(3, 0, 1, 3);
-	R = HomogenousT(R_rect);
+	R    = HomogenousT(R_rect);
 	tvec = HomogenousT(t_rect);
 }
 
 cv::Mat Vec2SkewMat(cv::Mat vec)
 {
-	cv::Mat_<double> skewMat = (cv::Mat_<double>(3, 3) << 0, -vec.at<double>(2, 0), vec.at<double>(1, 0),
-								vec.at<double>(2, 0), 0, -vec.at<double>(0, 0),
-								-vec.at<double>(1, 0), vec.at<double>(0, 0), 0);
+	cv::Mat_<double> skewMat =
+	    (cv::Mat_<double>(3, 3) << 0, -vec.at<double>(2, 0), vec.at<double>(1, 0),
+	     vec.at<double>(2, 0), 0, -vec.at<double>(0, 0), -vec.at<double>(1, 0),
+	     vec.at<double>(0, 0), 0);
 
 	return skewMat;
 }
 
-Robot_Command ControlVel_Pose_inCameraFrame(cv::Mat desiredC_tvec_O, cv::Mat desiredC_rvec_O, cv::Mat currentC_tvec_O, cv::Mat currentC_rvec_O, bool bRelative2ObjectFrame)
+Robot_Command ControlVel_Pose_inCameraFrame(cv::Mat desiredC_tvec_O, cv::Mat desiredC_rvec_O,
+                                            cv::Mat currentC_tvec_O, cv::Mat currentC_rvec_O,
+                                            bool bRelative2ObjectFrame)
 {
 	cv::Mat desiredC_R_O(3, 3, CV_64FC1);
 	cv::Mat currentC_R_O(3, 3, CV_64FC1);
@@ -1741,13 +1929,15 @@ Robot_Command ControlVel_Pose_inCameraFrame(cv::Mat desiredC_tvec_O, cv::Mat des
 
 	if (bRelative2ObjectFrame)
 	{
-		currentC_transVel_Camera = -controlGain * ((desiredC_tvec_O - currentC_tvec_O) + Vec2SkewMat(currentC_tvec_O) * desiredC_angleAxis_currentC);
+		currentC_transVel_Camera = -controlGain
+		                         * ((desiredC_tvec_O - currentC_tvec_O)
+		                            + Vec2SkewMat(currentC_tvec_O) * desiredC_angleAxis_currentC);
 		currentC_rotVel_Camera = -controlGain * desiredC_angleAxis_currentC;
 	}
 	else
 	{
 		currentC_transVel_Camera = -controlGain * desiredC_R_currentC.t() * desiredC_tvec_currentC;
-		currentC_rotVel_Camera = -controlGain * desiredC_angleAxis_currentC;
+		currentC_rotVel_Camera   = -controlGain * desiredC_angleAxis_currentC;
 	}
 
 	cv::Mat currentE_R_currentC(3, 3, CV_64FC1);
@@ -1758,11 +1948,13 @@ Robot_Command ControlVel_Pose_inCameraFrame(cv::Mat desiredC_tvec_O, cv::Mat des
 	cv::Mat currentE_transVel_Effector(3, 1, CV_64FC1);
 	cv::Mat currentE_rotVel_Effector(3, 1, CV_64FC1);
 
-	currentE_transVel_Effector = currentE_R_currentC * currentC_transVel_Camera + Vec2SkewMat(currentE_tvec_currentC) * currentE_R_currentC * currentC_rotVel_Camera;
+	currentE_transVel_Effector =
+	    currentE_R_currentC * currentC_transVel_Camera
+	    + Vec2SkewMat(currentE_tvec_currentC) * currentE_R_currentC * currentC_rotVel_Camera;
 	currentE_rotVel_Effector = currentE_R_currentC * currentC_rotVel_Camera;
 
 	double max_Trans = 0;
-	double max_Rot = 0;
+	double max_Rot   = 0;
 
 	double ratio_Trans;
 	double ratio_Rot;
@@ -1826,8 +2018,9 @@ Robot_Command ControlVel_Pose_inCameraFrame(cv::Mat desiredC_tvec_O, cv::Mat des
 	return vRobot_Command;
 }
 
-
-Robot_Command ControlVel_Pose_inEffectorFrame(cv::Mat desiredC_tvec_O, cv::Mat desiredC_rvec_O, cv::Mat currentC_tvec_O, cv::Mat currentC_rvec_O, bool bRelative2ObjectFrame)
+Robot_Command ControlVel_Pose_inEffectorFrame(cv::Mat desiredC_tvec_O, cv::Mat desiredC_rvec_O,
+                                              cv::Mat currentC_tvec_O, cv::Mat currentC_rvec_O,
+                                              bool bRelative2ObjectFrame)
 {
 	cv::Mat desiredC_R_O(3, 3, CV_64FC1);
 	cv::Mat currentC_R_O(3, 3, CV_64FC1);
@@ -1884,20 +2077,24 @@ Robot_Command ControlVel_Pose_inEffectorFrame(cv::Mat desiredC_tvec_O, cv::Mat d
 
 	if (bRelative2ObjectFrame)
 	{
-		currentE_transVel_Effector = -controlGain * ((desiredE_tvec_O - currentE_tvec_O) + Vec2SkewMat(currentE_tvec_O) * desiredE_angleAxis_currentE);
+		currentE_transVel_Effector = -controlGain
+		                           * ((desiredE_tvec_O - currentE_tvec_O)
+		                              + Vec2SkewMat(currentE_tvec_O) * desiredE_angleAxis_currentE);
 		currentE_rotVel_Effector = -controlGain * desiredE_angleAxis_currentE;
 	}
 	else
 	{
-		currentE_transVel_Effector = -controlGain * desiredE_R_currentE.t() * desiredE_tvec_currentE;
+		currentE_transVel_Effector =
+		    -controlGain * desiredE_R_currentE.t() * desiredE_tvec_currentE;
 		currentE_rotVel_Effector = -controlGain * desiredE_angleAxis_currentE;
 	}
 
-	//测试
-	//printf("函数计算速度（%lf,%lf,%lf）\r\n", currentE_transVel_Effector.at<double>(0, 0), currentE_transVel_Effector.at<double>(1, 0), currentE_transVel_Effector.at<double>(2, 0));
+	// 测试
+	// printf("函数计算速度（%lf,%lf,%lf）\r\n", currentE_transVel_Effector.at<double>(0, 0),
+	// currentE_transVel_Effector.at<double>(1, 0), currentE_transVel_Effector.at<double>(2, 0));
 
 	double max_Trans = 0;
-	double max_Rot = 0;
+	double max_Rot   = 0;
 
 	double ratio_Trans;
 	double ratio_Rot;
@@ -1912,7 +2109,8 @@ Robot_Command ControlVel_Pose_inEffectorFrame(cv::Mat desiredC_tvec_O, cv::Mat d
 		}
 	}
 
-	//printf("函数计算速度--缩放后（%lf,%lf,%lf）\r\n", vRobot_Command.translVel[0], vRobot_Command.translVel[1], vRobot_Command.translVel[2]);
+	// printf("函数计算速度--缩放后（%lf,%lf,%lf）\r\n", vRobot_Command.translVel[0],
+	// vRobot_Command.translVel[1], vRobot_Command.translVel[2]);
 
 	if (max_Trans < max_translVel)
 	{
@@ -1932,7 +2130,7 @@ Robot_Command ControlVel_Pose_inEffectorFrame(cv::Mat desiredC_tvec_O, cv::Mat d
 		}
 	}
 
-	//printf("最大“计算”角速度（%lf）\r\n", max_Rot);
+	// printf("最大“计算”角速度（%lf）\r\n", max_Rot);
 
 	if (max_Rot < max_rotVel)
 	{
@@ -1943,8 +2141,7 @@ Robot_Command ControlVel_Pose_inEffectorFrame(cv::Mat desiredC_tvec_O, cv::Mat d
 		ratio_Rot = max_rotVel / max_Rot;
 	}
 
-	//printf("角速度缩放因子（%lf）\r\n", ratio_Rot);
-
+	// printf("角速度缩放因子（%lf）\r\n", ratio_Rot);
 
 	if (ratio_Rot < ratio_Trans)
 	{
@@ -1955,7 +2152,7 @@ Robot_Command ControlVel_Pose_inEffectorFrame(cv::Mat desiredC_tvec_O, cv::Mat d
 		ratio_Vel = ratio_Trans;
 	}
 
-	//printf("速度缩放因子（%lf,%lf,%lf）\r\n", ratio_Vel,ratio_Trans,ratio_Rot);
+	// printf("速度缩放因子（%lf,%lf,%lf）\r\n", ratio_Vel,ratio_Trans,ratio_Rot);
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -1970,8 +2167,11 @@ Robot_Command ControlVel_Pose_inEffectorFrame(cv::Mat desiredC_tvec_O, cv::Mat d
 	return vRobot_Command;
 }
 
-
-Robot_Command ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_O, cv::Mat desiredC_rvec_O, cv::Mat currentC_tvec_O, cv::Mat currentC_rvec_O, bool bRelative2ObjectFrame, bool bConstantViaPoint, unsigned long& vtimeStep_Pose)
+Robot_Command
+ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_O, cv::Mat desiredC_rvec_O,
+                                            cv::Mat currentC_tvec_O, cv::Mat currentC_rvec_O,
+                                            bool bRelative2ObjectFrame, bool bConstantViaPoint,
+                                            unsigned long& vtimeStep_Pose)
 {
 	vtimeStep_Pose++;
 
@@ -1987,7 +2187,7 @@ Robot_Command ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_
 	desiredC_HomogenousT_O = R_t2HomogeneousT(desiredC_tvec_O, desiredC_R_O);
 	currentC_HomogenousT_O = R_t2HomogeneousT(currentC_tvec_O, currentC_R_O);
 
-	//初始时刻位姿
+	// 初始时刻位姿
 	if (vtimeStep_Pose == 1)
 	{
 		initialC_HomogenousT_O = currentC_HomogenousT_O;
@@ -1998,41 +2198,39 @@ Robot_Command ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_
 	/*Effector frame related information*/
 	cv::Mat desiredE_HomogenousT_desiredC = currentE_HomogenousT_currentC;
 
-	//初始位姿相关
+	// 初始位姿相关
 	cv::Mat initialE_HomogenousT_initialC = currentE_HomogenousT_currentC;
 
 	cv::Mat desiredE_HomogenousT_O(4, 4, CV_64FC1);
 	cv::Mat currentE_HomogenousT_O(4, 4, CV_64FC1);
 
-	//初始位姿相关
+	// 初始位姿相关
 	cv::Mat initialE_HomogenousT_O(4, 4, CV_64FC1);
 
 	desiredE_HomogenousT_O = desiredE_HomogenousT_desiredC * desiredC_HomogenousT_O;
 	currentE_HomogenousT_O = currentE_HomogenousT_currentC * currentC_HomogenousT_O;
 
-	//初始位姿相关
+	// 初始位姿相关
 	initialE_HomogenousT_O = initialE_HomogenousT_initialC * initialC_HomogenousT_O;
-
 
 	cv::Mat desiredE_HomogenousT_currentE(4, 4, CV_64FC1);
 
-	//初始位姿相关
+	// 初始位姿相关
 	cv::Mat desiredE_HomogenousT_initialE(4, 4, CV_64FC1);
-
 
 	cv::Mat O_HomogenousT_currentE(4, 4, CV_64FC1);
 
-	//初始位姿相关
+	// 初始位姿相关
 	cv::Mat O_HomogenousT_initialE(4, 4, CV_64FC1);
 
 	cv::invert(currentE_HomogenousT_O, O_HomogenousT_currentE, cv::DECOMP_LU);
 
-	//初始位姿相关
+	// 初始位姿相关
 	cv::invert(initialE_HomogenousT_O, O_HomogenousT_initialE, cv::DECOMP_LU);
 
 	desiredE_HomogenousT_currentE = desiredE_HomogenousT_O * O_HomogenousT_currentE;
 
-	//初始位姿相关
+	// 初始位姿相关
 	desiredE_HomogenousT_initialE = desiredE_HomogenousT_O * O_HomogenousT_initialE;
 
 	Robot_Command vRobot_Command = {0};
@@ -2041,39 +2239,39 @@ Robot_Command ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_
 	cv::Mat desiredE_tvec_currentE(3, 1, CV_64FC1);
 	HomogeneousT2Rt(desiredE_HomogenousT_currentE, desiredE_R_currentE, desiredE_tvec_currentE);
 
-	//初始位姿相关
+	// 初始位姿相关
 	cv::Mat desiredE_R_initialE(3, 3, CV_64FC1);
 	cv::Mat desiredE_tvec_initialE(3, 1, CV_64FC1);
 	HomogeneousT2Rt(desiredE_HomogenousT_initialE, desiredE_R_initialE, desiredE_tvec_initialE);
 
-	//viaPoint相关**********************
+	// viaPoint相关**********************
 	cv::Mat desiredE_HomogenousT_viaE(4, 4, CV_64FC1);
 	cv::Mat desiredE_R_viaE(3, 3, CV_64FC1);
 	cv::Mat desiredE_tvec_viaE(3, 1, CV_64FC1);
 
 	if (bConstantViaPoint)
 	{
-		desiredE_R_viaE = cv::Mat::eye(3, 3, CV_64FC1);
+		desiredE_R_viaE                     = cv::Mat::eye(3, 3, CV_64FC1);
 		desiredE_tvec_viaE.at<double>(0, 0) = 0;
 		desiredE_tvec_viaE.at<double>(1, 0) = 0;
 		desiredE_tvec_viaE.at<double>(2, 0) = desiredE_tvec_initialE.at<double>(2, 0);
 	}
 	else
 	{
-		desiredE_R_viaE = cv::Mat::eye(3, 3, CV_64FC1);
+		desiredE_R_viaE                     = cv::Mat::eye(3, 3, CV_64FC1);
 		desiredE_tvec_viaE.at<double>(0, 0) = 0;
 		desiredE_tvec_viaE.at<double>(1, 0) = 0;
 		desiredE_tvec_viaE.at<double>(2, 0) = desiredE_tvec_currentE.at<double>(2, 0);
 	}
 
 	desiredE_HomogenousT_viaE = R_t2HomogeneousT(desiredE_tvec_viaE, desiredE_R_viaE);
-	//viaPoint相关**********************
+	// viaPoint相关**********************
 
 	cv::Mat desiredE_R_O(3, 3, CV_64FC1);
 	cv::Mat desiredE_tvec_O(3, 1, CV_64FC1);
 	HomogeneousT2Rt(desiredE_HomogenousT_O, desiredE_R_O, desiredE_tvec_O);
 
-	//viaPoint相关********************
+	// viaPoint相关********************
 	cv::Mat viaE_HomogenousT_O(4, 4, CV_64FC1);
 	cv::Mat viaE_R_O(3, 3, CV_64FC1);
 	cv::Mat viaE_tvec_O(3, 1, CV_64FC1);
@@ -2081,7 +2279,7 @@ Robot_Command ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_
 	cv::invert(desiredE_HomogenousT_viaE, viaE_HomogenousT_deisredE, cv::DECOMP_LU);
 	viaE_HomogenousT_O = viaE_HomogenousT_deisredE * desiredE_HomogenousT_O;
 	HomogeneousT2Rt(viaE_HomogenousT_O, viaE_R_O, viaE_tvec_O);
-	//viaPoint相关********************
+	// viaPoint相关********************
 
 	cv::Mat currentE_R_O(3, 3, CV_64FC1);
 	cv::Mat currentE_tvec_O(3, 1, CV_64FC1);
@@ -2090,7 +2288,7 @@ Robot_Command ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_
 	cv::Mat desiredE_angleAxis_currentE(3, 1, CV_64FC1);
 	cv::Rodrigues(desiredE_R_currentE, desiredE_angleAxis_currentE);
 
-	//viaPoint相关********************
+	// viaPoint相关********************
 	cv::Mat viaE_HomogenousT_currentE(4, 4, CV_64FC1);
 	cv::Mat viaE_R_currentE(3, 3, CV_64FC1);
 	cv::Mat viaE_tvec_currentE(3, 1, CV_64FC1);
@@ -2098,25 +2296,27 @@ Robot_Command ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_
 	HomogeneousT2Rt(viaE_HomogenousT_currentE, viaE_R_currentE, viaE_tvec_currentE);
 	cv::Mat viaE_angleAxis_currentE(3, 1, CV_64FC1);
 	cv::Rodrigues(viaE_R_currentE, viaE_angleAxis_currentE);
-	//viaPoint相关********************
+	// viaPoint相关********************
 
 	cv::Mat currentE_transVel_Effector(3, 1, CV_64FC1);
 	cv::Mat currentE_rotVel_Effector(3, 1, CV_64FC1);
 
-	double controlGain = 0.1;
+	double controlGain   = 0.1;
 	double stageAccuracy = 3;
 
 	if (bFirstStage_Pose)
 	{
 		if (bRelative2ObjectFrame)
 		{
-			currentE_transVel_Effector = -controlGain * ((viaE_tvec_O - currentE_tvec_O) + Vec2SkewMat(currentE_tvec_O) * viaE_angleAxis_currentE);
+			currentE_transVel_Effector = -controlGain
+			                           * ((viaE_tvec_O - currentE_tvec_O)
+			                              + Vec2SkewMat(currentE_tvec_O) * viaE_angleAxis_currentE);
 			currentE_rotVel_Effector = -controlGain * viaE_angleAxis_currentE;
 		}
 		else
 		{
 			currentE_transVel_Effector = -controlGain * viaE_R_currentE.t() * viaE_tvec_currentE;
-			currentE_rotVel_Effector = -controlGain * viaE_angleAxis_currentE;
+			currentE_rotVel_Effector   = -controlGain * viaE_angleAxis_currentE;
 		}
 
 		if (norm(viaE_tvec_currentE) < stageAccuracy)
@@ -2129,12 +2329,16 @@ Robot_Command ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_
 	{
 		if (bRelative2ObjectFrame)
 		{
-			currentE_transVel_Effector = -controlGain * ((desiredE_tvec_O - currentE_tvec_O) + Vec2SkewMat(currentE_tvec_O) * desiredE_angleAxis_currentE);
+			currentE_transVel_Effector =
+			    -controlGain
+			    * ((desiredE_tvec_O - currentE_tvec_O)
+			       + Vec2SkewMat(currentE_tvec_O) * desiredE_angleAxis_currentE);
 			currentE_rotVel_Effector = -controlGain * desiredE_angleAxis_currentE;
 		}
 		else
 		{
-			currentE_transVel_Effector = -controlGain * desiredE_R_currentE.t() * desiredE_tvec_currentE;
+			currentE_transVel_Effector =
+			    -controlGain * desiredE_R_currentE.t() * desiredE_tvec_currentE;
 			currentE_rotVel_Effector = -controlGain * desiredE_angleAxis_currentE;
 		}
 
@@ -2147,7 +2351,7 @@ Robot_Command ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_
 	}
 
 	double max_Trans = 0;
-	double max_Rot = 0;
+	double max_Rot   = 0;
 
 	double ratio_Trans;
 	double ratio_Rot;
@@ -2211,7 +2415,9 @@ Robot_Command ControlVel_Pose_inEffectorFrame_useViaPoint(cv::Mat desiredC_tvec_
 	return vRobot_Command;
 }
 
-Robot_Command ControlVel_Image(cv::Point featurePoints_Desired[7], cv::Point featurePoints_Current[7], cv::Mat currentC_tvec_O, cv::Mat currentC_rvec_O, int num_FeaturePointsForControl)
+Robot_Command ControlVel_Image(cv::Point featurePoints_Desired[7],
+                               cv::Point featurePoints_Current[7], cv::Mat currentC_tvec_O,
+                               cv::Mat currentC_rvec_O, int num_FeaturePointsForControl)
 {
 	cv::Point3d featurePoints_Desired_Normalized[7];
 	cv::Point3d featurePoints_Current_Normalized[7];
@@ -2230,13 +2436,16 @@ Robot_Command ControlVel_Image(cv::Point featurePoints_Desired[7], cv::Point fea
 		featurePoints_Current_Extended[i].z = (double)1;
 	}
 
-	cv::Matx33d camera_matrix(1544.970675627578, 0, 1312.414149621184, 0, 1544.76986234472, 965.0566324183379, 0, 0, 1);
+	cv::Matx33d camera_matrix(1544.970675627578, 0, 1312.414149621184, 0, 1544.76986234472,
+	                          965.0566324183379, 0, 0, 1);
 
 	for (int i = 0; i < 7; i++)
 	{
-		featurePoints_Desired_Normalized[i] = camera_matrix.inv() * featurePoints_Desired_Extended[i];
+		featurePoints_Desired_Normalized[i] =
+		    camera_matrix.inv() * featurePoints_Desired_Extended[i];
 
-		featurePoints_Current_Normalized[i] = camera_matrix.inv() * featurePoints_Current_Extended[i];
+		featurePoints_Current_Normalized[i] =
+		    camera_matrix.inv() * featurePoints_Current_Extended[i];
 	}
 
 	cv::Point3d O_Points3D[7];
@@ -2292,24 +2501,32 @@ Robot_Command ControlVel_Image(cv::Point featurePoints_Desired[7], cv::Point fea
 
 	for (int i = 0; i < num_FeaturePointsForControl; i++)
 	{
-		ImageErrs.at<double>(2 * i, 0) = featurePoints_Current_Normalized[i].x - featurePoints_Desired_Normalized[i].x;
-		ImageErrs.at<double>(2 * i + 1, 0) = featurePoints_Current_Normalized[i].y - featurePoints_Desired_Normalized[i].y;
+		ImageErrs.at<double>(2 * i, 0) =
+		    featurePoints_Current_Normalized[i].x - featurePoints_Desired_Normalized[i].x;
+		ImageErrs.at<double>(2 * i + 1, 0) =
+		    featurePoints_Current_Normalized[i].y - featurePoints_Desired_Normalized[i].y;
 	}
 
 	for (int i = 0; i < num_FeaturePointsForControl; i++)
 	{
 		Jacobian.at<double>(2 * i, 0) = -1 / currentC_featurePoints_Z[i];
 		Jacobian.at<double>(2 * i, 1) = 0;
-		Jacobian.at<double>(2 * i, 2) = featurePoints_Current_Normalized[i].x / currentC_featurePoints_Z[i];
-		Jacobian.at<double>(2 * i, 3) = featurePoints_Current_Normalized[i].x * featurePoints_Current_Normalized[i].y;
-		Jacobian.at<double>(2 * i, 4) = -(1 + featurePoints_Current_Normalized[i].x * featurePoints_Current_Normalized[i].x);
+		Jacobian.at<double>(2 * i, 2) =
+		    featurePoints_Current_Normalized[i].x / currentC_featurePoints_Z[i];
+		Jacobian.at<double>(2 * i, 3) =
+		    featurePoints_Current_Normalized[i].x * featurePoints_Current_Normalized[i].y;
+		Jacobian.at<double>(2 * i, 4) =
+		    -(1 + featurePoints_Current_Normalized[i].x * featurePoints_Current_Normalized[i].x);
 		Jacobian.at<double>(2 * i, 5) = featurePoints_Current_Normalized[i].y;
 
 		Jacobian.at<double>(2 * i + 1, 0) = 0;
 		Jacobian.at<double>(2 * i + 1, 1) = -1 / currentC_featurePoints_Z[i];
-		Jacobian.at<double>(2 * i + 1, 2) = featurePoints_Current_Normalized[i].y / currentC_featurePoints_Z[i];
-		Jacobian.at<double>(2 * i + 1, 3) = 1 + featurePoints_Current_Normalized[i].y * featurePoints_Current_Normalized[i].y;
-		Jacobian.at<double>(2 * i + 1, 4) = -featurePoints_Current_Normalized[i].x * featurePoints_Current_Normalized[i].y;
+		Jacobian.at<double>(2 * i + 1, 2) =
+		    featurePoints_Current_Normalized[i].y / currentC_featurePoints_Z[i];
+		Jacobian.at<double>(2 * i + 1, 3) =
+		    1 + featurePoints_Current_Normalized[i].y * featurePoints_Current_Normalized[i].y;
+		Jacobian.at<double>(2 * i + 1, 4) =
+		    -featurePoints_Current_Normalized[i].x * featurePoints_Current_Normalized[i].y;
 		Jacobian.at<double>(2 * i + 1, 5) = -featurePoints_Current_Normalized[i].x;
 	}
 
@@ -2322,38 +2539,57 @@ Robot_Command ControlVel_Image(cv::Point featurePoints_Desired[7], cv::Point fea
 	cv::invert(Jacobian, Jacobian_Inv, cv::DECOMP_LU);
 
 	currentC_Vel_Camera = -controlGain * Jacobian_Inv * ImageErrs;
-	//currentC_Vel_Camera = -controlGain * Jacobian.inv() * ImageErrs;
-	//currentC_Vel_Camera = ImageErrs;
+	// currentC_Vel_Camera = -controlGain * Jacobian.inv() * ImageErrs;
+	// currentC_Vel_Camera = ImageErrs;
 
-	//printf("图像误差：（%lf,%lf）\r\n\n", ImageErrs.at<double>(0, 0), ImageErrs.at<double>(1, 0));
-	//printf("特征点坐标：（%lf,%lf,%lf）\r\n\n", O_Points3D[6].x, O_Points3D[6].y, O_Points3D[6].z);
-	//printf("雅可比行列式：（%lf）\r\n\n", cv::determinant(Jacobian));
+	// printf("图像误差：（%lf,%lf）\r\n\n", ImageErrs.at<double>(0, 0), ImageErrs.at<double>(1,
+	// 0)); printf("特征点坐标：（%lf,%lf,%lf）\r\n\n", O_Points3D[6].x, O_Points3D[6].y,
+	// O_Points3D[6].z); printf("雅可比行列式：（%lf）\r\n\n", cv::determinant(Jacobian));
 
-	//printf("雅可比各元素--第一行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(0, 0), Jacobian.at<double>(0, 1), Jacobian.at<double>(0, 2), Jacobian.at<double>(0, 3), Jacobian.at<double>(0, 4), Jacobian.at<double>(0, 5));
-	//printf("雅可比各元素--第二行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(1, 0), Jacobian.at<double>(1, 1), Jacobian.at<double>(1, 2), Jacobian.at<double>(1, 3), Jacobian.at<double>(1, 4), Jacobian.at<double>(1, 5));
-	//printf("雅可比各元素--第三行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(2, 0), Jacobian.at<double>(2, 1), Jacobian.at<double>(2, 2), Jacobian.at<double>(2, 3), Jacobian.at<double>(2, 4), Jacobian.at<double>(2, 5));
-	//printf("雅可比各元素--第四行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(3, 0), Jacobian.at<double>(3, 1), Jacobian.at<double>(3, 2), Jacobian.at<double>(3, 3), Jacobian.at<double>(3, 4), Jacobian.at<double>(3, 5));
-	//printf("雅可比各元素--第五行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(4, 0), Jacobian.at<double>(4, 1), Jacobian.at<double>(4, 2), Jacobian.at<double>(4, 3), Jacobian.at<double>(4, 4), Jacobian.at<double>(4, 5));
-	//printf("雅可比各元素--第六行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(5, 0), Jacobian.at<double>(5, 1), Jacobian.at<double>(5, 2), Jacobian.at<double>(5, 3), Jacobian.at<double>(5, 4), Jacobian.at<double>(5, 5));
+	// printf("雅可比各元素--第一行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(0, 0),
+	// Jacobian.at<double>(0, 1), Jacobian.at<double>(0, 2), Jacobian.at<double>(0, 3),
+	// Jacobian.at<double>(0, 4), Jacobian.at<double>(0, 5));
+	// printf("雅可比各元素--第二行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(1, 0),
+	// Jacobian.at<double>(1, 1), Jacobian.at<double>(1, 2), Jacobian.at<double>(1, 3),
+	// Jacobian.at<double>(1, 4), Jacobian.at<double>(1, 5));
+	// printf("雅可比各元素--第三行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(2, 0),
+	// Jacobian.at<double>(2, 1), Jacobian.at<double>(2, 2), Jacobian.at<double>(2, 3),
+	// Jacobian.at<double>(2, 4), Jacobian.at<double>(2, 5));
+	// printf("雅可比各元素--第四行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(3, 0),
+	// Jacobian.at<double>(3, 1), Jacobian.at<double>(3, 2), Jacobian.at<double>(3, 3),
+	// Jacobian.at<double>(3, 4), Jacobian.at<double>(3, 5));
+	// printf("雅可比各元素--第五行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(4, 0),
+	// Jacobian.at<double>(4, 1), Jacobian.at<double>(4, 2), Jacobian.at<double>(4, 3),
+	// Jacobian.at<double>(4, 4), Jacobian.at<double>(4, 5));
+	// printf("雅可比各元素--第六行：（%lf,%lf,%lf,%lf,%lf,%lf）\r\n\n", Jacobian.at<double>(5, 0),
+	// Jacobian.at<double>(5, 1), Jacobian.at<double>(5, 2), Jacobian.at<double>(5, 3),
+	// Jacobian.at<double>(5, 4), Jacobian.at<double>(5, 5));
 
+	// printf("图像坐标(归一化)--第一点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[0].x,
+	// featurePoints_Current_Normalized[0].y); printf("图像坐标(归一化)--第二点：（%lf,%lf）\r\n\n",
+	// featurePoints_Current_Normalized[1].x, featurePoints_Current_Normalized[1].y);
+	// printf("图像坐标(归一化)--第三点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[2].x,
+	// featurePoints_Current_Normalized[2].y); printf("图像坐标(归一化)--第四点：（%lf,%lf）\r\n\n",
+	// featurePoints_Current_Normalized[3].x, featurePoints_Current_Normalized[3].y);
+	// printf("图像坐标(归一化)--第五点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[4].x,
+	// featurePoints_Current_Normalized[4].y); printf("图像坐标(归一化)--第六点：（%lf,%lf）\r\n\n",
+	// featurePoints_Current_Normalized[5].x, featurePoints_Current_Normalized[5].y);
+	// printf("图像坐标(归一化)--第七点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[6].x,
+	// featurePoints_Current_Normalized[6].y);
 
-	//printf("图像坐标(归一化)--第一点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[0].x, featurePoints_Current_Normalized[0].y);
-	//printf("图像坐标(归一化)--第二点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[1].x, featurePoints_Current_Normalized[1].y);
-	//printf("图像坐标(归一化)--第三点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[2].x, featurePoints_Current_Normalized[2].y);
-	//printf("图像坐标(归一化)--第四点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[3].x, featurePoints_Current_Normalized[3].y);
-	//printf("图像坐标(归一化)--第五点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[4].x, featurePoints_Current_Normalized[4].y);
-	//printf("图像坐标(归一化)--第六点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[5].x, featurePoints_Current_Normalized[5].y);
-	//printf("图像坐标(归一化)--第七点：（%lf,%lf）\r\n\n", featurePoints_Current_Normalized[6].x, featurePoints_Current_Normalized[6].y);
+	// printf("图像坐标(未归一化)--第一点：（%d,%d）\r\n\n", featurePoints_Current[0].x,
+	// featurePoints_Current[0].y); printf("图像坐标(未归一化)--第二点：（%d,%d）\r\n\n",
+	// featurePoints_Current[1].x, featurePoints_Current[1].y);
+	// printf("图像坐标(未归一化)--第三点：（%d,%d）\r\n\n", featurePoints_Current[2].x,
+	// featurePoints_Current[2].y); printf("图像坐标(未归一化)--第四点：（%d,%d）\r\n\n",
+	// featurePoints_Current[3].x, featurePoints_Current[3].y);
+	// printf("图像坐标(未归一化)--第五点：（%d,%d）\r\n\n", featurePoints_Current[4].x,
+	// featurePoints_Current[4].y); printf("图像坐标(未归一化)--第六点：（%d,%d）\r\n\n",
+	// featurePoints_Current[5].x, featurePoints_Current[5].y);
+	// printf("图像坐标(未归一化)--第七点：（%d,%d）\r\n\n", featurePoints_Current[6].x,
+	// featurePoints_Current[6].y);
 
-	//printf("图像坐标(未归一化)--第一点：（%d,%d）\r\n\n", featurePoints_Current[0].x, featurePoints_Current[0].y);
-	//printf("图像坐标(未归一化)--第二点：（%d,%d）\r\n\n", featurePoints_Current[1].x, featurePoints_Current[1].y);
-	//printf("图像坐标(未归一化)--第三点：（%d,%d）\r\n\n", featurePoints_Current[2].x, featurePoints_Current[2].y);
-	//printf("图像坐标(未归一化)--第四点：（%d,%d）\r\n\n", featurePoints_Current[3].x, featurePoints_Current[3].y);
-	//printf("图像坐标(未归一化)--第五点：（%d,%d）\r\n\n", featurePoints_Current[4].x, featurePoints_Current[4].y);
-	//printf("图像坐标(未归一化)--第六点：（%d,%d）\r\n\n", featurePoints_Current[5].x, featurePoints_Current[5].y);
-	//printf("图像坐标(未归一化)--第七点：（%d,%d）\r\n\n", featurePoints_Current[6].x, featurePoints_Current[6].y);
-
-	//cv::waitKey(9000);
+	// cv::waitKey(9000);
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -2373,11 +2609,13 @@ Robot_Command ControlVel_Image(cv::Point featurePoints_Desired[7], cv::Point fea
 	cv::Mat currentE_transVel_Effector(3, 1, CV_64FC1);
 	cv::Mat currentE_rotVel_Effector(3, 1, CV_64FC1);
 
-	currentE_transVel_Effector = currentE_R_currentC * currentC_transVel_Camera + Vec2SkewMat(currentE_tvec_currentC) * currentE_R_currentC * currentC_rotVel_Camera;
+	currentE_transVel_Effector =
+	    currentE_R_currentC * currentC_transVel_Camera
+	    + Vec2SkewMat(currentE_tvec_currentC) * currentE_R_currentC * currentC_rotVel_Camera;
 	currentE_rotVel_Effector = currentE_R_currentC * currentC_rotVel_Camera;
 
 	double max_Trans = 0;
-	double max_Rot = 0;
+	double max_Rot   = 0;
 
 	double ratio_Trans;
 	double ratio_Rot;
@@ -2443,7 +2681,6 @@ Robot_Command ControlVel_Image(cv::Point featurePoints_Desired[7], cv::Point fea
 	return vRobot_Command;
 }
 
-
 void Open_DVP(void* p)
 {
 	dvpStatus status;
@@ -2452,7 +2689,8 @@ void Open_DVP(void* p)
 
 	printf("Test start,camera is %s\r\n", name);
 
-	do {
+	do
+	{
 		/* 打开设备 */
 		status = dvpOpenByName(name, OPEN_NORMAL, &h);
 		if (status != DVP_STATUS_OK)
@@ -2487,23 +2725,21 @@ void Open_DVP(void* p)
 		dvpGetAnalogGain(h, &analoggain);
 		dvpGetExposure(h, &exposure);
 
-
 		dvpGetColorCorrection(h, &colorcorrection);
 		dvpGetAwbOperation(h, &awboperation);
 
-
 		dvpSetSharpness(h, 40);
-		//dvpSetSharpness(h, 80);
+		// dvpSetSharpness(h, 80);
 		dvpSetGamma(h, 500);
 		dvpSetSaturation(h, 90);
 		dvpSetContrast(h, 100);
-		//dvpSetContrast(h, 140);
+		// dvpSetContrast(h, 140);
 		dvpSetColorSolutionSel(h, 2);
 
 		dvpSetAnalogGain(h, 1.2);
 		dvpSetExposure(h, 25000);
-		//dvpSetExposure(h, 40000);
-		//dvpSetExposure(h, 70000);
+		// dvpSetExposure(h, 40000);
+		// dvpSetExposure(h, 70000);
 
 		set_colorcorrection.bgr[0] = 0.9;
 		set_colorcorrection.bgr[1] = 0.79;
@@ -2511,14 +2747,12 @@ void Open_DVP(void* p)
 
 		dvpSetColorCorrection(h, set_colorcorrection);
 
-
 		set_awboperation = (dvpAwbOperation)2;
 
 		dvpSetAwbOperation(h, set_awboperation);
 
-		//dvpShowPropertyModalDialog(h,NULL);
-		//cv::waitKey(5000);
-
+		// dvpShowPropertyModalDialog(h,NULL);
+		// cv::waitKey(5000);
 
 		dvpFrame frame;
 		void* pBuffer;
@@ -2537,13 +2771,12 @@ void Open_DVP(void* p)
 
 		vector<cv::Point> featurePoints_Obtained_Filtered;
 
-
 		vector<cv::Point3f> Points3D;
 		vector<cv::Point2f> Points2D;
 
 		vector<cv::Point2f> Points2D_Proj;
 
-		cv::Mat Points2DMat = cv::Mat::zeros(7, 1, CV_64FC2);
+		cv::Mat Points2DMat      = cv::Mat::zeros(7, 1, CV_64FC2);
 		cv::Mat Points2D_ProjMat = cv::Mat::zeros(7, 1, CV_64FC2);
 
 		double projErr_Avg;
@@ -2562,11 +2795,13 @@ void Open_DVP(void* p)
 		cv::Mat rvec_Filtered = cv::Mat::zeros(3, 1, CV_64FC1);
 		cv::Mat tvec_Filtered = cv::Mat::zeros(3, 1, CV_64FC1);
 
+		cv::Mat camera_matrix = (cv::Mat_<double>(3, 3) << 1544.970675627578, 0, 1312.414149621184,
+		                         0, 1544.76986234472, 965.0566324183379, 0, 0, 1);
+		cv::Mat distortion_coefficients =
+		    (cv::Mat_<double>(5, 1) << 0.0578488137074523, -0.1147036269306462,
+		     0.0003202691065071685, -0.0002482003642574091, 0.06296758427444281);
 
-		cv::Mat camera_matrix = (cv::Mat_<double>(3, 3) << 1544.970675627578, 0, 1312.414149621184, 0, 1544.76986234472, 965.0566324183379, 0, 0, 1);
-		cv::Mat distortion_coefficients = (cv::Mat_<double>(5, 1) << 0.0578488137074523, -0.1147036269306462, 0.0003202691065071685, -0.0002482003642574091, 0.06296758427444281);
-
-		//cv::Mat color_showImage;
+		// cv::Mat color_showImage;
 
 		Points3D.push_back(cv::Point3f(16, 16, 0));
 		Points3D.push_back(cv::Point3f(16, 0, 0));
@@ -2577,9 +2812,9 @@ void Open_DVP(void* p)
 		Points3D.push_back(cv::Point3f(4, 36, 0));
 		Points3D.push_back(cv::Point3f(22.4, 36, 0));
 
-		bool first_run = TRUE;
+		bool first_run   = TRUE;
 		bool bDivergence = FALSE;
-		bool valid_pose = FALSE;
+		bool valid_pose  = FALSE;
 
 		double rm[9];
 		cv::Mat rotationM(3, 3, CV_64FC1, rm);
@@ -2587,7 +2822,6 @@ void Open_DVP(void* p)
 		unsigned long timeStep_Pose = 0;
 
 		double alpha = 0.9;
-
 
 		int queueSize = 5;
 		vector<cv::Mat> tvec_Filtered_Queue;
@@ -2598,7 +2832,9 @@ void Open_DVP(void* p)
 
 		while (Continuous_Running)
 		{
-			status = dvpGetFrame(h /*相机句柄*/, &frame /*帧信息*/, &pBuffer /*图像数据的内存首地址,切勿手动释放*/, 3000 /*超时时间（毫秒）*/);
+			status = dvpGetFrame(h /*相机句柄*/, &frame /*帧信息*/,
+			                     &pBuffer /*图像数据的内存首地址,切勿手动释放*/,
+			                     3000 /*超时时间（毫秒）*/);
 			if (status != DVP_STATUS_OK)
 			{
 				printf("Fail to get a frame in continuous mode \r\n");
@@ -2610,24 +2846,23 @@ void Open_DVP(void* p)
 			cv::namedWindow("ImageShow", 0);
 			cv::resizeWindow("ImageShow", 640, 480);
 
-
 			std::cout << "视频大小：" << showImage.depth() << std::endl;
 			printf("The depth of the camera is: %d \r\n", showImage.depth());
 			cv::imshow("ImageShow", showImage);
 			//            cv::waitKey(21);
 			AlreadyShow = TRUE;
 
-			//showImage.convertTo(color_showImage, CV_8U);
-			//cv::normalize(color_showImage,color_showImage,0,256*256,cv::NORM_MINMAX);
-			//cv::namedWindow("ColorImageShow", 1);
-			//cv::resizeWindow("ColorImageShow", 640, 480);
-			//cv::imshow("ColorImageShow", color_showImage);
+			// showImage.convertTo(color_showImage, CV_8U);
+			// cv::normalize(color_showImage,color_showImage,0,256*256,cv::NORM_MINMAX);
+			// cv::namedWindow("ColorImageShow", 1);
+			// cv::resizeWindow("ColorImageShow", 640, 480);
+			// cv::imshow("ColorImageShow", color_showImage);
 
 			if (!AlreadyStore && NeedToStoreDesiredPose)
 			{
 				cv::imwrite("DesiredPoseImage.jpg", showImage);
 				printf("期望位姿信息已保存 \r\n");
-				AlreadyStore = TRUE;
+				AlreadyStore           = TRUE;
 				NeedToStoreDesiredPose = FALSE;
 			}
 
@@ -2638,19 +2873,54 @@ void Open_DVP(void* p)
 				for (int i = 0; i < featurePoints_Obtained.size(); i++)
 				{
 					printf("已检测到......%d组特征点\r\n", featurePoints_Obtained.size());
-					//画矩形边线
-					cv::line(showImage, cv::Point(featurePoints_Obtained.at(i).at(0).x, featurePoints_Obtained.at(i).at(0).y), cv::Point(featurePoints_Obtained.at(i).at(1).x, featurePoints_Obtained.at(i).at(1).y), cv::Scalar(0, 0, 255), 3, cv::LINE_AA, 0);//BGR
-					cv::line(showImage, cv::Point(featurePoints_Obtained.at(i).at(1).x, featurePoints_Obtained.at(i).at(1).y), cv::Point(featurePoints_Obtained.at(i).at(2).x, featurePoints_Obtained.at(i).at(2).y), cv::Scalar(0, 255, 0), 3, cv::LINE_AA, 0);
-					cv::line(showImage, cv::Point(featurePoints_Obtained.at(i).at(2).x, featurePoints_Obtained.at(i).at(2).y), cv::Point(featurePoints_Obtained.at(i).at(3).x, featurePoints_Obtained.at(i).at(3).y), cv::Scalar(255, 0, 0), 3, cv::LINE_AA, 0);
-					cv::line(showImage, cv::Point(featurePoints_Obtained.at(i).at(3).x, featurePoints_Obtained.at(i).at(3).y), cv::Point(featurePoints_Obtained.at(i).at(0).x, featurePoints_Obtained.at(i).at(0).y), cv::Scalar(0, 0, 0), 3, cv::LINE_AA, 0);
+					// 画矩形边线
+					cv::line(showImage,
+					         cv::Point(featurePoints_Obtained.at(i).at(0).x,
+					                   featurePoints_Obtained.at(i).at(0).y),
+					         cv::Point(featurePoints_Obtained.at(i).at(1).x,
+					                   featurePoints_Obtained.at(i).at(1).y),
+					         cv::Scalar(0, 0, 255), 3, cv::LINE_AA, 0);// BGR
+					cv::line(showImage,
+					         cv::Point(featurePoints_Obtained.at(i).at(1).x,
+					                   featurePoints_Obtained.at(i).at(1).y),
+					         cv::Point(featurePoints_Obtained.at(i).at(2).x,
+					                   featurePoints_Obtained.at(i).at(2).y),
+					         cv::Scalar(0, 255, 0), 3, cv::LINE_AA, 0);
+					cv::line(showImage,
+					         cv::Point(featurePoints_Obtained.at(i).at(2).x,
+					                   featurePoints_Obtained.at(i).at(2).y),
+					         cv::Point(featurePoints_Obtained.at(i).at(3).x,
+					                   featurePoints_Obtained.at(i).at(3).y),
+					         cv::Scalar(255, 0, 0), 3, cv::LINE_AA, 0);
+					cv::line(showImage,
+					         cv::Point(featurePoints_Obtained.at(i).at(3).x,
+					                   featurePoints_Obtained.at(i).at(3).y),
+					         cv::Point(featurePoints_Obtained.at(i).at(0).x,
+					                   featurePoints_Obtained.at(i).at(0).y),
+					         cv::Scalar(0, 0, 0), 3, cv::LINE_AA, 0);
 
-					//画三角形边线
-					cv::line(showImage, cv::Point(featurePoints_Obtained.at(i).at(4).x, featurePoints_Obtained.at(i).at(4).y), cv::Point(featurePoints_Obtained.at(i).at(5).x, featurePoints_Obtained.at(i).at(5).y), cv::Scalar(0, 0, 255), 3, cv::LINE_AA, 0);//BGR
-					cv::line(showImage, cv::Point(featurePoints_Obtained.at(i).at(5).x, featurePoints_Obtained.at(i).at(5).y), cv::Point(featurePoints_Obtained.at(i).at(6).x, featurePoints_Obtained.at(i).at(6).y), cv::Scalar(0, 255, 0), 3, cv::LINE_AA, 0);
-					cv::line(showImage, cv::Point(featurePoints_Obtained.at(i).at(6).x, featurePoints_Obtained.at(i).at(6).y), cv::Point(featurePoints_Obtained.at(i).at(4).x, featurePoints_Obtained.at(i).at(4).y), cv::Scalar(255, 0, 0), 3, cv::LINE_AA, 0);
+					// 画三角形边线
+					cv::line(showImage,
+					         cv::Point(featurePoints_Obtained.at(i).at(4).x,
+					                   featurePoints_Obtained.at(i).at(4).y),
+					         cv::Point(featurePoints_Obtained.at(i).at(5).x,
+					                   featurePoints_Obtained.at(i).at(5).y),
+					         cv::Scalar(0, 0, 255), 3, cv::LINE_AA, 0);// BGR
+					cv::line(showImage,
+					         cv::Point(featurePoints_Obtained.at(i).at(5).x,
+					                   featurePoints_Obtained.at(i).at(5).y),
+					         cv::Point(featurePoints_Obtained.at(i).at(6).x,
+					                   featurePoints_Obtained.at(i).at(6).y),
+					         cv::Scalar(0, 255, 0), 3, cv::LINE_AA, 0);
+					cv::line(showImage,
+					         cv::Point(featurePoints_Obtained.at(i).at(6).x,
+					                   featurePoints_Obtained.at(i).at(6).y),
+					         cv::Point(featurePoints_Obtained.at(i).at(4).x,
+					                   featurePoints_Obtained.at(i).at(4).y),
+					         cv::Scalar(255, 0, 0), 3, cv::LINE_AA, 0);
 
 					featurePoints_Obtained_Previous = featurePoints_Obtained.at(0);
-					featurePoints_Obtained_Current = featurePoints_Obtained.at(0);
+					featurePoints_Obtained_Current  = featurePoints_Obtained.at(0);
 
 					cv::namedWindow("ContoursImage", 0);
 					cv::resizeWindow("ContoursImage", 640, 480);
@@ -2674,8 +2944,9 @@ void Open_DVP(void* p)
 							iterNum++;
 							if (first_run || bDivergence)
 							{
-
-								cv::solvePnP(Points3D, Points2D, camera_matrix, distortion_coefficients, rvec, tvec, FALSE, cv::SOLVEPNP_ITERATIVE);
+								cv::solvePnP(Points3D, Points2D, camera_matrix,
+								             distortion_coefficients, rvec, tvec, FALSE,
+								             cv::SOLVEPNP_ITERATIVE);
 								first_run = FALSE;
 
 								tvec_Previous = tvec;
@@ -2689,7 +2960,9 @@ void Open_DVP(void* p)
 							}
 							else
 							{
-								cv::solvePnP(Points3D, Points2D, camera_matrix, distortion_coefficients, rvec, tvec, TRUE, cv::SOLVEPNP_ITERATIVE);
+								cv::solvePnP(Points3D, Points2D, camera_matrix,
+								             distortion_coefficients, rvec, tvec, TRUE,
+								             cv::SOLVEPNP_ITERATIVE);
 
 								tvec_Filtered = alpha * tvec + (1 - alpha) * tvec_Previous;
 								rvec_Filtered = alpha * rvec + (1 - alpha) * rvec_Previous;
@@ -2712,8 +2985,10 @@ void Open_DVP(void* p)
 									rvec_Filtered_Sum = cv::Mat::zeros(3, 1, CV_64FC1);
 									for (int i = 0; i < queueSize; i++)
 									{
-										tvec_Filtered_Sum = tvec_Filtered_Sum + tvec_Filtered_Queue.at(i);
-										rvec_Filtered_Sum = rvec_Filtered_Sum + rvec_Filtered_Queue.at(i);
+										tvec_Filtered_Sum =
+										    tvec_Filtered_Sum + tvec_Filtered_Queue.at(i);
+										rvec_Filtered_Sum =
+										    rvec_Filtered_Sum + rvec_Filtered_Queue.at(i);
 									}
 									tvec = tvec_Filtered_Sum / queueSize;
 									rvec = rvec_Filtered_Sum / queueSize;
@@ -2724,25 +2999,31 @@ void Open_DVP(void* p)
 									rvec_Filtered_Sum = cv::Mat::zeros(3, 1, CV_64FC1);
 									for (int i = 0; i < tvec_Filtered_Queue.size(); i++)
 									{
-										tvec_Filtered_Sum = tvec_Filtered_Sum + tvec_Filtered_Queue.at(i);
-										rvec_Filtered_Sum = rvec_Filtered_Sum + rvec_Filtered_Queue.at(i);
+										tvec_Filtered_Sum =
+										    tvec_Filtered_Sum + tvec_Filtered_Queue.at(i);
+										rvec_Filtered_Sum =
+										    rvec_Filtered_Sum + rvec_Filtered_Queue.at(i);
 									}
 									tvec = tvec_Filtered_Sum / tvec_Filtered_Queue.size();
 									rvec = rvec_Filtered_Sum / tvec_Filtered_Queue.size();
 								}
 							}
 
-
-							//重投影误差计算***************************************************************************************************************************************************
-							cv::projectPoints(Points3D, rvec, tvec, camera_matrix, distortion_coefficients, Points2D_Proj);
+							// 重投影误差计算***************************************************************************************************************************************************
+							cv::projectPoints(Points3D, rvec, tvec, camera_matrix,
+							                  distortion_coefficients, Points2D_Proj);
 
 							projErr_Max = 0;
 							for (int i = 0; i < 7; i++)
 							{
-								Points2DMat.at<cv::Vec2d>(i, 0) = cv::Vec2f(Points2D.at(i).x, Points2D.at(i).y);
-								Points2D_ProjMat.at<cv::Vec2d>(i, 0) = cv::Vec2f(Points2D_Proj.at(i).x, Points2D_Proj.at(i).y);
+								Points2DMat.at<cv::Vec2d>(i, 0) =
+								    cv::Vec2f(Points2D.at(i).x, Points2D.at(i).y);
+								Points2D_ProjMat.at<cv::Vec2d>(i, 0) =
+								    cv::Vec2f(Points2D_Proj.at(i).x, Points2D_Proj.at(i).y);
 
-								double projErr_current = cv::norm(Points2DMat.at<cv::Vec2d>(i, 0), Points2D_ProjMat.at<cv::Vec2d>(i, 0));
+								double projErr_current =
+								    cv::norm(Points2DMat.at<cv::Vec2d>(i, 0),
+								             Points2D_ProjMat.at<cv::Vec2d>(i, 0));
 
 								if (projErr_current > projErr_Max)
 								{
@@ -2751,17 +3032,11 @@ void Open_DVP(void* p)
 							}
 
 							projErr_Avg = cv::norm(Points2DMat, Points2D_ProjMat, cv::NORM_L2) / 7;
-							cout << "当前估计位姿的重投影“平均”误差为：" << endl
-								 << endl;
-							cout << projErr_Avg << "------像素" << endl
-								 << endl
-								 << endl;
+							cout << "当前估计位姿的重投影“平均”误差为：" << endl << endl;
+							cout << projErr_Avg << "------像素" << endl << endl << endl;
 
-							cout << "当前估计位姿的重投影“最大”误差为：" << endl
-								 << endl;
-							cout << projErr_Max << "------像素" << endl
-								 << endl
-								 << endl;
+							cout << "当前估计位姿的重投影“最大”误差为：" << endl << endl;
+							cout << projErr_Max << "------像素" << endl << endl << endl;
 
 							if (projErr_Max > 5)
 								bDivergence = TRUE;
@@ -2772,18 +3047,19 @@ void Open_DVP(void* p)
 
 						valid_pose = TRUE;
 
-						printf("位移：（x方向）%lf   （y方向）%lf    （z方向）%lf\r\n", tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2, 0));
+						printf("位移：（x方向）%lf   （y方向）%lf    （z方向）%lf\r\n",
+						       tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2, 0));
 					}
 					if (bsendingFeature)
 					{
 						featurePoints_Sending = featurePoints_Obtained_Current;
-						canSend = TRUE;
+						canSend               = TRUE;
 					}
 
-					//保存期望信息到文件中
+					// 保存期望信息到文件中
 					if (need2StoreDesiredInfo)
 					{
-						//保存期望“图像”信息
+						// 保存期望“图像”信息
 						FILE* desiredFeaturePointInfoFile;
 						desiredFeaturePointInfoFile = fopen("desired_featurePoints.txt", "a+");
 
@@ -2791,14 +3067,18 @@ void Open_DVP(void* p)
 						{
 							for (int i = 0; i < 6; i++)
 							{
-								fprintf(desiredFeaturePointInfoFile, "%d", featurePoints_Obtained_Current.at(i).x);
+								fprintf(desiredFeaturePointInfoFile, "%d",
+								        featurePoints_Obtained_Current.at(i).x);
 								fprintf(desiredFeaturePointInfoFile, "%s", " ");
-								fprintf(desiredFeaturePointInfoFile, "%d", featurePoints_Obtained_Current.at(i).y);
+								fprintf(desiredFeaturePointInfoFile, "%d",
+								        featurePoints_Obtained_Current.at(i).y);
 								fprintf(desiredFeaturePointInfoFile, "%s", " ");
 							}
-							fprintf(desiredFeaturePointInfoFile, "%d", featurePoints_Obtained_Current.at(6).x);
+							fprintf(desiredFeaturePointInfoFile, "%d",
+							        featurePoints_Obtained_Current.at(6).x);
 							fprintf(desiredFeaturePointInfoFile, "%s", " ");
-							fprintf(desiredFeaturePointInfoFile, "%d", featurePoints_Obtained_Current.at(6).y);
+							fprintf(desiredFeaturePointInfoFile, "%d",
+							        featurePoints_Obtained_Current.at(6).y);
 							fprintf(desiredFeaturePointInfoFile, "%s", "\n");
 
 							need2StoreDesiredInfo = FALSE;
@@ -2807,28 +3087,31 @@ void Open_DVP(void* p)
 						}
 						fclose(desiredFeaturePointInfoFile);
 
-
-						//保存期望“位姿”信息
+						// 保存期望“位姿”信息
 						if (valid_pose)
 						{
 							FILE* desiredFeaturePointInfoFile_Pose;
-							desiredFeaturePointInfoFile_Pose = fopen("desired_featurePoints_Pose.txt", "a+");
+							desiredFeaturePointInfoFile_Pose =
+							    fopen("desired_featurePoints_Pose.txt", "a+");
 
 							if (desiredFeaturePointInfoFile_Pose)
 							{
 								for (int i = 0; i < 3; i++)
 								{
-									fprintf(desiredFeaturePointInfoFile_Pose, "%lf", tvec.at<double>(i, 0));
+									fprintf(desiredFeaturePointInfoFile_Pose, "%lf",
+									        tvec.at<double>(i, 0));
 									fprintf(desiredFeaturePointInfoFile_Pose, "%s", " ");
 								}
 
 								for (int i = 0; i < 2; i++)
 								{
-									fprintf(desiredFeaturePointInfoFile_Pose, "%lf", rvec.at<double>(i, 0));
+									fprintf(desiredFeaturePointInfoFile_Pose, "%lf",
+									        rvec.at<double>(i, 0));
 									fprintf(desiredFeaturePointInfoFile_Pose, "%s", " ");
 								}
 
-								fprintf(desiredFeaturePointInfoFile_Pose, "%lf", rvec.at<double>(2, 0));
+								fprintf(desiredFeaturePointInfoFile_Pose, "%lf",
+								        rvec.at<double>(2, 0));
 								fprintf(desiredFeaturePointInfoFile_Pose, "%s", "\n");
 
 								need2StoreDesiredInfo = FALSE;
@@ -2839,15 +3122,17 @@ void Open_DVP(void* p)
 						}
 					}
 
-					//控制器设计
+					// 控制器设计
 					if (startGrasping)
 					{
 						printf("\r\n\n抓取任务已经在执行中.....\r\n\n");
 
 						printf("期望“图像”信息为：");
 						for (int i = 0; i < 6; i++)
-							printf("（%d,%d）--", desiredFeatures_Image[i].x, desiredFeatures_Image[i].y);
-						printf("（%d,%d）\r\n\n", desiredFeatures_Image[6].x, desiredFeatures_Image[6].y);
+							printf("（%d,%d）--", desiredFeatures_Image[i].x,
+							       desiredFeatures_Image[i].y);
+						printf("（%d,%d）\r\n\n", desiredFeatures_Image[6].x,
+						       desiredFeatures_Image[6].y);
 
 						for (int i = 0; i < 7; i++)
 						{
@@ -2857,15 +3142,19 @@ void Open_DVP(void* p)
 
 						printf("当前“图像”信息为：");
 						for (int i = 0; i < 6; i++)
-							printf("（%d,%d）--", currentFeatures_Image[i].x, currentFeatures_Image[i].y);
-						printf("（%d,%d）\r\n\n", currentFeatures_Image[6].x, currentFeatures_Image[6].y);
+							printf("（%d,%d）--", currentFeatures_Image[i].x,
+							       currentFeatures_Image[i].y);
+						printf("（%d,%d）\r\n\n", currentFeatures_Image[6].x,
+						       currentFeatures_Image[6].y);
 
 						printf("期望“位姿”信息为：");
 						for (int i = 0; i < 5; i++)
 							printf("%lf--", desiredFeatures_Pose[i]);
 						printf("%lf \r\n\n", desiredFeatures_Pose[5]);
 
-						printf("当前“位姿”信息为：%lf--%lf--%lf--%lf--%lf--%lf\r\n\n", tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2, 0), rvec.at<double>(0, 0), rvec.at<double>(1, 0), rvec.at<double>(2, 0));
+						printf("当前“位姿”信息为：%lf--%lf--%lf--%lf--%lf--%lf\r\n\n",
+						       tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2, 0),
+						       rvec.at<double>(0, 0), rvec.at<double>(1, 0), rvec.at<double>(2, 0));
 
 						cv::Mat desiredC_tvec_O(3, 1, CV_64FC1);
 						cv::Mat desiredC_rvec_O(3, 1, CV_64FC1);
@@ -2880,45 +3169,62 @@ void Open_DVP(void* p)
 							desiredC_rvec_O.at<double>(i, 0) = desiredFeatures_Pose[3 + i];
 						}
 
-						//控制器
+						// 控制器
 						Robot_Command vRobot_Command;
 
 						printf("基于位置的控制\r\n\n");
-						vRobot_Command = ControlVel_Pose_inEffectorFrame_useViaPoint(desiredC_tvec_O, desiredC_rvec_O, tvec, rvec, TRUE, FALSE, timeStep_Pose);
+						vRobot_Command = ControlVel_Pose_inEffectorFrame_useViaPoint(
+						    desiredC_tvec_O, desiredC_rvec_O, tvec, rvec, TRUE, FALSE,
+						    timeStep_Pose);
 						printf("相对于“目标坐标系”\r\n\n");
-						printf("控制“线”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.translVel[0], vRobot_Command.translVel[1], vRobot_Command.translVel[2]);
-						printf("控制“角”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.rotVel[0], vRobot_Command.rotVel[1], vRobot_Command.rotVel[2]);
+						printf("控制“线”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.translVel[0],
+						       vRobot_Command.translVel[1], vRobot_Command.translVel[2]);
+						printf("控制“角”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.rotVel[0],
+						       vRobot_Command.rotVel[1], vRobot_Command.rotVel[2]);
 
-						//printf("图像坐标(未归一化---传输前)--第一点：（%d,%d）\r\n\n", currentFeatures_Image[0].x, currentFeatures_Image[0].y);
-						//printf("图像坐标(未归一化---传输前)--第二点：（%d,%d）\r\n\n", currentFeatures_Image[1].x, currentFeatures_Image[1].y);
-						//printf("图像坐标(未归一化---传输前)--第三点：（%d,%d）\r\n\n", currentFeatures_Image[2].x, currentFeatures_Image[2].y);
-						//printf("图像坐标(未归一化---传输前)--第四点：（%d,%d）\r\n\n", currentFeatures_Image[3].x, currentFeatures_Image[3].y);
-						//printf("图像坐标(未归一化---传输前)--第五点：（%d,%d）\r\n\n", currentFeatures_Image[4].x, currentFeatures_Image[4].y);
-						//printf("图像坐标(未归一化---传输前)--第六点：（%d,%d）\r\n\n", currentFeatures_Image[5].x, currentFeatures_Image[5].y);
-						//printf("图像坐标(未归一化---传输前)--第七点：（%d,%d）\r\n\n", currentFeatures_Image[6].x, currentFeatures_Image[6].y);
+						// printf("图像坐标(未归一化---传输前)--第一点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[0].x, currentFeatures_Image[0].y);
+						// printf("图像坐标(未归一化---传输前)--第二点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[1].x, currentFeatures_Image[1].y);
+						// printf("图像坐标(未归一化---传输前)--第三点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[2].x, currentFeatures_Image[2].y);
+						// printf("图像坐标(未归一化---传输前)--第四点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[3].x, currentFeatures_Image[3].y);
+						// printf("图像坐标(未归一化---传输前)--第五点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[4].x, currentFeatures_Image[4].y);
+						// printf("图像坐标(未归一化---传输前)--第六点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[5].x, currentFeatures_Image[5].y);
+						// printf("图像坐标(未归一化---传输前)--第七点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[6].x, currentFeatures_Image[6].y);
 
 						printf("基于图像的控制\r\n\n");
-						vRobot_Command = ControlVel_Image(desiredFeatures_Image, currentFeatures_Image, tvec, rvec, 3);
-						printf("控制“线”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.translVel[0], vRobot_Command.translVel[1], vRobot_Command.translVel[2]);
-						printf("控制“角”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.rotVel[0], vRobot_Command.rotVel[1], vRobot_Command.rotVel[2]);
-						//保存“图像”运行轨迹信息
+						vRobot_Command = ControlVel_Image(desiredFeatures_Image,
+						                                  currentFeatures_Image, tvec, rvec, 3);
+						printf("控制“线”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.translVel[0],
+						       vRobot_Command.translVel[1], vRobot_Command.translVel[2]);
+						printf("控制“角”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.rotVel[0],
+						       vRobot_Command.rotVel[1], vRobot_Command.rotVel[2]);
+						// 保存“图像”运行轨迹信息
 						if (fileStoreImageTraj)
 						{
 							for (int i = 0; i < 6; i++)
 							{
-								fprintf(fileStoreImageTraj, "%d", featurePoints_Obtained_Current.at(i).x);
+								fprintf(fileStoreImageTraj, "%d",
+								        featurePoints_Obtained_Current.at(i).x);
 								fprintf(fileStoreImageTraj, "%s", " ");
-								fprintf(fileStoreImageTraj, "%d", featurePoints_Obtained_Current.at(i).y);
+								fprintf(fileStoreImageTraj, "%d",
+								        featurePoints_Obtained_Current.at(i).y);
 								fprintf(fileStoreImageTraj, "%s", " ");
 							}
-							fprintf(fileStoreImageTraj, "%d", featurePoints_Obtained_Current.at(6).x);
+							fprintf(fileStoreImageTraj, "%d",
+							        featurePoints_Obtained_Current.at(6).x);
 							fprintf(fileStoreImageTraj, "%s", " ");
-							fprintf(fileStoreImageTraj, "%d", featurePoints_Obtained_Current.at(6).y);
+							fprintf(fileStoreImageTraj, "%d",
+							        featurePoints_Obtained_Current.at(6).y);
 							fprintf(fileStoreImageTraj, "%s", "\n");
 						}
 
-
-						//保存“位姿”运行轨迹信息
+						// 保存“位姿”运行轨迹信息
 						if (fileStoreImageTraj_Pose)
 						{
 							for (int i = 0; i < 3; i++)
@@ -2939,7 +3245,7 @@ void Open_DVP(void* p)
 						if (!bsendingFeature)
 						{
 							commands_Sending = vRobot_Command;
-							canSend = TRUE;
+							canSend          = TRUE;
 						}
 					}
 				}
@@ -2951,10 +3257,10 @@ void Open_DVP(void* p)
 						need2StoreDesiredInfo = FALSE;
 					}
 
-					//抓取任务已开始但未检测到有效图像特征，可以发送停止指令！！！
+					// 抓取任务已开始但未检测到有效图像特征，可以发送停止指令！！！
 					if (startGrasping)
 					{
-						//发送停止运动命令
+						// 发送停止运动命令
 						printf("抓取任务进行中但未检测到有效图像特征\r\n\n");
 
 						Robot_Command vRobot_Command = {0};
@@ -2962,7 +3268,7 @@ void Open_DVP(void* p)
 						if (!bsendingFeature)
 						{
 							commands_Sending = vRobot_Command;
-							canSend = TRUE;
+							canSend          = TRUE;
 						}
 					}
 				}
@@ -2972,7 +3278,8 @@ void Open_DVP(void* p)
 			}
 			else
 			{
-				Feature_Tracking(2, showImage, featurePoints_Obtained_Previous, featurePoints_Obtained_Current, 1.6);
+				Feature_Tracking(2, showImage, featurePoints_Obtained_Previous,
+				                 featurePoints_Obtained_Current, 1.6);
 
 				if (featurePoints_Obtained_Current.size() == 7)
 				{
@@ -2990,7 +3297,9 @@ void Open_DVP(void* p)
 							iterNum++;
 							if (!bDivergence)
 							{
-								cv::solvePnP(Points3D, Points2D, camera_matrix, distortion_coefficients, rvec, tvec, TRUE, cv::SOLVEPNP_ITERATIVE);
+								cv::solvePnP(Points3D, Points2D, camera_matrix,
+								             distortion_coefficients, rvec, tvec, TRUE,
+								             cv::SOLVEPNP_ITERATIVE);
 
 								tvec_Filtered = alpha * tvec + (1 - alpha) * tvec_Previous;
 								rvec_Filtered = alpha * rvec + (1 - alpha) * rvec_Previous;
@@ -3013,8 +3322,10 @@ void Open_DVP(void* p)
 									rvec_Filtered_Sum = cv::Mat::zeros(3, 1, CV_64FC1);
 									for (int i = 0; i < queueSize; i++)
 									{
-										tvec_Filtered_Sum = tvec_Filtered_Sum + tvec_Filtered_Queue.at(i);
-										rvec_Filtered_Sum = rvec_Filtered_Sum + rvec_Filtered_Queue.at(i);
+										tvec_Filtered_Sum =
+										    tvec_Filtered_Sum + tvec_Filtered_Queue.at(i);
+										rvec_Filtered_Sum =
+										    rvec_Filtered_Sum + rvec_Filtered_Queue.at(i);
 									}
 									tvec = tvec_Filtered_Sum / queueSize;
 									rvec = rvec_Filtered_Sum / queueSize;
@@ -3025,8 +3336,10 @@ void Open_DVP(void* p)
 									rvec_Filtered_Sum = cv::Mat::zeros(3, 1, CV_64FC1);
 									for (int i = 0; i < tvec_Filtered_Queue.size(); i++)
 									{
-										tvec_Filtered_Sum = tvec_Filtered_Sum + tvec_Filtered_Queue.at(i);
-										rvec_Filtered_Sum = rvec_Filtered_Sum + rvec_Filtered_Queue.at(i);
+										tvec_Filtered_Sum =
+										    tvec_Filtered_Sum + tvec_Filtered_Queue.at(i);
+										rvec_Filtered_Sum =
+										    rvec_Filtered_Sum + rvec_Filtered_Queue.at(i);
 									}
 									tvec = tvec_Filtered_Sum / tvec_Filtered_Queue.size();
 									rvec = rvec_Filtered_Sum / tvec_Filtered_Queue.size();
@@ -3034,7 +3347,9 @@ void Open_DVP(void* p)
 							}
 							else
 							{
-								cv::solvePnP(Points3D, Points2D, camera_matrix, distortion_coefficients, rvec, tvec, FALSE, cv::SOLVEPNP_ITERATIVE);
+								cv::solvePnP(Points3D, Points2D, camera_matrix,
+								             distortion_coefficients, rvec, tvec, FALSE,
+								             cv::SOLVEPNP_ITERATIVE);
 
 								tvec_Previous = tvec;
 								rvec_Previous = rvec;
@@ -3046,16 +3361,21 @@ void Open_DVP(void* p)
 								rvec_Filtered_Queue.push_back(rvec);
 							}
 
-							//重投影误差计算***************************************************************************************************************************************************
-							cv::projectPoints(Points3D, rvec, tvec, camera_matrix, distortion_coefficients, Points2D_Proj);
+							// 重投影误差计算***************************************************************************************************************************************************
+							cv::projectPoints(Points3D, rvec, tvec, camera_matrix,
+							                  distortion_coefficients, Points2D_Proj);
 
 							projErr_Max = 0;
 							for (int i = 0; i < 7; i++)
 							{
-								Points2DMat.at<cv::Vec2d>(i, 0) = cv::Vec2f(Points2D.at(i).x, Points2D.at(i).y);
-								Points2D_ProjMat.at<cv::Vec2d>(i, 0) = cv::Vec2f(Points2D_Proj.at(i).x, Points2D_Proj.at(i).y);
+								Points2DMat.at<cv::Vec2d>(i, 0) =
+								    cv::Vec2f(Points2D.at(i).x, Points2D.at(i).y);
+								Points2D_ProjMat.at<cv::Vec2d>(i, 0) =
+								    cv::Vec2f(Points2D_Proj.at(i).x, Points2D_Proj.at(i).y);
 
-								double projErr_current = cv::norm(Points2DMat.at<cv::Vec2d>(i, 0), Points2D_ProjMat.at<cv::Vec2d>(i, 0));
+								double projErr_current =
+								    cv::norm(Points2DMat.at<cv::Vec2d>(i, 0),
+								             Points2D_ProjMat.at<cv::Vec2d>(i, 0));
 
 								if (projErr_current > projErr_Max)
 								{
@@ -3064,17 +3384,11 @@ void Open_DVP(void* p)
 							}
 
 							projErr_Avg = cv::norm(Points2DMat, Points2D_ProjMat, cv::NORM_L2) / 7;
-							cout << "当前估计位姿的重投影“平均”误差为：" << endl
-								 << endl;
-							cout << projErr_Avg << "------像素" << endl
-								 << endl
-								 << endl;
+							cout << "当前估计位姿的重投影“平均”误差为：" << endl << endl;
+							cout << projErr_Avg << "------像素" << endl << endl << endl;
 
-							cout << "当前估计位姿的重投影“最大”误差为：" << endl
-								 << endl;
-							cout << projErr_Max << "------像素" << endl
-								 << endl
-								 << endl;
+							cout << "当前估计位姿的重投影“最大”误差为：" << endl << endl;
+							cout << projErr_Max << "------像素" << endl << endl << endl;
 
 							if (projErr_Max > 5)
 								bDivergence = TRUE;
@@ -3085,18 +3399,19 @@ void Open_DVP(void* p)
 
 						valid_pose = TRUE;
 
-						printf("位移：（x方向）%lf   （y方向）%lf    （z方向）%lf\r\n", tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2, 0));
+						printf("位移：（x方向）%lf   （y方向）%lf    （z方向）%lf\r\n",
+						       tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2, 0));
 					}
 					if (bsendingFeature)
 					{
 						featurePoints_Sending = featurePoints_Obtained_Current;
-						canSend = TRUE;
+						canSend               = TRUE;
 					}
 
-					//保存期望信息到文件中
+					// 保存期望信息到文件中
 					if (need2StoreDesiredInfo)
 					{
-						//保存期望“图像”信息
+						// 保存期望“图像”信息
 						FILE* desiredFeaturePointInfoFile;
 						desiredFeaturePointInfoFile = fopen("desired_featurePoints.txt", "a+");
 
@@ -3104,14 +3419,18 @@ void Open_DVP(void* p)
 						{
 							for (int i = 0; i < 6; i++)
 							{
-								fprintf(desiredFeaturePointInfoFile, "%d", featurePoints_Obtained_Current.at(i).x);
+								fprintf(desiredFeaturePointInfoFile, "%d",
+								        featurePoints_Obtained_Current.at(i).x);
 								fprintf(desiredFeaturePointInfoFile, "%s", " ");
-								fprintf(desiredFeaturePointInfoFile, "%d", featurePoints_Obtained_Current.at(i).y);
+								fprintf(desiredFeaturePointInfoFile, "%d",
+								        featurePoints_Obtained_Current.at(i).y);
 								fprintf(desiredFeaturePointInfoFile, "%s", " ");
 							}
-							fprintf(desiredFeaturePointInfoFile, "%d", featurePoints_Obtained_Current.at(6).x);
+							fprintf(desiredFeaturePointInfoFile, "%d",
+							        featurePoints_Obtained_Current.at(6).x);
 							fprintf(desiredFeaturePointInfoFile, "%s", " ");
-							fprintf(desiredFeaturePointInfoFile, "%d", featurePoints_Obtained_Current.at(6).y);
+							fprintf(desiredFeaturePointInfoFile, "%d",
+							        featurePoints_Obtained_Current.at(6).y);
 							fprintf(desiredFeaturePointInfoFile, "%s", "\n");
 
 							need2StoreDesiredInfo = FALSE;
@@ -3120,28 +3439,31 @@ void Open_DVP(void* p)
 						}
 						fclose(desiredFeaturePointInfoFile);
 
-
-						//保存期望“位姿”信息
+						// 保存期望“位姿”信息
 						if (valid_pose)
 						{
 							FILE* desiredFeaturePointInfoFile_Pose;
-							desiredFeaturePointInfoFile_Pose = fopen("desired_featurePoints_Pose.txt", "a+");
+							desiredFeaturePointInfoFile_Pose =
+							    fopen("desired_featurePoints_Pose.txt", "a+");
 
 							if (desiredFeaturePointInfoFile_Pose)
 							{
 								for (int i = 0; i < 3; i++)
 								{
-									fprintf(desiredFeaturePointInfoFile_Pose, "%lf", tvec.at<double>(i, 0));
+									fprintf(desiredFeaturePointInfoFile_Pose, "%lf",
+									        tvec.at<double>(i, 0));
 									fprintf(desiredFeaturePointInfoFile_Pose, "%s", " ");
 								}
 
 								for (int i = 0; i < 2; i++)
 								{
-									fprintf(desiredFeaturePointInfoFile_Pose, "%lf", rvec.at<double>(i, 0));
+									fprintf(desiredFeaturePointInfoFile_Pose, "%lf",
+									        rvec.at<double>(i, 0));
 									fprintf(desiredFeaturePointInfoFile_Pose, "%s", " ");
 								}
 
-								fprintf(desiredFeaturePointInfoFile_Pose, "%lf", rvec.at<double>(2, 0));
+								fprintf(desiredFeaturePointInfoFile_Pose, "%lf",
+								        rvec.at<double>(2, 0));
 								fprintf(desiredFeaturePointInfoFile_Pose, "%s", "\n");
 
 								need2StoreDesiredInfo = FALSE;
@@ -3152,15 +3474,17 @@ void Open_DVP(void* p)
 						}
 					}
 
-					//控制器设计
+					// 控制器设计
 					if (startGrasping)
 					{
 						printf("\r\n\n抓取任务已经在执行中.....\r\n\n");
 
 						printf("期望“图像”信息为：");
 						for (int i = 0; i < 6; i++)
-							printf("（%d,%d）--", desiredFeatures_Image[i].x, desiredFeatures_Image[i].y);
-						printf("（%d,%d）\r\n\n", desiredFeatures_Image[6].x, desiredFeatures_Image[6].y);
+							printf("（%d,%d）--", desiredFeatures_Image[i].x,
+							       desiredFeatures_Image[i].y);
+						printf("（%d,%d）\r\n\n", desiredFeatures_Image[6].x,
+						       desiredFeatures_Image[6].y);
 
 						for (int i = 0; i < 7; i++)
 						{
@@ -3170,17 +3494,19 @@ void Open_DVP(void* p)
 
 						printf("当前“图像”信息为：");
 						for (int i = 0; i < 6; i++)
-							printf("（%d,%d）--", currentFeatures_Image[i].x, currentFeatures_Image[i].y);
-						printf("（%d,%d）\r\n\n", currentFeatures_Image[6].x, currentFeatures_Image[6].y);
-
+							printf("（%d,%d）--", currentFeatures_Image[i].x,
+							       currentFeatures_Image[i].y);
+						printf("（%d,%d）\r\n\n", currentFeatures_Image[6].x,
+						       currentFeatures_Image[6].y);
 
 						printf("期望“位姿”信息为：");
 						for (int i = 0; i < 5; i++)
 							printf("%lf--", desiredFeatures_Pose[i]);
 						printf("%lf \r\n\n", desiredFeatures_Pose[5]);
 
-
-						printf("当前“位姿”信息为：%lf--%lf--%lf--%lf--%lf--%lf\r\n\n", tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2, 0), rvec.at<double>(0, 0), rvec.at<double>(1, 0), rvec.at<double>(2, 0));
+						printf("当前“位姿”信息为：%lf--%lf--%lf--%lf--%lf--%lf\r\n\n",
+						       tvec.at<double>(0, 0), tvec.at<double>(1, 0), tvec.at<double>(2, 0),
+						       rvec.at<double>(0, 0), rvec.at<double>(1, 0), rvec.at<double>(2, 0));
 
 						cv::Mat desiredC_tvec_O(3, 1, CV_64FC1);
 						cv::Mat desiredC_rvec_O(3, 1, CV_64FC1);
@@ -3195,45 +3521,62 @@ void Open_DVP(void* p)
 							desiredC_rvec_O.at<double>(i, 0) = desiredFeatures_Pose[3 + i];
 						}
 
-						//控制器
+						// 控制器
 						Robot_Command vRobot_Command;
 
 						printf("基于位置的控制\r\n\n");
-						vRobot_Command = ControlVel_Pose_inEffectorFrame_useViaPoint(desiredC_tvec_O, desiredC_rvec_O, tvec, rvec, TRUE, FALSE, timeStep_Pose);
+						vRobot_Command = ControlVel_Pose_inEffectorFrame_useViaPoint(
+						    desiredC_tvec_O, desiredC_rvec_O, tvec, rvec, TRUE, FALSE,
+						    timeStep_Pose);
 						printf("相对于“目标坐标系”\r\n\n");
-						printf("控制“线”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.translVel[0], vRobot_Command.translVel[1], vRobot_Command.translVel[2]);
-						printf("控制“角”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.rotVel[0], vRobot_Command.rotVel[1], vRobot_Command.rotVel[2]);
+						printf("控制“线”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.translVel[0],
+						       vRobot_Command.translVel[1], vRobot_Command.translVel[2]);
+						printf("控制“角”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.rotVel[0],
+						       vRobot_Command.rotVel[1], vRobot_Command.rotVel[2]);
 
-						//printf("图像坐标(未归一化---传输前)--第一点：（%d,%d）\r\n\n", currentFeatures_Image[0].x, currentFeatures_Image[0].y);
-						//printf("图像坐标(未归一化---传输前)--第二点：（%d,%d）\r\n\n", currentFeatures_Image[1].x, currentFeatures_Image[1].y);
-						//printf("图像坐标(未归一化---传输前)--第三点：（%d,%d）\r\n\n", currentFeatures_Image[2].x, currentFeatures_Image[2].y);
-						//printf("图像坐标(未归一化---传输前)--第四点：（%d,%d）\r\n\n", currentFeatures_Image[3].x, currentFeatures_Image[3].y);
-						//printf("图像坐标(未归一化---传输前)--第五点：（%d,%d）\r\n\n", currentFeatures_Image[4].x, currentFeatures_Image[4].y);
-						//printf("图像坐标(未归一化---传输前)--第六点：（%d,%d）\r\n\n", currentFeatures_Image[5].x, currentFeatures_Image[5].y);
-						//printf("图像坐标(未归一化---传输前)--第七点：（%d,%d）\r\n\n", currentFeatures_Image[6].x, currentFeatures_Image[6].y);
+						// printf("图像坐标(未归一化---传输前)--第一点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[0].x, currentFeatures_Image[0].y);
+						// printf("图像坐标(未归一化---传输前)--第二点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[1].x, currentFeatures_Image[1].y);
+						// printf("图像坐标(未归一化---传输前)--第三点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[2].x, currentFeatures_Image[2].y);
+						// printf("图像坐标(未归一化---传输前)--第四点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[3].x, currentFeatures_Image[3].y);
+						// printf("图像坐标(未归一化---传输前)--第五点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[4].x, currentFeatures_Image[4].y);
+						// printf("图像坐标(未归一化---传输前)--第六点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[5].x, currentFeatures_Image[5].y);
+						// printf("图像坐标(未归一化---传输前)--第七点：（%d,%d）\r\n\n",
+						// currentFeatures_Image[6].x, currentFeatures_Image[6].y);
 
 						printf("基于图像的控制\r\n\n");
-						vRobot_Command = ControlVel_Image(desiredFeatures_Image, currentFeatures_Image, tvec, rvec, 3);
-						printf("控制“线”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.translVel[0], vRobot_Command.translVel[1], vRobot_Command.translVel[2]);
-						printf("控制“角”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.rotVel[0], vRobot_Command.rotVel[1], vRobot_Command.rotVel[2]);
-						//保存“图像”运行轨迹信息
+						vRobot_Command = ControlVel_Image(desiredFeatures_Image,
+						                                  currentFeatures_Image, tvec, rvec, 3);
+						printf("控制“线”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.translVel[0],
+						       vRobot_Command.translVel[1], vRobot_Command.translVel[2]);
+						printf("控制“角”速度：（%lf,%lf,%lf）\r\n\n", vRobot_Command.rotVel[0],
+						       vRobot_Command.rotVel[1], vRobot_Command.rotVel[2]);
+						// 保存“图像”运行轨迹信息
 						if (fileStoreImageTraj)
 						{
 							for (int i = 0; i < 6; i++)
 							{
-								fprintf(fileStoreImageTraj, "%d", featurePoints_Obtained_Current.at(i).x);
+								fprintf(fileStoreImageTraj, "%d",
+								        featurePoints_Obtained_Current.at(i).x);
 								fprintf(fileStoreImageTraj, "%s", " ");
-								fprintf(fileStoreImageTraj, "%d", featurePoints_Obtained_Current.at(i).y);
+								fprintf(fileStoreImageTraj, "%d",
+								        featurePoints_Obtained_Current.at(i).y);
 								fprintf(fileStoreImageTraj, "%s", " ");
 							}
-							fprintf(fileStoreImageTraj, "%d", featurePoints_Obtained_Current.at(6).x);
+							fprintf(fileStoreImageTraj, "%d",
+							        featurePoints_Obtained_Current.at(6).x);
 							fprintf(fileStoreImageTraj, "%s", " ");
-							fprintf(fileStoreImageTraj, "%d", featurePoints_Obtained_Current.at(6).y);
+							fprintf(fileStoreImageTraj, "%d",
+							        featurePoints_Obtained_Current.at(6).y);
 							fprintf(fileStoreImageTraj, "%s", "\n");
 						}
 
-
-						//保存“位姿”运行轨迹信息
+						// 保存“位姿”运行轨迹信息
 						if (fileStoreImageTraj_Pose)
 						{
 							for (int i = 0; i < 3; i++)
@@ -3254,7 +3597,7 @@ void Open_DVP(void* p)
 						if (!bsendingFeature)
 						{
 							commands_Sending = vRobot_Command;
-							canSend = TRUE;
+							canSend          = TRUE;
 						}
 					}
 				}
@@ -3266,7 +3609,7 @@ void Open_DVP(void* p)
 						need2StoreDesiredInfo = FALSE;
 					}
 
-					//抓取任务已开始但未检测到有效图像特征，可以发送停止指令！！！
+					// 抓取任务已开始但未检测到有效图像特征，可以发送停止指令！！！
 					if (startGrasping)
 					{
 						printf("抓取任务进行中但未检测到有效图像特征\r\n\n");
@@ -3276,7 +3619,7 @@ void Open_DVP(void* p)
 						if (!bsendingFeature)
 						{
 							commands_Sending = vRobot_Command;
-							canSend = TRUE;
+							canSend          = TRUE;
 						}
 					}
 				}
@@ -3288,68 +3631,62 @@ void Open_DVP(void* p)
 			{
 				if (valid_pose)
 				{
-					cout << "平移向量：" << endl
-						 << endl;
-					cout << tvec << endl
-						 << endl;
+					cout << "平移向量：" << endl << endl;
+					cout << tvec << endl << endl;
 
 					cv::Rodrigues(rvec, rotationM);
-					cout << "旋转姿态：" << endl
-						 << endl;
-					cout << rotationM << endl
-						 << endl;
+					cout << "旋转姿态：" << endl << endl;
+					cout << rotationM << endl << endl;
 
 					valid_pose = FALSE;
-					//重投影误差计算*********************************************************************************************
-					cv::projectPoints(Points3D, rvec, tvec, camera_matrix, distortion_coefficients, Points2D_Proj);
+					// 重投影误差计算*********************************************************************************************
+					cv::projectPoints(Points3D, rvec, tvec, camera_matrix, distortion_coefficients,
+					                  Points2D_Proj);
 
-					projErr_Max = 0;
+					projErr_Max      = 0;
 					projErr_MaxIndex = -1;
-					projErr_Min = 1000;
+					projErr_Min      = 1000;
 					projErr_MinIndex = -1;
 					for (int i = 0; i < 7; i++)
 					{
-						Points2DMat.at<cv::Vec2d>(i, 0) = cv::Vec2f(Points2D.at(i).x, Points2D.at(i).y);
-						Points2D_ProjMat.at<cv::Vec2d>(i, 0) = cv::Vec2f(Points2D_Proj.at(i).x, Points2D_Proj.at(i).y);
+						Points2DMat.at<cv::Vec2d>(i, 0) =
+						    cv::Vec2f(Points2D.at(i).x, Points2D.at(i).y);
+						Points2D_ProjMat.at<cv::Vec2d>(i, 0) =
+						    cv::Vec2f(Points2D_Proj.at(i).x, Points2D_Proj.at(i).y);
 
-						double projErr_current = cv::norm(Points2DMat.at<cv::Vec2d>(i, 0), Points2D_ProjMat.at<cv::Vec2d>(i, 0));
+						double projErr_current = cv::norm(Points2DMat.at<cv::Vec2d>(i, 0),
+						                                  Points2D_ProjMat.at<cv::Vec2d>(i, 0));
 
 						if (projErr_current > projErr_Max)
 						{
-							projErr_Max = projErr_current;
+							projErr_Max      = projErr_current;
 							projErr_MaxIndex = i;
 						}
 
 						if (projErr_current < projErr_Min)
 						{
-							projErr_Min = projErr_current;
+							projErr_Min      = projErr_current;
 							projErr_MinIndex = i;
 						}
 
-						cv::circle(showImage, Points2D_Proj.at(i), 8, cv::Scalar(255, 0, 0), 3, cv::LINE_AA, 0);
+						cv::circle(showImage, Points2D_Proj.at(i), 8, cv::Scalar(255, 0, 0), 3,
+						           cv::LINE_AA, 0);
 					}
 
-					cv::circle(showImage, Points2D_Proj.at(projErr_MaxIndex), 8, cv::Scalar(0, 0, 255), 3, cv::LINE_AA, 0);
-					cv::circle(showImage, Points2D_Proj.at(projErr_MinIndex), 8, cv::Scalar(0, 255, 0), 3, cv::LINE_AA, 0);
+					cv::circle(showImage, Points2D_Proj.at(projErr_MaxIndex), 8,
+					           cv::Scalar(0, 0, 255), 3, cv::LINE_AA, 0);
+					cv::circle(showImage, Points2D_Proj.at(projErr_MinIndex), 8,
+					           cv::Scalar(0, 255, 0), 3, cv::LINE_AA, 0);
 
 					projErr_Avg = cv::norm(Points2DMat, Points2D_ProjMat, cv::NORM_L2) / 7;
-					cout << "当前估计位姿的重投影“平均”误差为：" << endl
-						 << endl;
-					cout << projErr_Avg << "------像素" << endl
-						 << endl
-						 << endl;
+					cout << "当前估计位姿的重投影“平均”误差为：" << endl << endl;
+					cout << projErr_Avg << "------像素" << endl << endl << endl;
 
-					cout << "当前估计位姿的重投影“最大”误差为：" << endl
-						 << endl;
-					cout << projErr_Max << "------像素" << endl
-						 << endl
-						 << endl;
+					cout << "当前估计位姿的重投影“最大”误差为：" << endl << endl;
+					cout << projErr_Max << "------像素" << endl << endl << endl;
 
-					cout << "当前估计位姿的重投影“最小”误差为：" << endl
-						 << endl;
-					cout << projErr_Min << "------像素" << endl
-						 << endl
-						 << endl;
+					cout << "当前估计位姿的重投影“最小”误差为：" << endl << endl;
+					cout << projErr_Min << "------像素" << endl << endl << endl;
 				}
 
 				cv::namedWindow("ContoursImage_Tracking", 0);
@@ -3357,21 +3694,21 @@ void Open_DVP(void* p)
 				cv::imshow("ContoursImage_Tracking", showImage);
 				cv::waitKey(1);
 			}
-			//cv::solvePnP(Points3D, Points2D, camera_matrix, distortion_coefficients, rvec, tvec, FALSE, cv::SOLVEPNP_P3P);
-			//cv::solvePnP(Points3D, Points2D, camera_matrix, distortion_coefficients, rvec, tvec, FALSE, cv::SOLVEPNP_EPNP);
+			// cv::solvePnP(Points3D, Points2D, camera_matrix, distortion_coefficients, rvec, tvec,
+			// FALSE, cv::SOLVEPNP_P3P); cv::solvePnP(Points3D, Points2D, camera_matrix,
+			// distortion_coefficients, rvec, tvec, FALSE, cv::SOLVEPNP_EPNP);
 
-			//求解位姿
-			//cv::solvePnP();
+			// 求解位姿
+			// cv::solvePnP();
 
-			//cv::waitKey(20);
-			//cv::namedWindow("ContoursImage", 0);
-			//cv::resizeWindow("ContoursImage", 640, 480);
-			//cv::imshow("ContoursImage", showImage);
-
+			// cv::waitKey(20);
+			// cv::namedWindow("ContoursImage", 0);
+			// cv::resizeWindow("ContoursImage", 640, 480);
+			// cv::imshow("ContoursImage", showImage);
 
 			if (kbhit())
 			{
-				//与机械臂建立连接且有按键后马上发送停止命令
+				// 与机械臂建立连接且有按键后马上发送停止命令
 				if (successConnect)
 				{
 					Robot_Command vRobot_Command = {0};
@@ -3380,7 +3717,7 @@ void Open_DVP(void* p)
 					if (!bsendingFeature)
 					{
 						commands_Sending = vRobot_Command;
-						canSend = TRUE;
+						canSend          = TRUE;
 					}
 				}
 
@@ -3396,7 +3733,7 @@ void Open_DVP(void* p)
 				if (keyboardInput == 71 || keyboardInput == 103)
 				{
 					Continuous_Running = TRUE;
-					startGrasping = TRUE;
+					startGrasping      = TRUE;
 					printf("抓取任务准备开始！！！！ \r\n\n");
 
 					if (successConnect)
@@ -3419,19 +3756,21 @@ void Open_DVP(void* p)
 						}
 					}
 
-					//读取期望位姿信息-Image
+					// 读取期望位姿信息-Image
 					FILE* desiredFeaturePointInfoFile;
 					desiredFeaturePointInfoFile = fopen("desired_featurePoints.txt", "a+");
-					int nLines = 0;
+					int nLines                  = 0;
 					if (desiredFeaturePointInfoFile)
 					{
 						while (!feof(desiredFeaturePointInfoFile))
 						{
 							for (int i = 0; i < 6; i++)
 							{
-								fscanf(desiredFeaturePointInfoFile, "%d", &desiredFeatures_Image[i].x);
+								fscanf(desiredFeaturePointInfoFile, "%d",
+								       &desiredFeatures_Image[i].x);
 								fscanf(desiredFeaturePointInfoFile, " ");
-								fscanf(desiredFeaturePointInfoFile, "%d", &desiredFeatures_Image[i].y);
+								fscanf(desiredFeaturePointInfoFile, "%d",
+								       &desiredFeatures_Image[i].y);
 								fscanf(desiredFeaturePointInfoFile, " ");
 							}
 							fscanf(desiredFeaturePointInfoFile, "%d", &desiredFeatures_Image[6].x);
@@ -3449,10 +3788,10 @@ void Open_DVP(void* p)
 					}
 					fclose(desiredFeaturePointInfoFile);
 
-
-					//读取期望位姿信息-Pose
+					// 读取期望位姿信息-Pose
 					FILE* desiredFeaturePointInfoFile_Pose;
-					desiredFeaturePointInfoFile_Pose = fopen("desired_featurePoints_Pose.txt", "a+");
+					desiredFeaturePointInfoFile_Pose =
+					    fopen("desired_featurePoints_Pose.txt", "a+");
 					int nLines_Pose = 0;
 					if (desiredFeaturePointInfoFile_Pose)
 					{
@@ -3460,10 +3799,12 @@ void Open_DVP(void* p)
 						{
 							for (int i = 0; i < 5; i++)
 							{
-								fscanf(desiredFeaturePointInfoFile_Pose, "%lf", &desiredFeatures_Pose[i]);
+								fscanf(desiredFeaturePointInfoFile_Pose, "%lf",
+								       &desiredFeatures_Pose[i]);
 								fscanf(desiredFeaturePointInfoFile_Pose, " ");
 							}
-							fscanf(desiredFeaturePointInfoFile_Pose, "%lf", &desiredFeatures_Pose[5]);
+							fscanf(desiredFeaturePointInfoFile_Pose, "%lf",
+							       &desiredFeatures_Pose[5]);
 							fscanf(desiredFeaturePointInfoFile_Pose, "\n");
 
 							nLines_Pose++;
@@ -3476,11 +3817,10 @@ void Open_DVP(void* p)
 					}
 					fclose(desiredFeaturePointInfoFile_Pose);
 
-
-					//打开文件保存“图像”轨迹信息
+					// 打开文件保存“图像”轨迹信息
 					fileStoreImageTraj = fopen("imageFeatureTraj.txt", "a+");
 
-					//打开文件保存“位姿”轨迹信息
+					// 打开文件保存“位姿”轨迹信息
 					fileStoreImageTraj_Pose = fopen("imageFeatureTraj_Pose.txt", "a+");
 
 					fileAreadyOpen = TRUE;
@@ -3488,9 +3828,9 @@ void Open_DVP(void* p)
 				else if (keyboardInput == 80 || keyboardInput == 112)
 				{
 					Continuous_Running = FALSE;
-					startGrasping = FALSE;
+					startGrasping      = FALSE;
 
-					//关闭文件
+					// 关闭文件
 					if (fileAreadyOpen)
 					{
 						fclose(fileStoreImageTraj);
@@ -3499,13 +3839,13 @@ void Open_DVP(void* p)
 
 					printf("抓取任务已经停止 \r\n\n");
 
-					//发送停止命令
+					// 发送停止命令
 					Robot_Command vRobot_Command = {0};
 
 					if (!bsendingFeature)
 					{
 						commands_Sending = vRobot_Command;
-						canSend = TRUE;
+						canSend          = TRUE;
 					}
 				}
 				else if (keyboardInput == 83 || keyboardInput == 115)
@@ -3538,9 +3878,8 @@ void Open_DVP(void* p)
 			}
 
 			cv::waitKey(2); /*每张图片显示20ms*/
-							//fflush(stdin);
+			                // fflush(stdin);
 		}
-
 
 		/* 停止视频流 */
 		status = dvpStop(h);
@@ -3555,10 +3894,9 @@ void Open_DVP(void* p)
 	printf("test quit, %s, status:%d\r\n", name, status);
 }
 
-
 void Running_Continuous()
 {
-	bool stop = FALSE;
+	bool stop                = FALSE;
 	dvpUint32 status_Running = -1;
 	while (!AlreadyStore)
 	{
@@ -3568,10 +3906,10 @@ void Running_Continuous()
 	{
 		cv::waitKey(2000);
 		printf("Do you want to stop the servoing process? 继续运行(0+回车) 马上停止(1+回车) \r\n");
-		//scanf("%d", &status_Running);
+		// scanf("%d", &status_Running);
 		if (status_Running == 1)
 		{
-			stop = TRUE;
+			stop               = TRUE;
 			Continuous_Running = FALSE;
 		}
 	}
@@ -3579,21 +3917,18 @@ void Running_Continuous()
 
 int main()
 {
-
-
-	//if (!AfxWinInit(::GetModuleHandle(NULL), NULL, ::GetCommandLine(), 0))
+	// if (!AfxWinInit(::GetModuleHandle(NULL), NULL, ::GetCommandLine(), 0))
 	//	return 1;
 
-	//AfxGetStaticModuleState();
-
+	// AfxGetStaticModuleState();
 
 	printf("start...\r\n\n");
 
 	cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_SILENT);
-	//cv::VideoCapture cap;
-	//cap.open(0);
+	// cv::VideoCapture cap;
+	// cap.open(0);
 
-	//if (cap.isOpened())
+	// if (cap.isOpened())
 	//{
 	//	int width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
 	//	int height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
@@ -3604,9 +3939,9 @@ int main()
 	//	std::cout << "视频高度：" << height << std::endl;
 	//	std::cout << "视频总帧数：" << totalFrames << std::endl;
 	//	std::cout << "帧率：" << frameRate << std::endl;
-	//}
+	// }
 
-	//cap.release();
+	// cap.release();
 
 	cv::Matx41d test[2];
 	test[0] = cv::Matx41d(11.0, 12.0, 13.0, 1);
@@ -3647,15 +3982,15 @@ int main()
 
 	thread task_servoing(Open_DVP, (void*)info[num].FriendlyName);
 
-
 	while (!AlreadyShow)
 	{
 		cv::waitKey(5);
 	}
 	if (AlreadyShow)
 	{
-		printf("Do you need to store the desired pose? 需要保存（1+回车）  不需要保存（0+回车）\r\n");
-		//scanf("%d", &status_NeedToStore);
+		printf(
+		    "Do you need to store the desired pose? 需要保存（1+回车）  不需要保存（0+回车）\r\n");
+		// scanf("%d", &status_NeedToStore);
 		if (status_NeedToStore == 1)
 		{
 			NeedToStoreDesiredPose = TRUE;
@@ -3663,9 +3998,9 @@ int main()
 		else
 			AlreadyStore = TRUE;
 	}
-	//thread task_stopDetection(Running_Continuous);
+	// thread task_stopDetection(Running_Continuous);
 	task_servoing.join();
-	//task_stopDetection.join();
+	// task_stopDetection.join();
 
 	system("pause");
 	return 0;

@@ -5,32 +5,38 @@
 #include <thread>
 using namespace std;
 
-int main() {
-    auto sendData = make_shared<_send>();
-    auto socketService = make_shared<comSocket>(1115,sendData);
-    auto addf = [](string data) {
+int main()
+{
+	auto sendData      = make_shared<_send>();
+	auto socketService = make_shared<comSocket>(1115, sendData);
+	auto addf          = [](string data) {
         data = data.substr(0, data.find('.') + 3);
-        while (data.size() < 4) {
+        while (data.size() < 4)
+        {
             data += " ";
         }
         return data;
-    };
-    ostringstream message{};
-    while (true) {
-        message << "===H: " << (socketService->socketRecv->Head_check) << "|CW: " << (socketService->socketRecv->Command);
-        message << "|Joint Data:";
-        int i{};
-        for (auto j: socketService->socketRecv->Joint_Position_set) {
-            message << "|No:" << i << ": " << addf(to_string(j));
-            i++;
-            if(i>=2){
-                break;
-            }
-        }
-        cout << message.str() << "===";
-        cout << '\n';
-        message.str("");
-        Sleep(20);
-    }
-    return 0;
+	};
+	ostringstream message {};
+	while (true)
+	{
+		message << "===H: " << (socketService->socketRecv->Head_check)
+		        << "|CW: " << (socketService->socketRecv->Command);
+		message << "|Joint Data:";
+		int i {};
+		for (auto j : socketService->socketRecv->Joint_Position_set)
+		{
+			message << "|No:" << i << ": " << addf(to_string(j));
+			i++;
+			if (i >= 2)
+			{
+				break;
+			}
+		}
+		cout << message.str() << "===";
+		cout << '\n';
+		message.str("");
+		Sleep(20);
+	}
+	return 0;
 }

@@ -7,21 +7,20 @@
 #include "iostream"
 #include "windows.h"
 using namespace std;
-class Multi_Process {
+class Multi_Process
+{
 public:
-    Multi_Process(){
-        cout<<"Mulit_Process Class built!"<<endl;
-    }
-    ~Multi_Process(){
+	Multi_Process() { cout << "Mulit_Process Class built!" << endl; }
+	~Multi_Process() {}
+	PROCESS_INFORMATION
+	safety_monitor_build(const string& name);
+	PROCESS_INFORMATION
+	safety_monitor_build();
+	int processDelete(PROCESS_INFORMATION& pi);
+	int data_monitor(const string& name, HANDLE& handle_read);
 
-    }
-    PROCESS_INFORMATION safety_monitor_build(const string& name);
-    PROCESS_INFORMATION safety_monitor_build();
-    int processDelete(PROCESS_INFORMATION& pi);
-    int data_monitor(const string& name,HANDLE&handle_read);
 private:
-    string safety_program = "SAFE_CHECK.exe";
+	string safety_program = "SAFE_CHECK.exe";
 };
 
-
-#endif//SEAL_DEMO_MULTI_PROCESS_H
+#endif// SEAL_DEMO_MULTI_PROCESS_H

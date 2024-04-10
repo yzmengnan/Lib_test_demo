@@ -2,21 +2,23 @@
 // Created by 91418 on 2024/3/9.
 //
 #include "grap_action.h"
-int main(int argc,char**argv)
+int main(int argc, char** argv)
 {
 	EndEffector_Motion em;
 	em.Enable();
-	if (argc>=2){
+	if (argc >= 2)
+	{
 		int signal = atoi(argv[1]);
-		switch (signal){
-		case 0:
-			cout<<"Close!"<<endl;
-			em.grap_tool(GRAP_CLOSE);
-			break;
-		case 1:
-			cout<<"Open!"<<endl;
-			em.grap_tool(GRAP_OPEN);
-			break;
+		switch (signal)
+		{
+			case 0:
+				cout << "Close!" << endl;
+				em.grap_tool(GRAP_CLOSE);
+				break;
+			case 1:
+				cout << "Open!" << endl;
+				em.grap_tool(GRAP_OPEN);
+				break;
 		}
 	}
 
@@ -28,7 +30,7 @@ int main(int argc,char**argv)
 	//      Sleep(2000);
 	//   	em.ftmr(ROTATE_FORWARD);
 	//      Sleep(2000);
-//	em.ftmr(ROTATE_BACKWARD);
+	//	em.ftmr(ROTATE_BACKWARD);
 	//	em.grap_tool(GRAP_CLOSE);
 	//	em.grap_tool(GRAP_CLOSE);
 	system("pause");

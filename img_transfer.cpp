@@ -94,7 +94,9 @@ public:
 		status = dvpStart(h);
 		while (*flag == true)
 		{
-			status = dvpGetFrame(h /*相机句柄*/, &frame /*帧信息*/, &pBuffer /*图像数据的内存首地址,切勿手动释放*/, 3000 /*超时时间（毫秒）*/);
+			status = dvpGetFrame(h /*相机句柄*/, &frame /*帧信息*/,
+			                     &pBuffer /*图像数据的内存首地址,切勿手动释放*/,
+			                     3000 /*超时时间（毫秒）*/);
 			if (status != DVP_STATUS_OK)
 			{
 				printf("Fail to get a frame in continuous mode \r\n");
@@ -129,7 +131,8 @@ public:
 		dvpStatus status;
 		dvpHandle h;
 		char* name = (char*)info[0].FriendlyName;
-		do {
+		do
+		{
 			/* 打开设备 */
 			status = dvpOpenByName(name, OPEN_NORMAL, &h);
 			if (status != DVP_STATUS_OK)
@@ -153,7 +156,9 @@ public:
 			//		for (int j = 0; j < GRABCOUNT; j++)
 			for (;;)
 			{
-				status = dvpGetFrame(h /*相机句柄*/, &frame /*帧信息*/, &pBuffer /*图像数据的内存首地址,切勿手动释放*/, 3000 /*超时时间（毫秒）*/);
+				status = dvpGetFrame(h /*相机句柄*/, &frame /*帧信息*/,
+				                     &pBuffer /*图像数据的内存首地址,切勿手动释放*/,
+				                     3000 /*超时时间（毫秒）*/);
 				if (status != DVP_STATUS_OK)
 				{
 					printf("Fail to get a frame in continuous mode \r\n");
@@ -161,7 +166,8 @@ public:
 				}
 
 				Convert2Mat(&frame, (unsigned char*)pBuffer, showImage);
-				//                        cout<<"width: "<<showImage.cols<<" height: "<<showImage.rows<<endl;
+				//                        cout<<"width: "<<showImage.cols<<" height:
+				//                        "<<showImage.rows<<endl;
 				cv::namedWindow("ImageShow", cv::WINDOW_GUI_NORMAL);
 				cv::resizeWindow("ImageShow", 2568 / 2, 1920 / 2);
 				cv::imshow("ImageShow", showImage);
@@ -194,16 +200,14 @@ void img_transfer(shared_ptr<bool> f)
 		i.getIMG(f, img);
 	});
 
-	thread imgLocalShow([&]() {
-		i.showIMG(*img);
-	});
+	thread imgLocalShow([&]() { i.showIMG(*img); });
 	cout << "get img data" << endl;
 	task.detach();
 	imgLocalShow.detach();
 	SHAREDMEMORY share;
 	int nFrames = 0;
 	string fps;
-	auto t0 = cv::getTickCount();
+	auto t0   = cv::getTickCount();
 	int index = 0;
 	while (*f)
 	{
@@ -215,12 +219,14 @@ void img_transfer(shared_ptr<bool> f)
 			if (nFrames % 10 == 0)
 			{
 				const int N = 10;
-				int64 t1 = cv::getTickCount();
-				fps = " Send FPS:" + to_string((double)cv::getTickFrequency() * N / (t1 - t0)) + "fps";
+				int64 t1    = cv::getTickCount();
+				fps = " Send FPS:" + to_string((double)cv::getTickFrequency() * N / (t1 - t0))
+				    + "fps";
 				t0 = t1;
 				cout << fps << endl;
 			}
-			//            cv::putText(frame, fps, cv::Point(100, 100), cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0, 255, 0), 1);
+			//            cv::putText(frame, fps, cv::Point(100, 100), cv::FONT_HERSHEY_COMPLEX, 1,
+			//            cv::Scalar(0, 255, 0), 1);
 		}
 		this_thread::sleep_for(chrono::milliseconds(1));
 		share.SendMat(frame, index * FRAME_NUMBER);

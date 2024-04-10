@@ -13,18 +13,22 @@
 
 using namespace std;
 
-TimerCounter::TimerCounter() {
-    QueryPerformanceFrequency(&freq); // 获取CPU时钟
+TimerCounter::TimerCounter()
+{
+	QueryPerformanceFrequency(&freq);// 获取CPU时钟
 }
 
 // TimerCounter::~TimerCounter()
 //     = default;
-void TimerCounter::Start() {
-    QueryPerformanceCounter(&startCount); // 计数
+void TimerCounter::Start()
+{
+	QueryPerformanceCounter(&startCount);// 计数
 }
 
-void TimerCounter::Stop() {
-    QueryPerformanceCounter(&endCount); // 停止计数
+void TimerCounter::Stop()
+{
+	QueryPerformanceCounter(&endCount);// 停止计数
 
-    dbTime = ((double) endCount.QuadPart - (double) startCount.QuadPart) / (double) freq.QuadPart; // 计时
+	dbTime =
+	    ((double)endCount.QuadPart - (double)startCount.QuadPart) / (double)freq.QuadPart;// 计时
 }
