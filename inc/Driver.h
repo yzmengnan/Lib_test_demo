@@ -28,13 +28,25 @@ extern mutex adsLock;
 using sd = class Driver
 {
 public:
-	vector<double> _driver_gearRatioScalar {-284.9231 * ANGLES_2_PULSES,
-	                                        -213.7 * ANGLES_2_PULSES,
-	                                        -171.0 * 5 / 3 / 90 * 82 * ANGLES_2_PULSES,
-	                                        -181.22 * ANGLES_2_PULSES,
-	                                        -144.9 * 5 / 3 * ANGLES_2_PULSES,
-	                                        -33.0 * 5 / 3 * ANGLES_2_PULSES,
-	                                        -25 * 1000 * 1.5 * ANGLES_2_PULSES};
+	vector<double> _driver_gearRatioScalar {
+	    // joint 1 modified
+	    -356.1538 * ANGLES_2_PULSES,
+	    //	    -284.9231 * ANGLES_2_PULSES,
+	    // joint2 modified
+	    -213.6923 * ANGLES_2_PULSES,
+	    // joint3
+	    -256.5 * ANGLES_2_PULSES,
+	    //	                                        -171.0 * 5 / 3 / 90 * 82 * ANGLES_2_PULSES,
+	    // joint4 modified
+	    //	                                        -181.22 * ANGLES_2_PULSES,
+	    -182.602 * ANGLES_2_PULSES,
+	    // joint 5 modified
+	    -241.4 * ANGLES_2_PULSES,
+	    //	                                        -144.9 * 5 / 3 * ANGLES_2_PULSES,
+	    // joint 6 modified
+	    -54.8684 * ANGLES_2_PULSES,
+	    //	                                        -33.0 * 5 / 3 * ANGLES_2_PULSES,
+	    -25 * 1000 * 1.5 * ANGLES_2_PULSES};
 	//    vector<double> _driver_gearRatioScalar{
 	//            -284.9231 * ANGLES_2_PULSES,
 	//            -213.7 * ANGLES_2_PULSES,
@@ -399,6 +411,7 @@ public:
 	int opSpaceMotionByJacobe_RL(const vector<double>& c_vecs, Robot& robot);
 	int opSpaceMotionByJacob0(const vector<float>& c_vecs);
 	int opSpaceMotionByJacob0_RL(const vector<double>& c_vecs, Robot& robot);
+	int opSpaceMotionByJacob0_RL(const vector<float>& c_vecs, Robot& robot);
 	/**
 	 *	\brief 使用基于世界坐标系的笛卡尔空间运动,目前仅支持位置运动
 	 * @param c_target_delta_position 基于末端坐标系的位置偏差量
