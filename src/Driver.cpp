@@ -938,6 +938,33 @@ int MotionV1::opSpaceMotionByJacob0_RL(const vector<double>& c_vecs, Robot& robo
 	auto qd = q_now + q_dot * 0.01;
 	return this->Write('3', qd[0], qd[1], qd[2], qd[3], qd[4], qd[5]);
 }
+int MotionV1::opSpaceMotionByJacob0_RL(const vector<float>& c_vecs, Robot& robot)
+{
+	// modify operational velocities
+	Eigen::VectorXd c_temp(6);
+	c_temp << c_vecs[0], c_vecs[1], c_vecs[2], c_vecs[3], c_vecs[4], c_vecs[5];
+	Eigen::VectorXd c_temp_abs = c_temp.array().abs();
+	double bigone              = c_temp_abs.maxCoeff();
+	if (bigone <= 0.001)
+	{
+		//		cout << "no capable order velocity!" << endl;
+		return 0;
+	}
+	c_temp.normalize();
+	auto c_temp_to_row = c_temp.transpose();
+	cout << "order operational vecs:" << c_temp_to_row << endl;
+	// get current q position
+	auto q = MDT::getAngles(*this, this->MotGetData);
+	// modify q position, only need the formar 6 axis
+	vector<double> q_6Axis {q.begin(), q.begin() + 6};
+	// get jacob matrix of the end effector
+	auto Jinv               = robot.getInverseJacob0(q_6Axis);
+	rl::math::Vector6 q_dot = Jinv * c_temp;
+	rl::math::Vector6 q_now;
+	q_now << q_6Axis[0], q_6Axis[1], q_6Axis[2], q_6Axis[3], q_6Axis[4], q_6Axis[5];
+	auto qd = q_now + q_dot * 0.01;
+	return this->Write('3', qd[0], qd[1], qd[2], qd[3], qd[4], qd[5]);
+}
 int MotionV1::opSpaceTargetMotion(const vector<double>& position_base,
                                   const vector<double>& c_target_delta_position, Robot& robot)
 {
