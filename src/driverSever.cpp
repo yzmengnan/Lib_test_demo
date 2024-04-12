@@ -74,7 +74,13 @@ driverSever::driverSever(const int& port, Tc_Ads& ads_handle)
 						                        this->socketRecv->Cartesian_Position_set[3],
 						                        this->socketRecv->Cartesian_Position_set[4],
 						                        this->socketRecv->Cartesian_Position_set[5]};
+#ifndef USE_RL
 						driver_errcode       = this->opSpaceMotionByJacob0(c_vecs);
+#else
+
+						static Robot r("../myrobot.xml");
+						driver_errcode = this->opSpaceMotionByJacob0_RL(c_vecs,r);
+#endif
 					}
 					// operation space moiton by jacobe
 					else if (this->socketRecv->Command & 0x20000000)
@@ -416,11 +422,16 @@ void driverSever::servoData_to_socketData(const Driver& d, const vector<DFS>& da
 		this->socketSend->Status |= (cspFlag << 3);
 	}
 
-	vector<double> j_angles              = MDT::getAngles(d, data);
-	j_angles[6]                          = j_angles[6];
-	this->socketSend->Joint_Position     = vector<float>(j_angles.begin(), j_angles.end());
-	vector<double> j_vec                 = MDT::getVecs(d, data);
-	this->socketSend->Joint_Velocity     = vector<float>(j_vec.begin(), j_vec.end());
-	vector<double> c_Position            = fkine(MDT::getAngles(d, data));
+	vector<double> j_angles          = MDT::getAngles(d, data);
+	j_angles[6]                      = j_angles[6];
+	this->socketSend->Joint_Position = vector<float>(j_angles.begin(), j_angles.end());
+	vector<double> j_vec             = MDT::getVecs(d, data);
+	this->socketSend->Joint_Velocity = vector<float>(j_vec.begin(), j_vec.end());
+#ifndef USE_RL
+	vector<double> c_Position = fkine(MDT::getAngles(d, data));
+#else
+	static Robot r("../myrobot.xml");
+	vector<double> c_Position = r.fkine(vector<double> {j_angles.begin(), j_angles.begin() + 6});
+#endif
 	this->socketSend->Cartesian_Position = vector<float>(c_Position.begin(), c_Position.end());
 }
