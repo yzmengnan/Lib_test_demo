@@ -13,8 +13,8 @@
 #define DFG_SIZE_T 8
 
 #define servoNums 7
-#define Grap_Position_Servo_Nums 1
-#define Grap_Torque_Servo_Nums 4
+#define Grap_Position_Servo_Nums 0
+#define Grap_Torque_Servo_Nums 2
 #define MONITOR_Hz 20
 #define Socket_Hz 1000 / 100
 #define motorLagRate 1.2
@@ -28,7 +28,7 @@
 //
 #include <memory>
 #include <vector>
-static std::vector<int32_t> pulse_offset {-507555, -905323126, 6492578, 17654595, -394883,
+static std::vector<int32_t> pulse_offset {-507555, -905323126, 22013249, 17654595, -394883,
                                           234933,  0,          0,       0};
 using DTS = struct Data_To_Servo {
 	uint16_t Control_Word     = 0;
