@@ -7,7 +7,7 @@ Robot::Robot(const std::string& filepath)
 {
 	this->robotModel = std ::shared_ptr<rl::mdl::Model>(this->factory.create(filepath));
 }
-std::vector<double> Robot::fkine(const std::vector<double>& jointData)
+auto Robot::fkine(const std::vector<double>& jointData) -> std::vector<double>
 {
 	std::vector<double> res(6, 0);
 	// input data invalid
@@ -19,32 +19,34 @@ std::vector<double> Robot::fkine(const std::vector<double>& jointData)
 	// set RL vector for joints` position
 	q << jointData[0], jointData[1], jointData[2], jointData[3], jointData[4], jointData[5];
 	q *= rl::math::constants::deg2rad;
-	auto tempK = dynamic_cast<rl::mdl::Kinematic*>(this->robotModel.get());
+	auto *tempK = dynamic_cast<rl::mdl::Kinematic*>(this->robotModel.get());
 	tempK->setPosition(q);
 	tempK->forwardPosition();
 	rl::math::Transform t         = tempK->getOperationalPosition(0);
 	rl::math::Vector3 position    = t.translation();
-	rl::math::Vector3 orientation = t.rotation().eulerAngles(2, 1, 0);
+	rl::math::Vector3 orientation = t.rotation().eulerAngles(2, 1, 0).reverse();
 	orientation *= rl::math::constants ::rad2deg;
 	res = {position[0], position[1], position[2], orientation[0], orientation[1], orientation[2]};
 	return res;
 }
 rl::math::Transform Robot::getTransformMatrix(const std::vector<double>& jointData)
 {
-	if (jointData.size() != 6)
+	if (jointData.size() != 6) {
 		return rl::math::Transform();
+}
 	rl::math::Vector temp_q(6);
 	temp_q << jointData[0], jointData[1], jointData[2], jointData[3], jointData[4], jointData[5];
 	temp_q *= rl::math::constants::deg2rad;
-	auto tempK = dynamic_cast<rl::mdl::Kinematic*>(this->robotModel.get());
+	auto *tempK = dynamic_cast<rl::mdl::Kinematic*>(this->robotModel.get());
 	tempK->setPosition(temp_q);
 	tempK->forwardPosition();
 	return tempK->getOperationalPosition(0);
 }
 rl::math::Matrix Robot::getJacobe(const std::vector<double>& jointData)
 {
-	if (jointData.size() != 6)
+	if (jointData.size() != 6) {
 		return rl::math::Matrix();
+}
 	rl::math::Vector temp_q(6);
 	temp_q << jointData[0], jointData[1], jointData[2], jointData[3], jointData[4], jointData[5];
 	temp_q *= rl::math::constants::deg2rad;
@@ -53,10 +55,11 @@ rl::math::Matrix Robot::getJacobe(const std::vector<double>& jointData)
 	tempK->calculateJacobian(false);
 	return tempK->getJacobian();
 }
-rl::math::Matrix Robot::getJacob0(const std::vector<double>& jointData)
+auto Robot::getJacob0(const std::vector<double>& jointData) -> rl::math::Matrix
 {
-	if (jointData.size() != 6)
+	if (jointData.size() != 6) {
 		return rl::math::Matrix();
+}
 	rl::math::Vector temp_q(6);
 	temp_q << jointData[0], jointData[1], jointData[2], jointData[3], jointData[4], jointData[5];
 	temp_q *= rl::math::constants::deg2rad;
@@ -65,7 +68,7 @@ rl::math::Matrix Robot::getJacob0(const std::vector<double>& jointData)
 	tempK->calculateJacobian();
 	return tempK->getJacobian();
 }
-std::vector<double> Robot::fkine()
+auto Robot::fkine() -> std::vector<double>
 {
 	this->kinematics->forwardPosition();
 	auto t                        = this->kinematics->getOperationalPosition(0);
@@ -74,7 +77,7 @@ std::vector<double> Robot::fkine()
 	orientation *= rl::math::constants ::rad2deg;
 	return {position[0], position[1], position[2], orientation[0], orientation[1], orientation[2]};
 }
-bool Robot::start(const std::shared_ptr<std::vector<double>> j)
+auto Robot::start(const std::shared_ptr<std::vector<double>> j) -> bool
 {
 	if ((*j).size() != 6)
 		return false;
@@ -109,30 +112,35 @@ rl::math::Matrix Robot::getJacob0()
 	this->kinematics->calculateJacobian();
 	return this->kinematics->getJacobian();
 }
-rl::math::Matrix Robot::getInverseJacobe(const std::vector<double>& jointData)
+auto Robot::getInverseJacobe(const std::vector<double>& jointData) -> rl::math::Matrix
 {
-	if (jointData.size() != 6)
-		return rl::math::Matrix();
+	if (jointData.size() != 6) {
+		return {};
+}
 	rl::math::Vector temp_q(6);
 	temp_q << jointData[0], jointData[1], jointData[2], jointData[3], jointData[4], jointData[5];
 	temp_q *= rl::math::constants::deg2rad;
-	auto tempK = dynamic_cast<rl::mdl::Kinematic*>(this->robotModel.get());
+	auto *tempK = dynamic_cast<rl::mdl::Kinematic*>(this->robotModel.get());
 	tempK->setPosition(temp_q);
+	tempK->forwardPosition();
 	tempK->calculateJacobian(false);
 	// TODO do not use svd
 	tempK->calculateJacobianInverse(0.5F, false);
 	return tempK->getJacobianInverse();
 }
-rl::math::Matrix Robot::getInverseJacob0(const std::vector<double>& jointData)
+auto Robot::getInverseJacob0(const std::vector<double>& jointData) -> rl::math::Matrix
 {
 	if (jointData.size() != 6)
-		return rl::math::Matrix();
+	{
+		return {};
+	}
 	rl::math::Vector temp_q(6);
 	temp_q << jointData[0], jointData[1], jointData[2], jointData[3], jointData[4], jointData[5];
 	temp_q *= rl::math::constants::deg2rad;
-	auto tempK = dynamic_cast<rl::mdl::Kinematic*>(this->robotModel.get());
+	auto* tempK = dynamic_cast<rl::mdl::Kinematic*>(this->robotModel.get());
 	tempK->setPosition(temp_q);
-	tempK->calculateJacobian();
-	tempK->calculateJacobianInverse(0.5F, true);
+	tempK->forwardPosition();
+	tempK->calculateJacobian(true);
+	tempK->calculateJacobianInverse(0.5F, false);
 	return tempK->getJacobianInverse();
 }
