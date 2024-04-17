@@ -24,9 +24,11 @@ auto Robot::fkine(const std::vector<double>& jointData) -> std::vector<double>
 	tempK->forwardPosition();
 	rl::math::Transform t         = tempK->getOperationalPosition(0);
 	rl::math::Vector3 position    = t.translation();
+	//返回ZYX欧拉角，得到的角度为RX,RY,RZ 是以末端坐标系为基准，依次进行对应轴旋转的角度
 	rl::math::Vector3 orientation = t.rotation().eulerAngles(2, 1, 0).reverse();
 	orientation *= rl::math::constants ::rad2deg;
-	res = {position[0], position[1], position[2], orientation[0], orientation[1], orientation[2]};
+	//返回的角度为ZYX固定角,获取旋转矩阵 R_UPA_DOWNB = Rz(3)*Ry(2)*Rx(1),其中，B为旋转坐标系，A为世界坐标系
+	res = {position[0], position[1], position[2], orientation.x(), orientation.y(), orientation.z()};
 	return res;
 }
 rl::math::Transform Robot::getTransformMatrix(const std::vector<double>& jointData)
@@ -144,3 +146,4 @@ auto Robot::getInverseJacob0(const std::vector<double>& jointData) -> rl::math::
 	tempK->calculateJacobianInverse(0.5F, false);
 	return tempK->getJacobianInverse();
 }
+rl::math::Transform Robot::getTransformMatrix() { return rl::math::Transform(); }
