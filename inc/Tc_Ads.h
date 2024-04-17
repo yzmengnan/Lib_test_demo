@@ -24,6 +24,9 @@ class Tc_Ads
 {
 public:
 	Tc_Ads();
+	~Tc_Ads(){
+		AdsPortClose();
+	}
 	auto set(vector<DTS>& SendData) -> int;
 	auto get(vector<DFS>& GetData) -> int;
 

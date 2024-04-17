@@ -13,8 +13,8 @@
 #define DFG_SIZE_T 8
 
 #define servoNums 7
-#define Grap_Position_Servo_Nums 0
-#define Grap_Torque_Servo_Nums 2
+#define Grap_Position_Servo_Nums 1
+#define Grap_Torque_Servo_Nums 4
 #define MONITOR_Hz 20
 #define Socket_Hz 1000 / 100
 #define motorLagRate 1.2
@@ -72,7 +72,7 @@ using DTG_T = struct Data_To_Grap_Torque {
 	uint16_t Control_Word    = 0;
 	int16_t Target_torque    = 0;
 	int8_t Mode_of_Operation = 4;
-	uint32_t Max_Motor_Speed = 200000 * 4;
+	uint32_t Max_Motor_Speed = 200000 ;
 };
 using _recv = struct Recv_from_Client {
 	int Head_check {22};                                                 // int32
