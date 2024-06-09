@@ -1,0 +1,791 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="FINAL" targetName="runninglib" />
+      <config projectName="FINAL" targetName="noSocketMain" />
+      <config projectName="FINAL" targetName="SocketTest" />
+      <config projectName="FINAL" targetName="jacob" />
+      <config projectName="FINAL" targetName="jacobTest" />
+      <config projectName="FINAL" targetName="SAFE-CHECK" />
+      <config projectName="FINAL" targetName="trajTest" />
+      <config projectName="FINAL" targetName="Lib_Demo" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+    <configurations />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f03e47fd-0475-4948-a743-8a3eb12eb51c" name="更改" comment="添加插值库" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Online" />
+  <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main-DESKTOP-940JSKH" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files (x86)/rl/include/rl-0.7.0/rl/mdl/Kinematic.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/main_Nosocket.cpp" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/Driver.cpp" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/driverSever.cpp" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <hideBySeverity>
+      <option value="100" />
+      <option value="200" />
+    </hideBySeverity>
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2023" />
+    <option name="minorVersion" value="2" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2TCJF1Pmlb6R0JPclo7VCkuC8YX" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;CMake Application.Lib_Demo.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.JacobTest.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.Lib_Demo.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.SAFE-CHECK.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.TEMP.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.VISUAL.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.jacobTest.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.noSocketMain.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 调试.Project.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;true&quot;,
+    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
+    &quot;cf.advertisement.text.overridden&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Yang/OneDrive - shu.edu.cn/Shield_Prog/Lib_Demo&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
+    &quot;two.files.diff.last.used.file&quot;: &quot;C:/Users/91418/OneDrive - shu.edu.cn/Shield_Prog/Seal_Demo/inc/Driver.h&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\91418\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\inc" />
+      <recent name="C:\Users\91418\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo" />
+      <recent name="C:\Users\91418\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\src" />
+      <recent name="C:\Users\91418\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\_VISUAL" />
+      <recent name="C:\Users\91418\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\lib" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\91418\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\src" />
+      <recent name="C:\Users\91418\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\inc" />
+      <recent name="C:\Users\91418\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\inc\histroy" />
+      <recent name="C:\Users\91418\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo" />
+      <recent name="C:\Users\91418\OneDrive\Shield_Prog\Lib_Demo\src" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake Application.JacobTest">
+    <configuration name="Project" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory" temporary="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="JacobTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="jacobTest" CONFIG_NAME="Local" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="jacobTest">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Lib_Demo" type="CMakeRunConfiguration" factoryName="Application" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="Lib_Demo" CONFIG_NAME="Online" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="Lib_Demo">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SAFE-CHECK" type="CMakeRunConfiguration" factoryName="Application" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="SAFE-CHECK" CONFIG_NAME="Local" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="SAFE-CHECK">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VISUAL" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="0 0" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="VISUAL" CONFIG_NAME="VISUAL" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="VISUAL">
+      <envs>
+        <env name="PATH" value="C:\Program Files (x86)\Do3think\DVP2 x64;C:\opencv\openCVlocalBuild\sources\opencv-4.x\opencv-4.x\build\bin;C:\TwinCAT\Common64;C:\TwinCAT\Common32" />
+      </envs>
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="noSocketMain" type="CMakeRunConfiguration" factoryName="Application" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="noSocketMain" CONFIG_NAME="Local" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="noSocketMain">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.JacobTest" />
+      <item itemvalue="CMake Application.Lib_Demo" />
+      <item itemvalue="CMake Application.SAFE-CHECK" />
+      <item itemvalue="CMake Application.VISUAL" />
+      <item itemvalue="CMake Application.noSocketMain" />
+      <item itemvalue="CMake Debug.Project" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="f03e47fd-0475-4948-a743-8a3eb12eb51c" name="更改" comment="" />
+      <created>1690541023422</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1690541023422</updated>
+      <workItem from="1690541026335" duration="12607000" />
+      <workItem from="1690605962007" duration="4628000" />
+      <workItem from="1690615881220" duration="2432000" />
+      <workItem from="1690618694689" duration="4073000" />
+      <workItem from="1690642889106" duration="7112000" />
+      <workItem from="1690650033058" duration="1000" />
+      <workItem from="1690651380317" duration="383000" />
+      <workItem from="1690651778481" duration="158000" />
+      <workItem from="1690697337704" duration="206000" />
+      <workItem from="1690796928885" duration="5496000" />
+      <workItem from="1690864674105" duration="1438000" />
+      <workItem from="1690870042349" duration="4696000" />
+      <workItem from="1690878530163" duration="2501000" />
+      <workItem from="1690881063995" duration="147000" />
+      <workItem from="1690881472977" duration="131000" />
+      <workItem from="1690888645163" duration="285000" />
+      <workItem from="1690889168854" duration="1332000" />
+      <workItem from="1690890524487" duration="256000" />
+      <workItem from="1690890800481" duration="18000" />
+      <workItem from="1690956944148" duration="12148000" />
+      <workItem from="1690978060176" duration="10000" />
+      <workItem from="1690978239020" duration="7728000" />
+      <workItem from="1691036094024" duration="8611000" />
+      <workItem from="1691045704106" duration="1541000" />
+      <workItem from="1691050355887" duration="767000" />
+      <workItem from="1691051154001" duration="979000" />
+      <workItem from="1691052258057" duration="107000" />
+      <workItem from="1691052469695" duration="328000" />
+      <workItem from="1691058267600" duration="7195000" />
+      <workItem from="1691243619960" duration="206000" />
+      <workItem from="1691246504637" duration="1090000" />
+      <workItem from="1691307716133" duration="10003000" />
+      <workItem from="1691756094268" duration="108000" />
+      <workItem from="1691756223473" duration="13074000" />
+      <workItem from="1692942858656" duration="506000" />
+      <workItem from="1692943814341" duration="2803000" />
+      <workItem from="1693105884806" duration="1203000" />
+      <workItem from="1693288337444" duration="8659000" />
+      <workItem from="1693406023902" duration="532000" />
+      <workItem from="1693451689114" duration="12000" />
+      <workItem from="1693476111346" duration="37000" />
+      <workItem from="1693476345687" duration="977000" />
+      <workItem from="1693893879884" duration="3785000" />
+      <workItem from="1695094015749" duration="1457000" />
+      <workItem from="1695351670509" duration="791000" />
+      <workItem from="1695534247065" duration="973000" />
+      <workItem from="1695535238311" duration="360000" />
+      <workItem from="1695613058558" duration="1033000" />
+      <workItem from="1695783632647" duration="1873000" />
+      <workItem from="1696660197805" duration="771000" />
+      <workItem from="1696661569176" duration="3546000" />
+      <workItem from="1696772276371" duration="898000" />
+      <workItem from="1696993023013" duration="8397000" />
+      <workItem from="1697013317862" duration="1142000" />
+      <workItem from="1699853419025" duration="8759000" />
+      <workItem from="1699879280631" duration="156000" />
+      <workItem from="1699887243845" duration="819000" />
+      <workItem from="1699941766280" duration="3826000" />
+      <workItem from="1700027546367" duration="2423000" />
+      <workItem from="1700185804912" duration="13910000" />
+      <workItem from="1700296284061" duration="657000" />
+      <workItem from="1700456438757" duration="3276000" />
+      <workItem from="1700538164204" duration="60000" />
+      <workItem from="1700538243492" duration="245000" />
+      <workItem from="1700545130220" duration="12960000" />
+      <workItem from="1700637615160" duration="7832000" />
+      <workItem from="1700657472878" duration="77000" />
+      <workItem from="1700657562943" duration="3765000" />
+      <workItem from="1700801667035" duration="7228000" />
+      <workItem from="1700842920854" duration="1824000" />
+      <workItem from="1701064360027" duration="9632000" />
+      <workItem from="1701098665232" duration="3593000" />
+      <workItem from="1701108587340" duration="2389000" />
+      <workItem from="1701145105715" duration="27578000" />
+      <workItem from="1701186922562" duration="1931000" />
+      <workItem from="1701258192954" duration="491000" />
+      <workItem from="1701318355539" duration="1573000" />
+      <workItem from="1701443625621" duration="1146000" />
+      <workItem from="1702350142271" duration="4699000" />
+      <workItem from="1702358442415" duration="177000" />
+      <workItem from="1702358638814" duration="366000" />
+      <workItem from="1702359015417" duration="721000" />
+      <workItem from="1702436545305" duration="17126000" />
+      <workItem from="1702472235159" duration="745000" />
+      <workItem from="1702556557485" duration="327000" />
+      <workItem from="1702557293334" duration="606000" />
+      <workItem from="1702965116381" duration="23000" />
+      <workItem from="1702965155240" duration="290000" />
+      <workItem from="1702969119281" duration="1723000" />
+      <workItem from="1702971544045" duration="915000" />
+      <workItem from="1703044506374" duration="11480000" />
+      <workItem from="1703077498146" duration="589000" />
+      <workItem from="1703644303243" duration="18571000" />
+      <workItem from="1703693706621" duration="300000" />
+      <workItem from="1703694030756" duration="3804000" />
+      <workItem from="1703777273178" duration="3537000" />
+      <workItem from="1703828112337" duration="3829000" />
+      <workItem from="1703833644967" duration="6124000" />
+      <workItem from="1704209259822" duration="2168000" />
+      <workItem from="1704296251098" duration="255000" />
+      <workItem from="1704345992227" duration="12277000" />
+      <workItem from="1704613606219" duration="16000" />
+      <workItem from="1704613789346" duration="25000" />
+      <workItem from="1704620959995" duration="810000" />
+      <workItem from="1704685086623" duration="482000" />
+      <workItem from="1704686387938" duration="6000" />
+      <workItem from="1704693414120" duration="576000" />
+      <workItem from="1704694064475" duration="31000" />
+      <workItem from="1704694135013" duration="253000" />
+      <workItem from="1704725568560" duration="896000" />
+      <workItem from="1704778251218" duration="590000" />
+      <workItem from="1704778878923" duration="1886000" />
+      <workItem from="1704781049620" duration="491000" />
+      <workItem from="1704782333376" duration="12204000" />
+      <workItem from="1704804318858" duration="584000" />
+      <workItem from="1704804918184" duration="3898000" />
+      <workItem from="1704815378095" duration="3224000" />
+      <workItem from="1704865953078" duration="11676000" />
+      <workItem from="1704879609007" duration="9000" />
+      <workItem from="1704892858597" duration="26000" />
+      <workItem from="1704892926024" duration="2270000" />
+      <workItem from="1704948541701" duration="7801000" />
+      <workItem from="1704957483580" duration="6386000" />
+      <workItem from="1704982436928" duration="6566000" />
+      <workItem from="1705643838758" duration="4617000" />
+      <workItem from="1705656953440" duration="149000" />
+      <workItem from="1705657173332" duration="156000" />
+      <workItem from="1705657622428" duration="109000" />
+      <workItem from="1705658116646" duration="2000" />
+    </task>
+    <task id="LOCAL-00056" summary="添加监视器">
+      <option name="closed" value="true" />
+      <created>1699853731744</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1699853731744</updated>
+    </task>
+    <task id="LOCAL-00057" summary="添加矩阵运算模块">
+      <option name="closed" value="true" />
+      <created>1700029666611</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1700029666611</updated>
+    </task>
+    <task id="LOCAL-00058" summary="轨迹插值">
+      <option name="closed" value="true" />
+      <created>1700029677975</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1700029677975</updated>
+    </task>
+    <task id="LOCAL-00059" summary="雅可比变换">
+      <option name="closed" value="true" />
+      <created>1700029753734</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1700029753734</updated>
+    </task>
+    <task id="LOCAL-00060" summary="添加上中位机调试代码（离线设备调试）&#10;添加中位机接收路径点数据并进行轨迹插值的功能">
+      <option name="closed" value="true" />
+      <created>1700029808392</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1700029808392</updated>
+    </task>
+    <task id="LOCAL-00061" summary="更新路径点获取方法，修正临时变量bug，修正判断bug，修改offlinecsp实现方式">
+      <option name="closed" value="true" />
+      <created>1700208155064</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1700208155065</updated>
+    </task>
+    <task id="LOCAL-00062" summary="定义私有成员路径插值点">
+      <option name="closed" value="true" />
+      <created>1700208181530</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1700208181530</updated>
+    </task>
+    <task id="LOCAL-00063" summary="更新">
+      <option name="closed" value="true" />
+      <created>1700208199606</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1700208199606</updated>
+    </task>
+    <task id="LOCAL-00064" summary="发送数据更新">
+      <option name="closed" value="true" />
+      <created>1700459078122</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1700459078123</updated>
+    </task>
+    <task id="LOCAL-00065" summary="clangTidy 代码修复并更新笛卡尔空间相关操作">
+      <option name="closed" value="true" />
+      <created>1700554173893</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1700554173893</updated>
+    </task>
+    <task id="LOCAL-00066" summary="clangTidy 代码修复并更新笛卡尔空间相关操作">
+      <option name="closed" value="true" />
+      <created>1700554186434</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1700554186434</updated>
+    </task>
+    <task id="LOCAL-00067" summary="雅可比测试">
+      <option name="closed" value="true" />
+      <created>1700554198736</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1700554198736</updated>
+    </task>
+    <task id="LOCAL-00068" summary="添加了单列向量矩阵的初始化方法&#10;添加了获取某举证某一列元素的方法">
+      <option name="closed" value="true" />
+      <created>1700554240979</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1700554240979</updated>
+    </task>
+    <task id="LOCAL-00069" summary="代码修正">
+      <option name="closed" value="true" />
+      <created>1700554261014</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1700554261014</updated>
+    </task>
+    <task id="LOCAL-00070" summary="添加jacob测试">
+      <option name="closed" value="true" />
+      <created>1700554273943</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1700554273943</updated>
+    </task>
+    <task id="LOCAL-00071" summary="更新了joint2position的rpy角输出，设置输入为角度制，">
+      <option name="closed" value="true" />
+      <created>1700558091455</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1700558091455</updated>
+    </task>
+    <task id="LOCAL-00072" summary="更新操作空间位置运动">
+      <option name="closed" value="true" />
+      <created>1702359478722</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1702359478723</updated>
+    </task>
+    <task id="LOCAL-00073" summary="添加平移轴">
+      <option name="closed" value="true" />
+      <created>1702359521120</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1702359521120</updated>
+    </task>
+    <task id="LOCAL-00074" summary="优化">
+      <option name="closed" value="true" />
+      <created>1702359529716</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1702359529716</updated>
+    </task>
+    <task id="LOCAL-00075" summary="更新通讯数据">
+      <option name="closed" value="true" />
+      <created>1702359596047</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1702359596047</updated>
+    </task>
+    <task id="LOCAL-00076" summary="更新">
+      <option name="closed" value="true" />
+      <created>1702359605940</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1702359605940</updated>
+    </task>
+    <task id="LOCAL-00077" summary="更新">
+      <option name="closed" value="true" />
+      <created>1702359614071</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1702359614071</updated>
+    </task>
+    <task id="LOCAL-00078" summary="设置为历史代码">
+      <option name="closed" value="true" />
+      <created>1702359627116</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1702359627116</updated>
+    </task>
+    <task id="LOCAL-00079" summary="更新">
+      <option name="closed" value="true" />
+      <created>1702359657383</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1702359657383</updated>
+    </task>
+    <task id="LOCAL-00080" summary="更新">
+      <option name="closed" value="true" />
+      <created>1702359665925</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1702359665925</updated>
+    </task>
+    <task id="LOCAL-00081" summary="更正">
+      <option name="closed" value="true" />
+      <created>1702359685086</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1702359685086</updated>
+    </task>
+    <task id="LOCAL-00082" summary="更正">
+      <option name="closed" value="true" />
+      <created>1702446980927</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1702446980928</updated>
+    </task>
+    <task id="LOCAL-00083" summary="更正">
+      <option name="closed" value="true" />
+      <created>1703051336463</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1703051336464</updated>
+    </task>
+    <task id="LOCAL-00084" summary="添加位置控制闭环">
+      <option name="closed" value="true" />
+      <created>1703051382041</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1703051382041</updated>
+    </task>
+    <task id="LOCAL-00085" summary="添加操作空间控制">
+      <option name="closed" value="true" />
+      <created>1703051425987</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1703051425987</updated>
+    </task>
+    <task id="LOCAL-00086" summary="更新">
+      <option name="closed" value="true" />
+      <created>1703051493909</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1703051493909</updated>
+    </task>
+    <task id="LOCAL-00087" summary="添加视觉验证">
+      <option name="closed" value="true" />
+      <created>1703051536250</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1703051536250</updated>
+    </task>
+    <task id="LOCAL-00088" summary="添加视觉验证">
+      <option name="closed" value="true" />
+      <created>1703051551889</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1703051551889</updated>
+    </task>
+    <task id="LOCAL-00089" summary="添加armadillo 矩阵库">
+      <option name="closed" value="true" />
+      <created>1703051577066</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1703051577066</updated>
+    </task>
+    <task id="LOCAL-00090" summary="添加armadillo 矩阵库">
+      <option name="closed" value="true" />
+      <created>1703051585165</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1703051585165</updated>
+    </task>
+    <task id="LOCAL-00091" summary="添加armadillo 矩阵库">
+      <option name="closed" value="true" />
+      <created>1703051870973</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1703051870973</updated>
+    </task>
+    <task id="LOCAL-00092" summary="update">
+      <option name="closed" value="true" />
+      <created>1703838591214</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838591215</updated>
+    </task>
+    <task id="LOCAL-00093" summary="re-organized">
+      <option name="closed" value="true" />
+      <created>1703838712561</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838712561</updated>
+    </task>
+    <task id="LOCAL-00094" summary="update">
+      <option name="closed" value="true" />
+      <created>1703838727922</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838727922</updated>
+    </task>
+    <task id="LOCAL-00095" summary="update">
+      <option name="closed" value="true" />
+      <created>1703838734164</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838734164</updated>
+    </task>
+    <task id="LOCAL-00096" summary="update">
+      <option name="closed" value="true" />
+      <created>1703838745274</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838745274</updated>
+    </task>
+    <task id="LOCAL-00097" summary="更新了关于基坐标系的雅可比速度运动">
+      <option name="closed" value="true" />
+      <created>1703838805137</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838805137</updated>
+    </task>
+    <task id="LOCAL-00098" summary="添加了上位机操作空间关于坐标系e和坐标系0的速度矢量控制&#10;添加了关节空间的速度矢量控制&#10;offline csp时，使用pp【x】 自动运动到起始点">
+      <option name="closed" value="true" />
+      <created>1703839060485</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839060485</updated>
+    </task>
+    <task id="LOCAL-00099" summary="update">
+      <option name="closed" value="true" />
+      <created>1703839080148</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839080148</updated>
+    </task>
+    <task id="LOCAL-00100" summary="update">
+      <option name="closed" value="true" />
+      <created>1703839086497</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839086497</updated>
+    </task>
+    <task id="LOCAL-00101" summary="update">
+      <option name="closed" value="true" />
+      <created>1703839091385</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839091385</updated>
+    </task>
+    <task id="LOCAL-00102" summary="设置syncrpm 为double&#10;添加jacobe 与jacob0 雅可比矩阵的操作空间速度矢量控制">
+      <option name="closed" value="true" />
+      <created>1703839153730</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839153730</updated>
+    </task>
+    <task id="LOCAL-00103" summary="添加度申科技相机">
+      <option name="closed" value="true" />
+      <created>1703839181959</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839181959</updated>
+    </task>
+    <task id="LOCAL-00104" summary="添加基于RPY角的fkine">
+      <option name="closed" value="true" />
+      <created>1703839218806</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839218806</updated>
+    </task>
+    <option name="localTasksCounter" value="105" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="clangTidy 代码修复并更新笛卡尔空间相关操作" />
+    <MESSAGE value="雅可比测试" />
+    <MESSAGE value="添加了单列向量矩阵的初始化方法&#10;添加了获取某举证某一列元素的方法" />
+    <MESSAGE value="代码修正" />
+    <MESSAGE value="添加jacob测试" />
+    <MESSAGE value="更新了joint2position的rpy角输出，设置输入为角度制，" />
+    <MESSAGE value="更新操作空间位置运动" />
+    <MESSAGE value="添加平移轴" />
+    <MESSAGE value="优化" />
+    <MESSAGE value="更新通讯数据" />
+    <MESSAGE value="设置为历史代码" />
+    <MESSAGE value="更正" />
+    <MESSAGE value="添加位置控制闭环" />
+    <MESSAGE value="添加操作空间控制" />
+    <MESSAGE value="更新" />
+    <MESSAGE value="添加视觉验证" />
+    <MESSAGE value="添加armadillo 矩阵库" />
+    <MESSAGE value="re-organized" />
+    <MESSAGE value="更新了关于基坐标系的雅可比速度运动" />
+    <MESSAGE value="添加了上位机操作空间关于坐标系e和坐标系0的速度矢量控制&#10;添加了关节空间的速度矢量控制&#10;offline csp时，使用pp【x】 自动运动到起始点" />
+    <MESSAGE value="update" />
+    <MESSAGE value="设置syncrpm 为double&#10;添加jacobe 与jacob0 雅可比矩阵的操作空间速度矢量控制" />
+    <MESSAGE value="添加度申科技相机" />
+    <MESSAGE value="添加基于RPY角的fkine" />
+    <MESSAGE value="添加插值库" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加插值库" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/trajTest.cpp</url>
+          <line>14</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/main_Nosocket.cpp</url>
+          <line>78</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/inc/Driver.h</url>
+          <line>400</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="CMakeRunConfiguration">
+        <watch expression="this-&gt;comSocket" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

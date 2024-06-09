@@ -1,7 +1,7 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
-    <inspection_tool class="ClangTidy" enabled="false" level="WARNING" enabled_by_default="false">
+    <inspection_tool class="ClangTidy" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES">
       <option name="clangTidyCheckOptions">
         <list>
           <ClangTidyCheckOption>
@@ -23,6 +23,10 @@
           <ClangTidyCheckOption>
             <option name="optionName" value="readability-identifier-length.MinimumVariableNameLength" />
             <option name="optionValue" value="1" />
+          </ClangTidyCheckOption>
+          <ClangTidyCheckOption>
+            <option name="optionName" value="cppcoreguidelines-avoid-magic-numbers.IgnoredIntegerValues" />
+            <option name="optionValue" value="1;2;3;4;6;7;8;9;0" />
           </ClangTidyCheckOption>
         </list>
       </option>

@@ -18,21 +18,25 @@ VAR
 	j5_status AT%ID20:Axis_Status;
 	j6_status AT%ID25:Axis_Status;
 	p1_status AT%ID30:Axis_Status;
-	BREAK AT%QD100:WORD:=0;
-	j1_acc AT%Q*:UDINT :=4000000000;
-	j2_acc AT%Q*:UDINT :=4000000000;
-	j3_acc AT%Q*:UDINT :=4000000000;
+	
+	BREAK AT%QD100:WORD:=8;
+	
+	j1_acc AT%Q*:UDINT :=40000000;
+	j2_acc AT%Q*:UDINT :=40000000;
+	j3_acc AT%Q*:UDINT :=40000000;
 	j4_acc AT%Q*:UDINT :=4000000000;
-	j5_acc AT%Q*:UDINT :=4000000000;
-	j6_acc AT%Q*:UDINT :=4000000000;
-	j1_dacc AT%Q*:UDINT :=4000000000;
-	j2_dacc AT%Q*:UDINT :=4000000000;
-	j3_dacc AT%Q*:UDINT :=4000000000;
+	j5_acc AT%Q*:UDINT :=40000000;
+	j6_acc AT%Q*:UDINT :=40000000;
+	j1_dacc AT%Q*:UDINT :=40000000;
+	j2_dacc AT%Q*:UDINT :=40000000;
+	j3_dacc AT%Q*:UDINT :=40000000;
 	j4_dacc AT%Q*:UDINT :=4000000000;
-	j5_dacc AT%Q*:UDINT :=4000000000;
-	j6_dacc AT%Q*:UDINT :=4000000000;
-	q1_acc AT%Q*:UDINT :=4000000000;
-	q1_dacc AT%Q*:UDINT :=4000000000;
+	j5_dacc AT%Q*:UDINT :=40000000;
+	j6_dacc AT%Q*:UDINT :=40000000;
+	q1_acc AT%Q*:UDINT :=40000000;
+	q1_dacc AT%Q*:UDINT :=400000000;
+	
+	tool_sensor AT%ID100:INT;
 END_VAR
 ]]></Declaration>
     <Implementation>

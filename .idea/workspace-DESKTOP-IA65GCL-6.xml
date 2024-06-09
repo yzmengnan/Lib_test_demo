@@ -1,0 +1,1010 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="FINAL" targetName="runninglib" />
+      <config projectName="FINAL" targetName="VISUAL" />
+      <config projectName="FINAL" targetName="VS_IBVS_DEMO" />
+      <config projectName="FINAL" targetName="SocketTest" />
+      <config projectName="FINAL" targetName="DVPTEST" />
+      <config projectName="FINAL" targetName="TrajTest" />
+      <config projectName="FINAL" targetName="trajTest" />
+      <config projectName="FINAL" targetName="noSocketMain" />
+      <config projectName="FINAL" targetName="SharedMemory_Send" />
+      <config projectName="FINAL" targetName="SharedMemory_Receive" />
+      <config projectName="FINAL" targetName="GRAP_TEST" />
+      <config projectName="FINAL" targetName="jacob" />
+      <config projectName="FINAL" targetName="jacobTest" />
+      <config projectName="FINAL" targetName="SAFE-CHECK" />
+      <config projectName="FINAL" targetName="IMG_transfer" />
+      <config projectName="FINAL" targetName="Lib_Demo" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+    <configurations>
+      <configuration PROFILE_NAME="Grap_TEST" ENABLED="true" GENERATION_DIR="_Grap" CONFIG_NAME="Debug">
+        <ADDITIONAL_GENERATION_ENVIRONMENT>
+          <envs>
+            <env name="GRAP_TEST" value="true" />
+          </envs>
+        </ADDITIONAL_GENERATION_ENVIRONMENT>
+      </configuration>
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f03e47fd-0475-4948-a743-8a3eb12eb51c" name="更改" comment="优化">
+      <change afterPath="$PROJECT_DIR$/.idea/Lib_Demo.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/statistic.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace-DESKTOP-IA65GCL-2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace-DESKTOP-IA65GCL-3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace-DESKTOP-IA65GCL-4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace-DESKTOP-IA65GCL-5.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace-DESKTOP-IA65GCL.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace-DunDJa.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace-MengnanY-2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace-MengnanY-3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace-MengnanY.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/.cmake/api/v1/query/cache-v2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/.cmake/api/v1/query/cmakeFiles-v1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/.cmake/api/v1/query/codemodel-v2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/.cmake/api/v1/query/toolchains-v1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/.cmake/api/v1/reply/directory-.-Debug-d0094a50bb2071803777.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeCache.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/3.27.8/CMakeCCompiler.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/3.27.8/CMakeCXXCompiler.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/3.27.8/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/3.27.8/CMakeDetermineCompilerABI_CXX.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/3.27.8/CMakeRCCompiler.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/3.27.8/CMakeSystem.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/3.27.8/CompilerIdC/CMakeCCompilerId.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/3.27.8/CompilerIdC/a.exe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/3.27.8/CompilerIdCXX/CMakeCXXCompilerId.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/3.27.8/CompilerIdCXX/a.exe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/CMakeConfigureLog.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/clion-Grap_TEST-log.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/clion-environment.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/cmake.check_cache" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/CMakeFiles/rules.ninja" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/build.ninja" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_Grap/cmake_install.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/grap_action.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/plc2/POUs/MAIN.TcPOU" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/plc2/plc2.tmc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/grap_action.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/cmake.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Grap_Control_Demo.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Grap_Control_Demo.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grap_tool/zero_err_setfile.dlg" beforeDir="false" afterPath="$PROJECT_DIR$/grap_tool/zero_err_setfile.dlg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/DATA_STRUCT.h" beforeDir="false" afterPath="$PROJECT_DIR$/inc/DATA_STRUCT.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/Driver.h" beforeDir="false" afterPath="$PROJECT_DIR$/inc/Driver.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/Tc_Ads.h" beforeDir="false" afterPath="$PROJECT_DIR$/inc/Tc_Ads.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/librunninglib.a" beforeDir="false" afterPath="$PROJECT_DIR$/lib/librunninglib.a" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plcProj/LIBPROJ/.vs/LIBPROJ/v15/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/.vs/LIBPROJ/v15/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/LIBPROJ.tsproj" beforeDir="false" afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/LIBPROJ.tsproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/LIBPROJ.tsproj.bak" beforeDir="false" afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/LIBPROJ.tsproj.bak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/CurrentConfig.tszip" beforeDir="false" afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/CurrentConfig.tszip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/CurrentConfig.xml" beforeDir="false" afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/CurrentConfig.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/CurrentConfig/plc.tpzip" beforeDir="false" afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/CurrentConfig/plc.tpzip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/Plc/Port_851.app" beforeDir="false" afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/Plc/Port_851.app" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/Plc/Port_851.crc" beforeDir="false" afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/Plc/Port_851.crc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/Plc/Port_851_boot.tizip" beforeDir="false" afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/_Boot/TwinCAT RT (x64)/Plc/Port_851_boot.tizip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/plc/plc.tmc" beforeDir="false" afterPath="$PROJECT_DIR$/plcProj/LIBPROJ/LIBPROJ/plc/plc.tmc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Driver.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Driver.cpp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Online" />
+  <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main-DESKTOP-940JSKH" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files (x86)/rl/include/rl-0.7.0/rl/mdl/Kinematic.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/main_Nosocket.cpp" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/Driver.cpp" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/driverSever.cpp" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/../../../../../msys64/ucrt64/include/opencv4/opencv2/highgui.hpp" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <hideBySeverity>
+      <option value="100" />
+      <option value="200" />
+    </hideBySeverity>
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2023" />
+    <option name="minorVersion" value="2" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2TCJF1Pmlb6R0JPclo7VCkuC8YX" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;C/C++ File.temp.cpp.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.JacobTest.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.Lib_Demo.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.DVPTEST.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.GRAP_TEST.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.IMG_transfer.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.JacobTest.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.Lib_Demo.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.SAFE-CHECK.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.SharedMemory_Receive.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.SharedMemory_Send.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.TEMP.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.TrajTest.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.VISUAL.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.VS_IBVS_DEMO.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.jacobTest.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 应用程序.noSocketMain.executor&quot;: &quot;Run&quot;,
+    &quot;CMake 调试.Project.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;true&quot;,
+    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
+    &quot;cf.advertisement.text.overridden&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/OneDrive - shu.edu.cn/Shield_Prog/Qt_Demo/demo&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Console&quot;,
+    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
+    &quot;two.files.diff.last.used.file&quot;: &quot;C:/Users/91418/OneDrive - shu.edu.cn/Shield_Prog/Seal_Demo/inc/Driver.h&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Yang\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo" />
+      <recent name="C:\Users\Yang\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\_VISUAL" />
+      <recent name="C:\Users\Yang\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\_Online" />
+      <recent name="C:\Users\Yang\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\lib" />
+      <recent name="C:\Users\91418\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\inc" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Yang\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\src" />
+      <recent name="C:\Users\Yang\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo" />
+      <recent name="D:\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\src" />
+      <recent name="C:\Users\Yang\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\history_app" />
+      <recent name="C:\Users\Yang\OneDrive - shu.edu.cn\Shield_Prog\Lib_Demo\histroy_app" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake 应用程序.Lib_Demo">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DVPTEST" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="true" USE_EXTERNAL_CONSOLE="true" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="DVPTEST" CONFIG_NAME="VISUAL" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="DVPTEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GRAP_TEST" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="GRAP_TEST" CONFIG_NAME="Grap_TEST" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="GRAP_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IMG_transfer" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="IMG_transfer" CONFIG_NAME="VISUAL" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="IMG_transfer">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="JacobTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="jacobTest" CONFIG_NAME="Local" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="jacobTest">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Lib_Demo" type="CMakeRunConfiguration" factoryName="Application" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="Lib_Demo" CONFIG_NAME="Online" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="Lib_Demo">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SAFE-CHECK" type="CMakeRunConfiguration" factoryName="Application" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="SAFE-CHECK" CONFIG_NAME="Local" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="SAFE-CHECK">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SharedMemory_Receive" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="SharedMemory_Receive" CONFIG_NAME="VISUAL" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="SharedMemory_Receive">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SharedMemory_Send" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="SharedMemory_Send" CONFIG_NAME="VISUAL" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="SharedMemory_Send">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TrajTest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="TrajTest" CONFIG_NAME="TEMP" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="TrajTest">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VISUAL" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="3" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="VISUAL" CONFIG_NAME="VISUAL" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="VISUAL">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VS_IBVS_DEMO" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="true" USE_EXTERNAL_CONSOLE="true" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="VS_IBVS_DEMO" CONFIG_NAME="VISUAL" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="VS_IBVS_DEMO">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="noSocketMain" type="CMakeRunConfiguration" factoryName="Application" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FINAL" TARGET_NAME="noSocketMain" CONFIG_NAME="Local" RUN_TARGET_PROJECT_NAME="FINAL" RUN_TARGET_NAME="noSocketMain">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake 应用程序.DVPTEST" />
+      <item itemvalue="CMake 应用程序.GRAP_TEST" />
+      <item itemvalue="CMake 应用程序.IMG_transfer" />
+      <item itemvalue="CMake 应用程序.JacobTest" />
+      <item itemvalue="CMake 应用程序.Lib_Demo" />
+      <item itemvalue="CMake 应用程序.SAFE-CHECK" />
+      <item itemvalue="CMake 应用程序.SharedMemory_Receive" />
+      <item itemvalue="CMake 应用程序.SharedMemory_Send" />
+      <item itemvalue="CMake 应用程序.TrajTest" />
+      <item itemvalue="CMake 应用程序.VISUAL" />
+      <item itemvalue="CMake 应用程序.VS_IBVS_DEMO" />
+      <item itemvalue="CMake 应用程序.noSocketMain" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="f03e47fd-0475-4948-a743-8a3eb12eb51c" name="更改" comment="" />
+      <created>1690541023422</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1690541023422</updated>
+      <workItem from="1690541026335" duration="12607000" />
+      <workItem from="1690605962007" duration="4628000" />
+      <workItem from="1690615881220" duration="2432000" />
+      <workItem from="1690618694689" duration="4073000" />
+      <workItem from="1690642889106" duration="7112000" />
+      <workItem from="1690650033058" duration="1000" />
+      <workItem from="1690651380317" duration="383000" />
+      <workItem from="1690651778481" duration="158000" />
+      <workItem from="1690697337704" duration="206000" />
+      <workItem from="1690796928885" duration="5496000" />
+      <workItem from="1690864674105" duration="1438000" />
+      <workItem from="1690870042349" duration="4696000" />
+      <workItem from="1690878530163" duration="2501000" />
+      <workItem from="1690881063995" duration="147000" />
+      <workItem from="1690881472977" duration="131000" />
+      <workItem from="1690888645163" duration="285000" />
+      <workItem from="1690889168854" duration="1332000" />
+      <workItem from="1690890524487" duration="256000" />
+      <workItem from="1690890800481" duration="18000" />
+      <workItem from="1690956944148" duration="12148000" />
+      <workItem from="1690978060176" duration="10000" />
+      <workItem from="1690978239020" duration="7728000" />
+      <workItem from="1691036094024" duration="8611000" />
+      <workItem from="1691045704106" duration="1541000" />
+      <workItem from="1691050355887" duration="767000" />
+      <workItem from="1691051154001" duration="979000" />
+      <workItem from="1691052258057" duration="107000" />
+      <workItem from="1691052469695" duration="328000" />
+      <workItem from="1691058267600" duration="7195000" />
+      <workItem from="1691243619960" duration="206000" />
+      <workItem from="1691246504637" duration="1090000" />
+      <workItem from="1691307716133" duration="10003000" />
+      <workItem from="1691756094268" duration="108000" />
+      <workItem from="1691756223473" duration="13074000" />
+      <workItem from="1692942858656" duration="506000" />
+      <workItem from="1692943814341" duration="2803000" />
+      <workItem from="1693105884806" duration="1203000" />
+      <workItem from="1693288337444" duration="8659000" />
+      <workItem from="1693406023902" duration="532000" />
+      <workItem from="1693451689114" duration="12000" />
+      <workItem from="1693476111346" duration="37000" />
+      <workItem from="1693476345687" duration="977000" />
+      <workItem from="1693893879884" duration="3785000" />
+      <workItem from="1695094015749" duration="1457000" />
+      <workItem from="1695351670509" duration="791000" />
+      <workItem from="1695534247065" duration="973000" />
+      <workItem from="1695535238311" duration="360000" />
+      <workItem from="1695613058558" duration="1033000" />
+      <workItem from="1695783632647" duration="1873000" />
+      <workItem from="1696660197805" duration="771000" />
+      <workItem from="1696661569176" duration="3546000" />
+      <workItem from="1696772276371" duration="898000" />
+      <workItem from="1696993023013" duration="8397000" />
+      <workItem from="1697013317862" duration="1142000" />
+      <workItem from="1699853419025" duration="8759000" />
+      <workItem from="1699879280631" duration="156000" />
+      <workItem from="1699887243845" duration="819000" />
+      <workItem from="1699941766280" duration="3826000" />
+      <workItem from="1700027546367" duration="2423000" />
+      <workItem from="1700185804912" duration="13910000" />
+      <workItem from="1700296284061" duration="657000" />
+      <workItem from="1700456438757" duration="3276000" />
+      <workItem from="1700538164204" duration="60000" />
+      <workItem from="1700538243492" duration="245000" />
+      <workItem from="1700545130220" duration="12960000" />
+      <workItem from="1700637615160" duration="7832000" />
+      <workItem from="1700657472878" duration="77000" />
+      <workItem from="1700657562943" duration="3765000" />
+      <workItem from="1700801667035" duration="7228000" />
+      <workItem from="1700842920854" duration="1824000" />
+      <workItem from="1701064360027" duration="9632000" />
+      <workItem from="1701098665232" duration="3593000" />
+      <workItem from="1701108587340" duration="2389000" />
+      <workItem from="1701145105715" duration="27578000" />
+      <workItem from="1701186922562" duration="1931000" />
+      <workItem from="1701258192954" duration="491000" />
+      <workItem from="1701318355539" duration="1573000" />
+      <workItem from="1701443625621" duration="1146000" />
+      <workItem from="1702350142271" duration="4699000" />
+      <workItem from="1702358442415" duration="177000" />
+      <workItem from="1702358638814" duration="366000" />
+      <workItem from="1702359015417" duration="721000" />
+      <workItem from="1702436545305" duration="17126000" />
+      <workItem from="1702472235159" duration="745000" />
+      <workItem from="1702556557485" duration="327000" />
+      <workItem from="1702557293334" duration="606000" />
+      <workItem from="1702965116381" duration="23000" />
+      <workItem from="1702965155240" duration="290000" />
+      <workItem from="1702969119281" duration="1723000" />
+      <workItem from="1702971544045" duration="915000" />
+      <workItem from="1703044506374" duration="11480000" />
+      <workItem from="1703077498146" duration="589000" />
+      <workItem from="1703644303243" duration="18571000" />
+      <workItem from="1703693706621" duration="300000" />
+      <workItem from="1703694030756" duration="3804000" />
+      <workItem from="1703777273178" duration="3537000" />
+      <workItem from="1703828112337" duration="3829000" />
+      <workItem from="1703833644967" duration="6124000" />
+      <workItem from="1704209259822" duration="2168000" />
+      <workItem from="1704296251098" duration="255000" />
+      <workItem from="1704345992227" duration="12277000" />
+      <workItem from="1704613606219" duration="16000" />
+      <workItem from="1704613789346" duration="25000" />
+      <workItem from="1704620959995" duration="810000" />
+      <workItem from="1704685086623" duration="482000" />
+      <workItem from="1704686387938" duration="6000" />
+      <workItem from="1704693414120" duration="576000" />
+      <workItem from="1704694064475" duration="31000" />
+      <workItem from="1704694135013" duration="253000" />
+      <workItem from="1704725568560" duration="896000" />
+      <workItem from="1704778251218" duration="590000" />
+      <workItem from="1704778878923" duration="1886000" />
+      <workItem from="1704781049620" duration="491000" />
+      <workItem from="1704782333376" duration="12204000" />
+      <workItem from="1704804318858" duration="584000" />
+      <workItem from="1704804918184" duration="3898000" />
+      <workItem from="1704815378095" duration="3224000" />
+      <workItem from="1704865953078" duration="11676000" />
+      <workItem from="1704879609007" duration="9000" />
+      <workItem from="1704892858597" duration="26000" />
+      <workItem from="1704892926024" duration="2270000" />
+      <workItem from="1704948541701" duration="7801000" />
+      <workItem from="1704957483580" duration="6386000" />
+      <workItem from="1704982436928" duration="6566000" />
+      <workItem from="1705643838758" duration="4617000" />
+      <workItem from="1705656953440" duration="149000" />
+      <workItem from="1705657173332" duration="156000" />
+      <workItem from="1705657622428" duration="109000" />
+      <workItem from="1705658116646" duration="171000" />
+      <workItem from="1705658347922" duration="1000" />
+      <workItem from="1705658814335" duration="176000" />
+      <workItem from="1705659098465" duration="908000" />
+      <workItem from="1705660190991" duration="1000" />
+      <workItem from="1705727416492" duration="23000" />
+      <workItem from="1705727458734" duration="2394000" />
+      <workItem from="1705730145074" duration="100000" />
+      <workItem from="1705818173744" duration="20000" />
+      <workItem from="1705987773803" duration="4709000" />
+      <workItem from="1705993898482" duration="4988000" />
+      <workItem from="1708593115304" duration="742000" />
+      <workItem from="1708650555831" duration="72000" />
+      <workItem from="1709023333448" duration="224000" />
+      <workItem from="1709708307305" duration="3352000" />
+      <workItem from="1709711693430" duration="181000" />
+      <workItem from="1709788322918" duration="641000" />
+      <workItem from="1709897972080" duration="32000" />
+      <workItem from="1709898013862" duration="47000" />
+      <workItem from="1709898511411" duration="20000" />
+      <workItem from="1709956474526" duration="615000" />
+      <workItem from="1709957103325" duration="3747000" />
+      <workItem from="1709962060664" duration="8000" />
+      <workItem from="1710087921436" duration="349000" />
+      <workItem from="1710120382923" duration="3110000" />
+      <workItem from="1710130689929" duration="143000" />
+      <workItem from="1710130910454" duration="2960000" />
+      <workItem from="1710134138720" duration="10941000" />
+      <workItem from="1710171967044" duration="1443000" />
+      <workItem from="1710222124141" duration="739000" />
+      <workItem from="1710232724584" duration="3169000" />
+      <workItem from="1710307290675" duration="5411000" />
+      <workItem from="1710341734774" duration="87000" />
+      <workItem from="1710342321188" duration="3043000" />
+      <workItem from="1710348255057" duration="1000" />
+      <workItem from="1710349048619" duration="386000" />
+      <workItem from="1710428419231" duration="3559000" />
+      <workItem from="1710558537008" duration="154000" />
+      <workItem from="1710656070956" duration="1943000" />
+      <workItem from="1710723759359" duration="80000" />
+      <workItem from="1710730428158" duration="229000" />
+      <workItem from="1710740317102" duration="949000" />
+      <workItem from="1710744963766" duration="373000" />
+      <workItem from="1710750576593" duration="72000" />
+      <workItem from="1710774989789" duration="35000" />
+      <workItem from="1710822820076" duration="1083000" />
+      <workItem from="1710830735226" duration="4223000" />
+      <workItem from="1710912634512" duration="5636000" />
+      <workItem from="1710925463096" duration="476000" />
+      <workItem from="1710935601761" duration="6432000" />
+      <workItem from="1710946357289" duration="2325000" />
+      <workItem from="1710955971657" duration="3305000" />
+      <workItem from="1710995942342" duration="729000" />
+      <workItem from="1710998848045" duration="291000" />
+      <workItem from="1711023649852" duration="676000" />
+      <workItem from="1711341236154" duration="1423000" />
+      <workItem from="1711376458419" duration="8000" />
+      <workItem from="1711439900755" duration="4301000" />
+      <workItem from="1711454208686" duration="3188000" />
+      <workItem from="1711457465242" duration="296000" />
+      <workItem from="1711457984963" duration="132000" />
+      <workItem from="1711463666890" duration="2132000" />
+      <workItem from="1711474374864" duration="26000" />
+      <workItem from="1711515047726" duration="3089000" />
+      <workItem from="1711518484592" duration="3769000" />
+      <workItem from="1711530142512" duration="47000" />
+      <workItem from="1711530279283" duration="1522000" />
+      <workItem from="1711532127669" duration="1292000" />
+      <workItem from="1711533536828" duration="2660000" />
+      <workItem from="1711536464307" duration="347000" />
+      <workItem from="1711705096336" duration="405000" />
+      <workItem from="1711716785046" duration="912000" />
+      <workItem from="1711733853314" duration="1570000" />
+      <workItem from="1711943585965" duration="226000" />
+      <workItem from="1711943817205" duration="14092000" />
+      <workItem from="1712034725421" duration="65000" />
+      <workItem from="1712034921721" duration="15605000" />
+      <workItem from="1712051074810" duration="70000" />
+      <workItem from="1712119509145" duration="1000" />
+      <workItem from="1712744650118" duration="86000" />
+    </task>
+    <task id="LOCAL-00093" summary="re-organized">
+      <option name="closed" value="true" />
+      <created>1703838712561</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838712561</updated>
+    </task>
+    <task id="LOCAL-00094" summary="update">
+      <option name="closed" value="true" />
+      <created>1703838727922</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838727922</updated>
+    </task>
+    <task id="LOCAL-00095" summary="update">
+      <option name="closed" value="true" />
+      <created>1703838734164</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838734164</updated>
+    </task>
+    <task id="LOCAL-00096" summary="update">
+      <option name="closed" value="true" />
+      <created>1703838745274</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838745274</updated>
+    </task>
+    <task id="LOCAL-00097" summary="更新了关于基坐标系的雅可比速度运动">
+      <option name="closed" value="true" />
+      <created>1703838805137</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1703838805137</updated>
+    </task>
+    <task id="LOCAL-00098" summary="添加了上位机操作空间关于坐标系e和坐标系0的速度矢量控制&#10;添加了关节空间的速度矢量控制&#10;offline csp时，使用pp【x】 自动运动到起始点">
+      <option name="closed" value="true" />
+      <created>1703839060485</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839060485</updated>
+    </task>
+    <task id="LOCAL-00099" summary="update">
+      <option name="closed" value="true" />
+      <created>1703839080148</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839080148</updated>
+    </task>
+    <task id="LOCAL-00100" summary="update">
+      <option name="closed" value="true" />
+      <created>1703839086497</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839086497</updated>
+    </task>
+    <task id="LOCAL-00101" summary="update">
+      <option name="closed" value="true" />
+      <created>1703839091385</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839091385</updated>
+    </task>
+    <task id="LOCAL-00102" summary="设置syncrpm 为double&#10;添加jacobe 与jacob0 雅可比矩阵的操作空间速度矢量控制">
+      <option name="closed" value="true" />
+      <created>1703839153730</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839153730</updated>
+    </task>
+    <task id="LOCAL-00103" summary="添加度申科技相机">
+      <option name="closed" value="true" />
+      <created>1703839181959</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839181959</updated>
+    </task>
+    <task id="LOCAL-00104" summary="添加基于RPY角的fkine">
+      <option name="closed" value="true" />
+      <created>1703839218806</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1703839218806</updated>
+    </task>
+    <task id="LOCAL-00105" summary="更新宏定义socket端口号">
+      <option name="closed" value="true" />
+      <created>1705998479167</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998479167</updated>
+    </task>
+    <task id="LOCAL-00106" summary="更新插补库">
+      <option name="closed" value="true" />
+      <created>1705998533209</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998533209</updated>
+    </task>
+    <task id="LOCAL-00107" summary="更新库">
+      <option name="closed" value="true" />
+      <created>1705998550940</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998550940</updated>
+    </task>
+    <task id="LOCAL-00108" summary="更新">
+      <option name="closed" value="true" />
+      <created>1705998560860</created>
+      <option name="number" value="00108" />
+      <option name="presentableId" value="LOCAL-00108" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998560860</updated>
+    </task>
+    <task id="LOCAL-00109" summary="更新">
+      <option name="closed" value="true" />
+      <created>1705998568207</created>
+      <option name="number" value="00109" />
+      <option name="presentableId" value="LOCAL-00109" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998568207</updated>
+    </task>
+    <task id="LOCAL-00110" summary="更新 使用一阶插补">
+      <option name="closed" value="true" />
+      <created>1705998578060</created>
+      <option name="number" value="00110" />
+      <option name="presentableId" value="LOCAL-00110" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998578061</updated>
+    </task>
+    <task id="LOCAL-00111" summary="修正插补Nan问题">
+      <option name="closed" value="true" />
+      <created>1705998600544</created>
+      <option name="number" value="00111" />
+      <option name="presentableId" value="LOCAL-00111" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998600544</updated>
+    </task>
+    <task id="LOCAL-00112" summary="更新CMake， 添加DVPtest">
+      <option name="closed" value="true" />
+      <created>1705998624520</created>
+      <option name="number" value="00112" />
+      <option name="presentableId" value="LOCAL-00112" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998624520</updated>
+    </task>
+    <task id="LOCAL-00113" summary="使用宏定义端口号">
+      <option name="closed" value="true" />
+      <created>1705998638212</created>
+      <option name="number" value="00113" />
+      <option name="presentableId" value="LOCAL-00113" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998638212</updated>
+    </task>
+    <task id="LOCAL-00114" summary="测试轨迹点插补">
+      <option name="closed" value="true" />
+      <created>1705998645901</created>
+      <option name="number" value="00114" />
+      <option name="presentableId" value="LOCAL-00114" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998645901</updated>
+    </task>
+    <task id="LOCAL-00115" summary="修正，用于保存分类图像">
+      <option name="closed" value="true" />
+      <created>1705998666097</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998666097</updated>
+    </task>
+    <task id="LOCAL-00116" summary="更新">
+      <option name="closed" value="true" />
+      <created>1705998690115</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1705998690115</updated>
+    </task>
+    <task id="LOCAL-00117" summary="更新">
+      <option name="closed" value="true" />
+      <created>1710235091096</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235091096</updated>
+    </task>
+    <task id="LOCAL-00118" summary="更新GrapDriver 驱动逻辑">
+      <option name="closed" value="true" />
+      <created>1710235112304</created>
+      <option name="number" value="00118" />
+      <option name="presentableId" value="LOCAL-00118" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235112304</updated>
+    </task>
+    <task id="LOCAL-00119" summary="更新Todo">
+      <option name="closed" value="true" />
+      <created>1710235142280</created>
+      <option name="number" value="00119" />
+      <option name="presentableId" value="LOCAL-00119" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235142280</updated>
+    </task>
+    <task id="LOCAL-00120" summary="更新 Grap专用的ads接口">
+      <option name="closed" value="true" />
+      <created>1710235182834</created>
+      <option name="number" value="00120" />
+      <option name="presentableId" value="LOCAL-00120" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235182834</updated>
+    </task>
+    <task id="LOCAL-00121" summary="创建手爪测试程序">
+      <option name="closed" value="true" />
+      <created>1710235195941</created>
+      <option name="number" value="00121" />
+      <option name="presentableId" value="LOCAL-00121" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235195941</updated>
+    </task>
+    <task id="LOCAL-00122" summary="更新">
+      <option name="closed" value="true" />
+      <created>1710235205403</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235205403</updated>
+    </task>
+    <task id="LOCAL-00123" summary="添加Grap地址与相关数据类型">
+      <option name="closed" value="true" />
+      <created>1710235233205</created>
+      <option name="number" value="00123" />
+      <option name="presentableId" value="LOCAL-00123" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235233205</updated>
+    </task>
+    <task id="LOCAL-00124" summary="添加Grap">
+      <option name="closed" value="true" />
+      <created>1710235247587</created>
+      <option name="number" value="00124" />
+      <option name="presentableId" value="LOCAL-00124" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235247587</updated>
+    </task>
+    <task id="LOCAL-00125" summary="更新Todo">
+      <option name="closed" value="true" />
+      <created>1710235256292</created>
+      <option name="number" value="00125" />
+      <option name="presentableId" value="LOCAL-00125" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235256292</updated>
+    </task>
+    <task id="LOCAL-00126" summary="添加Grap专用Ads接口">
+      <option name="closed" value="true" />
+      <created>1710235269367</created>
+      <option name="number" value="00126" />
+      <option name="presentableId" value="LOCAL-00126" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235269367</updated>
+    </task>
+    <task id="LOCAL-00127" summary="添加Grap专用Ads接口">
+      <option name="closed" value="true" />
+      <created>1710235281538</created>
+      <option name="number" value="00127" />
+      <option name="presentableId" value="LOCAL-00127" />
+      <option name="project" value="LOCAL" />
+      <updated>1710235281538</updated>
+    </task>
+    <task id="LOCAL-00128" summary="更新测试内容">
+      <option name="closed" value="true" />
+      <created>1710313430907</created>
+      <option name="number" value="00128" />
+      <option name="presentableId" value="LOCAL-00128" />
+      <option name="project" value="LOCAL" />
+      <updated>1710313430907</updated>
+    </task>
+    <task id="LOCAL-00129" summary="添加力矩控制逻辑">
+      <option name="closed" value="true" />
+      <created>1710313453720</created>
+      <option name="number" value="00129" />
+      <option name="presentableId" value="LOCAL-00129" />
+      <option name="project" value="LOCAL" />
+      <updated>1710313453720</updated>
+    </task>
+    <task id="LOCAL-00130" summary="添加力矩控制逻辑">
+      <option name="closed" value="true" />
+      <created>1710313473552</created>
+      <option name="number" value="00130" />
+      <option name="presentableId" value="LOCAL-00130" />
+      <option name="project" value="LOCAL" />
+      <updated>1710313473552</updated>
+    </task>
+    <task id="LOCAL-00131" summary="grap测试的twincat项目文件">
+      <option name="closed" value="true" />
+      <created>1710313501383</created>
+      <option name="number" value="00131" />
+      <option name="presentableId" value="LOCAL-00131" />
+      <option name="project" value="LOCAL" />
+      <updated>1710313501383</updated>
+    </task>
+    <task id="LOCAL-00132" summary="移动">
+      <option name="closed" value="true" />
+      <created>1711439992716</created>
+      <option name="number" value="00132" />
+      <option name="presentableId" value="LOCAL-00132" />
+      <option name="project" value="LOCAL" />
+      <updated>1711439992716</updated>
+    </task>
+    <task id="LOCAL-00133" summary="添加交大ibvs">
+      <option name="closed" value="true" />
+      <created>1711440028804</created>
+      <option name="number" value="00133" />
+      <option name="presentableId" value="LOCAL-00133" />
+      <option name="project" value="LOCAL" />
+      <updated>1711440028804</updated>
+    </task>
+    <task id="LOCAL-00134" summary="测试">
+      <option name="closed" value="true" />
+      <created>1711440034569</created>
+      <option name="number" value="00134" />
+      <option name="presentableId" value="LOCAL-00134" />
+      <option name="project" value="LOCAL" />
+      <updated>1711440034569</updated>
+    </task>
+    <task id="LOCAL-00135" summary="测试">
+      <option name="closed" value="true" />
+      <created>1711440043818</created>
+      <option name="number" value="00135" />
+      <option name="presentableId" value="LOCAL-00135" />
+      <option name="project" value="LOCAL" />
+      <updated>1711440043818</updated>
+    </task>
+    <task id="LOCAL-00136" summary="调整目录">
+      <option name="closed" value="true" />
+      <created>1711440721741</created>
+      <option name="number" value="00136" />
+      <option name="presentableId" value="LOCAL-00136" />
+      <option name="project" value="LOCAL" />
+      <updated>1711440721741</updated>
+    </task>
+    <task id="LOCAL-00137" summary="优化目标链接库">
+      <option name="closed" value="true" />
+      <created>1711943862154</created>
+      <option name="number" value="00137" />
+      <option name="presentableId" value="LOCAL-00137" />
+      <option name="project" value="LOCAL" />
+      <updated>1711943862154</updated>
+    </task>
+    <task id="LOCAL-00138" summary="共享内存传输图像数据测试">
+      <option name="closed" value="true" />
+      <created>1711943884367</created>
+      <option name="number" value="00138" />
+      <option name="presentableId" value="LOCAL-00138" />
+      <option name="project" value="LOCAL" />
+      <updated>1711943884367</updated>
+    </task>
+    <task id="LOCAL-00139" summary="更新">
+      <option name="closed" value="true" />
+      <created>1711943891957</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1711943891957</updated>
+    </task>
+    <task id="LOCAL-00140" summary="共享内存传输图像数据测试">
+      <option name="closed" value="true" />
+      <created>1711943907848</created>
+      <option name="number" value="00140" />
+      <option name="presentableId" value="LOCAL-00140" />
+      <option name="project" value="LOCAL" />
+      <updated>1711943907848</updated>
+    </task>
+    <task id="LOCAL-00141" summary="优化">
+      <option name="closed" value="true" />
+      <created>1711943921796</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1711943921796</updated>
+    </task>
+    <option name="localTasksCounter" value="142" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="更新库" />
+    <MESSAGE value="更新 使用一阶插补" />
+    <MESSAGE value="修正插补Nan问题" />
+    <MESSAGE value="更新CMake， 添加DVPtest" />
+    <MESSAGE value="使用宏定义端口号" />
+    <MESSAGE value="测试轨迹点插补" />
+    <MESSAGE value="修正，用于保存分类图像" />
+    <MESSAGE value="更新GrapDriver 驱动逻辑" />
+    <MESSAGE value="更新 Grap专用的ads接口" />
+    <MESSAGE value="创建手爪测试程序" />
+    <MESSAGE value="添加Grap地址与相关数据类型" />
+    <MESSAGE value="添加Grap" />
+    <MESSAGE value="更新Todo" />
+    <MESSAGE value="添加Grap专用Ads接口" />
+    <MESSAGE value="更新测试内容" />
+    <MESSAGE value="添加力矩控制逻辑" />
+    <MESSAGE value="grap测试的twincat项目文件" />
+    <MESSAGE value="移动" />
+    <MESSAGE value="添加交大ibvs" />
+    <MESSAGE value="测试" />
+    <MESSAGE value="调整目录" />
+    <MESSAGE value="优化目标链接库" />
+    <MESSAGE value="更新" />
+    <MESSAGE value="共享内存传输图像数据测试" />
+    <MESSAGE value="优化" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/history_app/main_Nosocket.cpp</url>
+          <line>78</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/driverSever.cpp</url>
+          <line>227</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/pathInterpolation.cpp</url>
+          <line>23</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/pathInterpolation.cpp</url>
+          <line>59</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/history_app/trajTest.cpp</url>
+          <line>18</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/ShareMemory.cpp</url>
+          <line>21</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="CMakeRunConfiguration">
+        <watch expression="this-&gt;comSocket" />
+        <watch expression="this-&gt;comSocket" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
