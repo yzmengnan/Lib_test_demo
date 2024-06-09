@@ -9,8 +9,8 @@
 #define Grap_Tool_limit_therthold 40000
 enum
 {
-	GRAP_CLOSE = 0,
-	GRAP_OPEN,
+	GRAB_CLOSE = 0,
+	GRAB_OPEN,
 	ROTATE_FORWARD = 0,
 	ROTATE_BACKWARD
 };
@@ -100,7 +100,7 @@ private:
 	int fast_tool_moving_offset {-3447630};
 	int uptool_open_position {94000}, uptool_close_position {3660000};
 	int downtool_open_position {-2550000}, downtool_close_position {940000};
-	int grap_torque           = 450;
+	int grap_torque           = 650;
 	int grap_torque_threshold = 750;
 	int overtime              = 40;
 };
