@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 {
 	Tc_Ads ads_ptr;
 	Multi_Process p;
-	auto pi = p.safety_monitor_build("SAFE-CHECK.exe");
+	auto pi = p.safety_monitor_build("SAFE-CHECK.exe vservoing.exe");
 	auto d  = make_shared<MotionV1>(ads_ptr);
 	//    auto fl = file_log();
 	//    fl.writeFile(*d);

@@ -16,9 +16,13 @@
 #	define targetName "Lib_Demo.exe"
 #endif
 bool check_name(DWORD processID);
+
+bool check_name(DWORD processID, const std::string& target_name);
+
 void PrintProcessNameAndID(DWORD processID);
 void safety_behaviour();
-int main(void)
+
+int main(int argc, char* argv[])
 {
 	// Get the list of process identifiers.
 	int check_counts {};
@@ -41,7 +45,15 @@ int main(void)
 		{
 			if (aProcesses[i] != 0)
 			{
-				check_counts += check_name(aProcesses[i]);
+				if (argc == 2)
+				{
+					check_counts += check_name(aProcesses[i], argv[1]);
+				}
+				else
+				{
+					check_counts += check_name(aProcesses[i]);
+				}
+
 				//                PrintProcessNameAndID(aProcesses[i]);
 			}
 		}
@@ -103,6 +115,33 @@ void PrintProcessNameAndID(DWORD processID)
 
 	CloseHandle(hProcess);
 }
+
+bool check_name(DWORD processID, const std::string& target_name)
+{
+	TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+	// Get a handle to the process.
+
+	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
+
+	// Get the process name.
+
+	if (NULL != hProcess)
+	{
+		HMODULE hMod;
+		DWORD cbNeeded;
+
+		if (EnumProcessModules(hProcess, &hMod, sizeof(hMod), &cbNeeded))
+		{
+			GetModuleBaseName(hProcess, hMod, szProcessName, sizeof(szProcessName) / sizeof(TCHAR));
+		}
+	}
+	if ((std::string)szProcessName == target_name)
+	{
+		return 1;
+	}
+	return 0;
+}
+
 bool check_name(DWORD processID)
 {
 	TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");

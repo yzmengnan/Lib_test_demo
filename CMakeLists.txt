@@ -50,8 +50,8 @@ if (DEFINED ENV{isNoSocket})
                           ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib
                           )
 
-    add_executable(noSocketMain history_app/main_Nosocket.cpp)
-    target_link_libraries(noSocketMain
+    add_executable(vservoing visual_servo_motion.cpp)
+    target_link_libraries(vservoing
                           ws2_32
                           runninglib
                           ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib
@@ -79,12 +79,14 @@ if (DEFINED ENV{OPENCV_NEEDED})
         include_directories(${OpenCV_INCLUDE_DIRS})
         message(STATUS "opencv dirs is ${OpenCV_INCLUDE_DIRS}")
         message(STATUS "opencv version is ${OpenCV_VERSION}")
+
         add_executable(VISUAL visualTest.cpp)
         add_executable(DVPTEST "history_app/Dvp2OpenCV.cpp")
         add_executable(VS_IBVS_DEMO ibvs.cpp)
         add_executable(IMG_transfer img_transfer.cpp ShareMemory.cpp)
         add_executable(SharedMemory_Send sharedMemory_Send.cpp ShareMemory.cpp)
         add_executable(SharedMemory_Receive sharedMemory_Receive.cpp ShareMemory.cpp)
+
         target_link_libraries(VISUAL ws2_32 runninglib ${PROJECT_SOURCE_DIR}/lib/TcAdsDll.lib ${PROJECT_SOURCE_DIR}/lib/DVPCamera64.lib ${OpenCV_LIBRARIES})
         target_link_libraries(DVPTEST ${PROJECT_SOURCE_DIR}/lib/DVPCamera64.lib ${OpenCV_LIBRARIES})
         target_link_libraries(IMG_transfer ws2_32 ${PROJECT_SOURCE_DIR}/lib/DVPCamera64.lib ${OpenCV_LIBRARIES})
