@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CMakeSharedSettings">
     <configurations>
-      <configuration PROFILE_NAME="VISUAL" ENABLED="true" GENERATION_DIR="_VISUAL" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DCMAKE_PREFIX_PATH=C:\msys64\home\Yang\opencv\opencv\build\install">
+      <configuration PROFILE_NAME="VISUAL" ENABLED="true" GENERATION_DIR="_VISUAL" CONFIG_NAME="Debug">
         <ADDITIONAL_GENERATION_ENVIRONMENT>
           <envs>
             <env name="OPENCV_NEEDED" value="true" />
